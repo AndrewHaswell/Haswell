@@ -1,1 +1,0 @@
-{"virtualbox":{"/home/vagrant/haswell2":{"type":null,"mount_options":[],"guestpath":"/home/vagrant/haswell2","hostpath":"/Users/Imperialoutpost/PhpstormProjects/Haswell2","disabled":false,"__vagrantfile":true},"/vagrant":{"guestpath":"/vagrant","hostpath":"/Users/Imperialoutpost/PhpstormProjects/Haswell2","disabled":false,"__vagrantfile":true}}}
