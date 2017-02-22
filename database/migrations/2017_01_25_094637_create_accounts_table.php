@@ -15,7 +15,7 @@ class CreateAccountsTable extends Migration
         Schema::create('accounts', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->enum('type', ['current','credit','loan']);
+            $table->enum('type', ['current','credit','loan','cash']);
             $table->timestamps();
         });
     }

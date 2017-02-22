@@ -17,7 +17,8 @@ $factory->define(App\Models\account::class, function (Faker\Generator $faker) {
 
   $account_types = ['current',
                     'credit',
-                    'loan'];
+                    'loan',
+                    'cash'];
   $type = $account_types[mt_rand(0, count($account_types) - 1)];
 
   return ['name' => $faker->domainWord,

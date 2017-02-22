@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Http\Requests;
+use App\Models\account;
 
 class AccountsController extends Controller
 {
@@ -16,7 +17,7 @@ class AccountsController extends Controller
   }
 
   /**
-   * Display a listing of the reso   exit('bob');urce.
+   * Display a listing of the resource.
    *
    * @return \Illuminate\Http\Response
    */
@@ -30,7 +31,16 @@ class AccountsController extends Controller
       echo 'Not logged in';
     }
 
-    exit('Andy: ' . $user);
+
+    $accounts = Account::orderBy('type', 'asc')->orderBy('name', 'asc')->get();
+
+    return view('accounts.test', compact('accounts'));
+
+  }
+
+  public function detail($id)
+  {
+    dd($id);
   }
 
   /**

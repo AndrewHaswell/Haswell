@@ -19,3 +19,4 @@ Route::auth();
 
 Route::get('/home', 'HomeController@index');
 Route::get('/accounts', 'AccountsController@index');
+Route::get('/account/{$id}', 'AccountsController@detail');
