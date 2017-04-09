@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Http\Requests;
-use App\Models\account;
+use App\Models\Account;
 use Carbon\Carbon;
 use App\Models\Schedule;
 
