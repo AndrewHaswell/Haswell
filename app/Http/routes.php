@@ -12,11 +12,17 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+  return view('welcome');
 });
 
 Route::auth();
 
 Route::get('/home', 'HomeController@index');
+Route::get('/accounts/{id}', 'AccountsController@detail');
+Route::get('/future/{id}/{month}', 'AccountsController@future');
+Route::get('/transactions/{id}', 'TransactionsController@detail');
+Route::get('/transactions', 'TransactionsController@index');
 Route::get('/accounts', 'AccountsController@index');
-Route::get('/account/{$id}', 'AccountsController@detail');
+Route::get('/balance', 'TestController@balance');
+Route::get('/test', 'TestController@test');
+Route::resource('transactions', 'TransactionsController');

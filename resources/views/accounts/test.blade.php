@@ -17,9 +17,9 @@
           <tbody>
           @foreach ($accounts as $account)
             <tr>
-              <th scope="row"><a href="account/{{$account->id}}">{{ $account->name }}</a></th>
-              <td>{{ $account->type }}</td>
-              <td>{{ $account->balances()->orderBy('created_at', 'desc')->first()->balance }}</td>
+              <th scope="row"><a href="/accounts/{{$account->id}}">{{ $account->name }}</a></th>
+              <td>{{ ucwords($account->type) }}</td>
+              <td>{{ number_format($account->balance, 2, '.', '') }}</td>
             </tr>
           @endforeach
           </tbody>

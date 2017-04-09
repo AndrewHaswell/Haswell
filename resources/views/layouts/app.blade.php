@@ -23,6 +23,16 @@
         .fa-btn {
             margin-right: 6px;
         }
+
+        .account_month {
+            font-weight: bold;
+            color: white;
+            background-color: darkred;
+            }
+
+        .credit_row {
+            color: green;
+            }
     </style>
 </head>
 <body id="app-layout">
@@ -48,6 +58,8 @@
                 <!-- Left Side Of Navbar -->
                 <ul class="nav navbar-nav">
                     <li><a href="{{ url('/home') }}">Home</a></li>
+                    <li><a href="{{ url('/accounts') }}">Accounts</a></li>
+                    <li><a href="{{ url('/transactions') }}">Transactions</a></li>
                 </ul>
 
                 <!-- Right Side Of Navbar -->

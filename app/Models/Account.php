@@ -6,15 +6,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class Account extends Model
 {
-  //
 
   public function payments()
   {
     return $this->hasMany('App\Models\Payment');
   }
 
-  public function balances()
+  public function schedules()
   {
-    return $this->hasMany('App\Models\Balance');
+    return $this->hasMany('App\Models\Schedule');
   }
+
+  public function transactions()
+  {
+    return $this->hasMany('App\Models\Transaction');
+  }
+
 }

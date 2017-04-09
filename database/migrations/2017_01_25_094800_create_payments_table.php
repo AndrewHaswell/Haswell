@@ -16,9 +16,11 @@ class CreatePaymentsTable extends Migration
       $table->increments('id');
       $table->integer('account_id')->unsigned();
       $table->string('name');
-      $table->enum('type',['direct_debit', 'expense']);
+      $table->enum('weekend', ['none','before','after']);
+      $table->string('start_date');
+      $table->string('end_date');
+      $table->string('interval');
       $table->decimal('amount');
-      $table->smallInteger('fixed_date');
       $table->timestamps();
       $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
     });
