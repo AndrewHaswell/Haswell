@@ -30,6 +30,10 @@
             background-color: darkred;
             }
 
+        .unconfirmed {
+            color: red;
+            }
+
         .credit_row {
             color: green;
             }
