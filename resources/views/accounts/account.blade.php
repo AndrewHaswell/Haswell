@@ -27,14 +27,16 @@
             ?>
             <tr>
               <td class="account_month" colspan="3"><?=$this_month?></td>
-              <td align="right" class="account_month"><?=number_format($balance, 2, '.',',')?></td>
+              <td align="right" class="account_month"><?=number_format($balance, 2, '.', ',')?></td>
             </tr>
             <?php
             }
             $previous_month = $this_month;
             ?>
             <tr>
-              <th scope="row"><a href="/transactions/{{$transaction->id}}">{{ $transaction->name }}</a></th>
+              <th scope="row"><a href="/transactions/{{$transaction->id}}">{{ $transaction->name }}<?= !$transaction->confirmed
+                    ? '&nbsp;&nbsp;&nbsp;<img src="http://www.rccanada.ca/rccforum/images/rccskin/misc/cross.png"/>'
+                    : ''?></a></th>
               <td>{{ date('D jS F Y',strtotime($transaction->payment_date)) }}</td>
               <?php if ($transaction->type == 'debit') {
                 $transaction->amount *= -1;
