@@ -68,7 +68,7 @@ class AccountsController extends Controller
     $account = Account::findOrFail($id);
     $account = $this->get_future_balance($account, $date);
     $transactions = $account->transactions()->orderBy('payment_date', 'desc')->get();
-    $schedules = $account->schedules()->where('payment_date', '<=', $date)->orderBy('payment_date', 'desc')->get();
+    $schedules = $account->schedules()->where('payment_date', '<=', $date)->where('payment_date', '>', Carbon::parse('today'))->orderBy('payment_date', 'desc')->get();
     return view('accounts.account_future', compact('account', 'transactions', 'schedules'));
   }
 
