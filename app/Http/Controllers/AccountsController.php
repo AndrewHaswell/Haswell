@@ -137,7 +137,7 @@ class AccountsController extends Controller
       }
     }
 
-    $schedules = $account->schedules()->where('payment_date', '<=', $date)->get();
+    $schedules = $account->schedules()->where('payment_date', '<=', $date)->where('payment_date', '>', Carbon::parse('today'))->get();
     foreach ($schedules as $schedule) {
       if ($schedule->type == 'debit') {
         $account->balance -= $schedule->amount;
