@@ -26,6 +26,8 @@ class TransactionsController extends Controller
       $account_list[$account->id] = $account->name;
     }
 
+
+
     // Show the accounts
     return view('transactions.details', compact(['transaction',
                                                  'account_list']));
@@ -43,8 +45,8 @@ class TransactionsController extends Controller
     foreach ($accounts as $account) {
       $account_list[$account->id] = $account->name;
     }
-
-    return view('transactions.create', compact('account_list'));
+    $title = 'Transactions';
+    return view('transactions.create', compact(['account_list','title']));
   }
 
   /**
