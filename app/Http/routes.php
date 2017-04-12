@@ -36,3 +36,5 @@ Route::get('/accounts', 'AccountsController@index');
 Route::get('/balance', 'TestController@balance');
 Route::get('/test', 'TestController@test');
 Route::resource('transactions', 'TransactionsController');
+Route::resource('payments', 'PaymentsController');
+Route::resource('schedules', 'SchedulesController');

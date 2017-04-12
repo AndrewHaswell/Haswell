@@ -42,6 +42,55 @@ class TestController extends Controller
     }
   }
 
+  public function bank_holidays()
+  {
+
+    $year = '2018';
+
+    $mayday = Carbon::parse('first monday of may '.$year);
+    $spring_bank_holiday = Carbon::parse('last monday of may '.$year);
+    $summer_bank_holiday = Carbon::parse('last monday of august '.$year);
+
+    $easter = new Carbon('21st March ' . $year);
+    $easter_days = easter_days($year);
+    $good_friday = clone $easter;
+    $good_friday->addDays($easter_days - 2);
+    $easter_monday = clone $easter;
+    $easter_monday->addDays($easter_days + 1);
+
+    $christmas = new Carbon('25th December ' . $year);
+    if ($christmas->format('N') == 6) {
+      $christmas->modify('next monday');
+    } else if ($christmas->format('N') > 6) {
+      $christmas->modify('next tuesday');
+    }
+
+    $boxing_day = new Carbon('26th December ' . $year);
+    if ($boxing_day->format('N') == 6) {
+      $boxing_day->modify('next monday');
+    } else if ($boxing_day->format('N') > 6) {
+      $boxing_day->modify('next tuesday');
+    }
+    $new_year = new Carbon('1st January ' . $year);
+    if ($new_year->format('N') == 6) {
+      $new_year->modify('next monday');
+    } else if ($new_year->format('N') > 6) {
+      $new_year->modify('next tuesday');
+    }
+
+
+    echo "\n\r\n\r" . Kohana::debug(Router::$controller . ' : ' . Router::$method . ' : ' . __FILE__ . ' : ' . __LINE__) . "\n\r";
+    echo Kohana::debug($new_year);
+    echo Kohana::debug($good_friday);
+    echo Kohana::debug($easter_monday);
+    echo Kohana::debug($mayday);
+    echo Kohana::debug($spring_bank_holiday);
+    echo Kohana::debug($summer_bank_holiday);
+    echo Kohana::debug($christmas);
+    echo Kohana::debug($boxing_day);
+    exit();
+  }
+
   /**
    * @author Andrew Haswell
    */
