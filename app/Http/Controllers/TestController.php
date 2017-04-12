@@ -45,11 +45,11 @@ class TestController extends Controller
   public function bank_holidays()
   {
 
-    $year = '2018';
+    $year = '2017';
 
-    $mayday = Carbon::parse('first monday of may '.$year);
-    $spring_bank_holiday = Carbon::parse('last monday of may '.$year);
-    $summer_bank_holiday = Carbon::parse('last monday of august '.$year);
+    $mayday = Carbon::parse('first monday of may ' . $year);
+    $spring_bank_holiday = Carbon::parse('last monday of may ' . $year);
+    $summer_bank_holiday = Carbon::parse('last monday of august ' . $year);
 
     $easter = new Carbon('21st March ' . $year);
     $easter_days = easter_days($year);
@@ -78,17 +78,16 @@ class TestController extends Controller
       $new_year->modify('next tuesday');
     }
 
+    $bank_holidays = [$new_year,
+                      $good_friday,
+                      $easter_monday,
+                      $mayday,
+                      $spring_bank_holiday,
+                      $summer_bank_holiday,
+                      $christmas,
+                      $boxing_day];
 
-    echo "\n\r\n\r" . Kohana::debug(Router::$controller . ' : ' . Router::$method . ' : ' . __FILE__ . ' : ' . __LINE__) . "\n\r";
-    echo Kohana::debug($new_year);
-    echo Kohana::debug($good_friday);
-    echo Kohana::debug($easter_monday);
-    echo Kohana::debug($mayday);
-    echo Kohana::debug($spring_bank_holiday);
-    echo Kohana::debug($summer_bank_holiday);
-    echo Kohana::debug($christmas);
-    echo Kohana::debug($boxing_day);
-    exit();
+    return $bank_holidays;
   }
 
   /**
@@ -99,6 +98,7 @@ class TestController extends Controller
   {
     $payments = Payment::all();
     $accounts = Account::all();
+    $holidays = $this->bank_holidays();
 
     $account_list = [];
 
@@ -134,6 +134,7 @@ class TestController extends Controller
       foreach ($period as $dt) {
         // If we need to compensate for the weekend, do the checks
         if ($payment->weekend != 'none') {
+
           $weekday = $dt->format('N');
           // Alter the date for a weekend
           if ($weekday >= 6) {
@@ -141,6 +142,34 @@ class TestController extends Controller
               ? 'last friday'
               : 'next monday';
             $dt->modify($modify);
+          }
+
+          $bank_holidays = $holidays;
+          $reverse_bank_holidays = array_reverse($holidays);
+
+          $holidays = $payment->weekend == 'before'
+            ? $reverse_bank_holidays
+            : $bank_holidays;
+
+          foreach ($holidays as $holiday) {
+
+            if ($holiday == $dt) {
+
+              $modify = $payment->weekend == 'before'
+                ? '-1 day'
+                : '+1 day';
+              $dt->modify($modify);
+
+              $weekday = $dt->format('N');
+
+              // Alter the date for a weekend
+              if ($weekday >= 6) {
+                $modify = $payment->weekend == 'before'
+                  ? 'last friday'
+                  : 'next monday';
+                $dt->modify($modify);
+              }
+            }
           }
         }
 
