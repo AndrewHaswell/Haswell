@@ -33,6 +33,7 @@
             <td>{!! Form::text('amount', $transaction->amount, [
     'class'=>'form-control']) !!}</td>
           </tr>
+
           <tr>
             <th>{!! Form::label('account_id', 'Account: ') !!}</th>
             <td>{!! Form::select('account_id', $account_list, $transaction->account_id, [
@@ -41,6 +42,13 @@
           <tr>
             <th>{!! Form::label('confirmed', 'Confirmed: ') !!}</th>
             <td>{!! Form::select('confirmed', ['1' => 'Yes', '0'=>'No'], $transaction->confirmed, [
+    'class'=>'form-control']) !!}</td>
+          </tr>
+
+          <!--Form::checkbox('name', 'value', true);-->
+          <tr>
+            <th>{!! Form::label('delete', 'Tick box to delete: ') !!}</th>
+            <td>{!! Form::checkbox('delete', 'delete', false, [
     'class'=>'form-control']) !!}</td>
           </tr>
 

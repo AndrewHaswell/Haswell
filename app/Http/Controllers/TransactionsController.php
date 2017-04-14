@@ -26,8 +26,6 @@ class TransactionsController extends Controller
       $account_list[$account->id] = $account->name;
     }
 
-
-
     // Show the accounts
     return view('transactions.details', compact(['transaction',
                                                  'account_list']));
@@ -46,7 +44,8 @@ class TransactionsController extends Controller
       $account_list[$account->id] = $account->name;
     }
     $title = 'Transactions';
-    return view('transactions.create', compact(['account_list','title']));
+    return view('transactions.create', compact(['account_list',
+                                                'title']));
   }
 
   /**
@@ -70,6 +69,10 @@ class TransactionsController extends Controller
   {
     if (!empty($request->transaction_id)) {
       $transaction = Transaction::findOrFail($request->transaction_id);
+      if (!empty($request->delete) && $request->delete == 'delete') {
+        $transaction->delete();
+        return Redirect::to(url('/accounts/' . $transaction->account_id));
+      }
     } else {
       $transaction = new Transaction();
     }
@@ -78,7 +81,7 @@ class TransactionsController extends Controller
     if (!empty($request->transfer)) {
       $transfer_from = Account::findOrFail($request->account_id);
       $transfer_to = Account::findOrFail($request->transfer);
-      $transfer_to_name = 'Transferred to ' . $transfer_to->name ;
+      $transfer_to_name = 'Transferred to ' . $transfer_to->name;
       $transfer_from_name = 'Transferred from ' . $transfer_from->name;
     }
 

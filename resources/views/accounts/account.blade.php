@@ -7,16 +7,16 @@
 
         <?php $balance = $account->balance; ?>
         <h2>{{$account->name}}</h2>
-        <h3>&pound;{{number_format($balance, 2, '.',',')}}</h3>
+        <p class="current_balance">Current Balance: <strong>&pound;{{number_format($balance, 2, '.',',')}}</strong></p>
+        <p class="upcoming_link"><a href="#" id="show_upcoming">Show Upcoming</a></p>
 
-
-        <table class="table table-striped table-hover">
+        <table id="upcoming" class="table table-striped table-hover">
           <thead class="thead-default">
           <tr>
-            <th>Name</th>
-            <th>Date</th>
-            <th>Amount</th>
-            <th>Balance</th>
+            <th width="35%">Name</th>
+            <th width="35%">Date</th>
+            <th width="15%">Amount</th>
+            <th width="15%">Balance</th>
           </tr>
           </thead>
           <tbody>
@@ -41,10 +41,19 @@
             </tr>
 
           @endforeach
+          </tbody>
+        </table>
 
+        <table class="table table-striped table-hover">
+          <thead class="thead-default">
           <tr>
-            <td colspan="4">&nbsp;</td>
+            <th width="35%">Name</th>
+            <th width="35%">Date</th>
+            <th width="15%">Amount</th>
+            <th width="15%">Balance</th>
           </tr>
+          </thead>
+          <tbody>
 
           @foreach ($transactions as $transaction)
             <?php
@@ -75,10 +84,10 @@
             </tr>
           @endforeach
           </tbody>
-
-
         </table>
       </div>
     </div>
   </div>
+
+
 @endsection
