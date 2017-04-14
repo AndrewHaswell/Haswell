@@ -8,6 +8,9 @@
           <thead class="thead-default">
           <tr>
             <th>Name</th>
+            <th>Start</th>
+            <th>Interval</th>
+            <th>End</th>
             <th>Type</th>
             <th>Amount</th>
           </tr>
@@ -15,9 +18,15 @@
           <tbody>
           @foreach ($payments as $payment)
             <tr>
-              <td><a href="#">{{ $payment->name }}</a></td>
-              <td>{{ $payment->start_date }} -> {{ $payment->interval }} -> {{ $payment->end_date }}</td>
-              <td>{{ $payment->type }}</td>
+              <th><a href="/payments/{{$payment->id}}">{{ $payment->name }}</a></th>
+              <td>{{ date('j M y',strtotime($payment->start_date)) }}</td>
+              <td>{{ ucwords($payment->interval) }}</td>
+              <?php if ($payment->end_date != '') { ?>
+              <td>{{ date('j M y',strtotime($payment->end_date)) }}</td>
+              <?php } else { ?>
+              <td>-</td>
+              <?php }?>
+              <td>{{ ucwords($payment->type) }}</td>
               <td>{{ $payment->amount }}</td>
             </tr>
           @endforeach
