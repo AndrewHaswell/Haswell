@@ -12,6 +12,9 @@
 
   <title>{{$title}}</title>
 
+  <!-- JQuery -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
   <!-- Fonts -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css"
         integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
@@ -25,6 +28,10 @@
   <style>
     body {
       font-family: 'Lato';
+      }
+
+    #upcoming {
+      display: none;
       }
 
     .fa-btn {
@@ -43,6 +50,18 @@
 
     .credit_row {
       color: green;
+      }
+
+    .current_balance {
+      clear:     both;
+      float:     left;
+      font-size: 12pt;
+      }
+
+    .upcoming_link {
+      float:      right;
+      text-align: right;
+      font-size:  12pt;
       }
   </style>
 </head>
@@ -97,6 +116,20 @@
 </nav>
 
 @yield('content')
+
+<script>
+  $(function () {
+    $('#show_upcoming').on('click', function () {
+      $('#upcoming').fadeToggle(600);
+      if ($(this).text() == 'Show Upcoming') {
+        $(this).text('Hide Upcoming');
+      } else {
+        $(this).text('Show Upcoming');
+      }
+      return false;
+    });
+  });
+</script>
 
 <!-- JavaScripts -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"
