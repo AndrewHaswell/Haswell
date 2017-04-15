@@ -59,7 +59,7 @@ class AccountsController extends Controller
     $future_account = clone $account;
     $title = 'Accounts - ' . $account->name;
     $account = $this->get_current_balance($account, false);
-    $transactions = $account->transactions()->orderBy('payment_date', 'desc')->get();
+    $transactions = $account->transactions()->orderBy('payment_date', 'desc')->orderBy('type', 'desc')->get();
     $end_of_month = Carbon::parse('last day of this month');
     $schedules = $account->schedules()->where('payment_date', '<=', $end_of_month)->where('payment_date', '>', Carbon::parse('today'))->orderBy('payment_date', 'desc')->get();
     $future_balance = $this->get_future_balance($future_account, $end_of_month)->balance;
@@ -141,10 +141,6 @@ class AccountsController extends Controller
 
   public function get_future_balance($account, $date)
   {
-
-
-
-
     $transactions = $account->transactions()->where('payment_date', '>=', $account->balance_date)->get();
     foreach ($transactions as $transaction) {
       if ($transaction->type == 'debit') {
@@ -158,7 +154,6 @@ class AccountsController extends Controller
 
     $schedules = $account->schedules()->where('payment_date', '<=', $date)->where('payment_date', '>', Carbon::parse('today'))->orderBy('payment_date', 'asc')->get();
 
-
     foreach ($schedules as $schedule) {
 
       //dump($schedule);
@@ -171,7 +166,7 @@ class AccountsController extends Controller
       //dump($account->balance);
     }
 
-   // dd($account);
+    // dd($account);
 
     return $account;
   }
