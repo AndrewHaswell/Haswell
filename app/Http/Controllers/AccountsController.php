@@ -61,7 +61,7 @@ class AccountsController extends Controller
     $account = $this->get_current_balance($account, false);
     $transactions = $account->transactions()->orderBy('payment_date', 'desc')->orderBy('type', 'desc')->get();
     $end_of_month = Carbon::parse('last day of this month');
-    $schedules = $account->schedules()->where('payment_date', '<=', $end_of_month)->where('payment_date', '>', Carbon::parse('today'))->orderBy('payment_date', 'desc')->get();
+    $schedules = $account->schedules()->where('payment_date', '<=', $end_of_month)->where('payment_date', '>', Carbon::parse('today'))->orderBy('payment_date', 'desc')->orderBy('type', 'desc')->get();
     $future_balance = $this->get_future_balance($future_account, $end_of_month)->balance;
 
     return view('accounts.account', compact(['account',
