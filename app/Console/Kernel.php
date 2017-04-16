@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Console\Commands\UpdatePayments;
+use App\Console\Commands\DatabaseBackup;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -13,7 +14,8 @@ class Kernel extends ConsoleKernel
    *
    * @var array
    */
-  protected $commands = [UpdatePayments::class,];
+  protected $commands = [UpdatePayments::class,
+                         DatabaseBackup::class];
 
   /**
    * Define the application's command schedule.
@@ -24,6 +26,7 @@ class Kernel extends ConsoleKernel
    */
   protected function schedule(Schedule $schedule)
   {
+    $schedule->command('db:backup')->twiceDaily();
     $schedule->command('payments:update')->twiceDaily();
   }
 }

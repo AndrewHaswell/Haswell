@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "27ddef9b3fc54bd7a6525be0ecf7f6fc",
+    "content-hash": "3509fed76d543448fe7a680632bbd44c",
     "packages": [
         {
             "name": "classpreloader/classpreloader",
@@ -1023,6 +1023,49 @@
                 "random"
             ],
             "time": "2017-03-13T16:22:52+00:00"
+        },
+        {
+            "name": "phelium/mysql-backup",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/shevabam/mysql-backup.git",
+                "reference": "8f7f31325ee58e0726ba769fb98c0eaa9d0e811f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/shevabam/mysql-backup/zipball/8f7f31325ee58e0726ba769fb98c0eaa9d0e811f",
+                "reference": "8f7f31325ee58e0726ba769fb98c0eaa9d0e811f",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Phelium\\Component\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GNU GPL 2.0"
+            ],
+            "authors": [
+                {
+                    "name": "ShevAbam",
+                    "email": "me@shevarezo.fr"
+                }
+            ],
+            "description": "Backup easily your MySQL database !",
+            "homepage": "https://github.com/shevabam/mysql-backup",
+            "keywords": [
+                "backup",
+                "database",
+                "dump",
+                "mysql"
+            ],
+            "time": "2015-02-20T18:46:29+00:00"
         },
         {
             "name": "psr/http-message",
@@ -3510,7 +3553,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "phelium/mysql-backup": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
