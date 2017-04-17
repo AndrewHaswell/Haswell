@@ -26,7 +26,7 @@ class Kernel extends ConsoleKernel
    */
   protected function schedule(Schedule $schedule)
   {
-    $schedule->command('db:backup')->twiceDaily();
-    $schedule->command('payments:update')->twiceDaily();
+    $schedule->command('db:backup')->everyFiveMinutes();
+    $schedule->command('payments:update')->everyFiveMinutes();
   }
 }
