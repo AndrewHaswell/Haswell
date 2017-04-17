@@ -39,6 +39,7 @@ class DatabaseBackup extends Command
      */
     public function handle()
     {
+      mail('andy@snowmanx.com', 'Cron Ran - DB Backup', 'Cron Ran', 'MIME-Version: 1.0' . "\r\n" . 'Content-type: text/html; charset=iso-8859-1');
       $Dump = new MySQLBackup('localhost', 'imperial_iop', '9004lestat', 'imperial_accounts');
       $Dump->setCompress('zip');
       $Dump->setFilename('bkp_'.time());
