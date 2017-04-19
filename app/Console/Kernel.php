@@ -25,6 +25,6 @@ class Kernel extends ConsoleKernel
    */
   protected function schedule(Schedule $schedule)
   {
-    $schedule->command('payments:update')->everyFiveMinutes();
+    $schedule->command('payments:update')->everyFiveMinutes()->sendOutputTo('payment_update.log');
   }
 }
