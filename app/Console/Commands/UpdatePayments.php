@@ -138,8 +138,6 @@ class UpdatePayments extends Command
 
     foreach ($payments as $payment) {
 
-      echo '<h2>' . $payment->name . '</h2>';
-
       // Work out our payments dates
       $begin = new DateTime($payment->start_date);
       $end = new DateTime();
