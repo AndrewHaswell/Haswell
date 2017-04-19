@@ -1,4 +1,4 @@
-#!/usr/bin/env php
+#!/opt/php70/bin/php
 <?php
 
 /*
@@ -28,12 +28,7 @@ $app = require_once __DIR__.'/bootstrap/app.php';
 |
 */
 
-exit(phpversion());
-
-
-
-
-//$kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
+$kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
 
 $status = $kernel->handle(
     $input = new Symfony\Component\Console\Input\ArgvInput,
