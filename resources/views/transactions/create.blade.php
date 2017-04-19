@@ -16,9 +16,14 @@
     'class'=>'form-control']) !!}</td>
           </tr>
 
+          <?php
+          $now = \Carbon\Carbon::now(new DateTimeZone('Europe/London'));
+          $now = $now->format('Y-m-d H:i:s');
+          ?>
+
           <tr>
             <th>{!! Form::label('payment_date', 'Payment Date: ') !!}</th>
-            <td>{!! Form::text('payment_date', date('Y-m-d H:i:s'), [
+            <td>{!! Form::text('payment_date', $now, [
     'class'=>'form-control']) !!}</td>
           </tr>
 
@@ -39,7 +44,7 @@
             <td>{!! Form::text('amount', '', [
     'class'=>'form-control']) !!}</td>
           </tr>
-<?php array_unshift($account_list, '')?>
+          <?php array_unshift($account_list, '')?>
           <tr>
             <th>{!! Form::label('transfer', 'Transfer: ') !!}</th>
             <td>{!! Form::select('transfer', $account_list, '', [
