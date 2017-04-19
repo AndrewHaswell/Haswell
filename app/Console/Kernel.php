@@ -14,8 +14,7 @@ class Kernel extends ConsoleKernel
    *
    * @var array
    */
-  protected $commands = [UpdatePayments::class,
-                         DatabaseBackup::class];
+  protected $commands = [UpdatePayments::class];
 
   /**
    * Define the application's command schedule.
@@ -26,7 +25,6 @@ class Kernel extends ConsoleKernel
    */
   protected function schedule(Schedule $schedule)
   {
-    $schedule->command('db:backup')->everyFiveMinutes();
     $schedule->command('payments:update')->everyFiveMinutes();
   }
 }
