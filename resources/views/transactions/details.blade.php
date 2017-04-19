@@ -3,7 +3,7 @@
 @section('content')
   <div class="container">
     <div class="row">
-      <tr class="col-md-10 col-md-offset-1">
+      <div class="col-md-10 col-md-offset-1">
         <h3>{{$transaction->name}}</h3>
         {!! Form::open(['action' => 'TransactionsController@store']) !!}
         <table class="table table-striped table-hover">
@@ -62,8 +62,8 @@
           </tbody>
 
         </table>
-      {!! Form::close() !!}
+        {!! Form::close() !!}
+      </div>
     </div>
-  </div>
   </div>
 @endsection

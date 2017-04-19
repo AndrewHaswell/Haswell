@@ -21,7 +21,7 @@ class PaymentsController extends Controller
     // Remove out of date payments
     Payment::where('end_date', '<', Carbon::parse('today'))->where('end_date', '!=', '')->delete();
 
-    $payments = Payment::orderBy('interval','desc')->orderBy('name','asc')->get();
+    $payments = Payment::orderBy('name','asc')->orderBy('interval','desc')->get();
     return view('payments.payments', compact('payments'));
   }
 
