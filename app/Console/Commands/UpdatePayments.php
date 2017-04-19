@@ -37,6 +37,6 @@ class UpdatePayments extends Command
    */
   public function handle()
   {
-    mail('andy@snowmanx.com', 'Testy cron', 'Testing a cron', 'MIME-Version: 1.0' . "\r\n" . 'Content-type: text/html; charset=iso-8859-1');
+    $this->comment(PHP_EOL . 'Running a cron job!' . PHP_EOL);
   }
 }
