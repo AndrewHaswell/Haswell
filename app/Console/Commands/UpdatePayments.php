@@ -55,6 +55,8 @@ class UpdatePayments extends Command
 
       $transaction = new Transaction();
 
+      echo 'Transaction Added: ' . $schedule->name . "\n\r";
+
       $transaction->name = $schedule->name;
       $transaction->payment_date = $today;
       $transaction->type = $schedule->type;
@@ -65,11 +67,12 @@ class UpdatePayments extends Command
     }
   }
 
-  public function bank_holidays()
+  public function bank_holidays($year = null)
   {
-
-    $year = '2017';
-
+    if (empty($year)) {
+      $year = new Carbon();
+      $year = $year->format('Y');
+    }
     $mayday = Carbon::parse('first monday of may ' . $year);
     $spring_bank_holiday = Carbon::parse('last monday of may ' . $year);
     $summer_bank_holiday = Carbon::parse('last monday of august ' . $year);
