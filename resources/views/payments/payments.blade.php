@@ -37,7 +37,9 @@
             $start_date = $payment->start_date . ' - ' . $payment->interval;
 
             if (empty($payment->end_date)) {
-              if (strpos($payment->interval, 'month') !== false) {
+              if (strpos($payment->interval, 'year') !== false) {
+                $start_date = 'Annually - ' . date('jS M', strtotime($payment->start_date));
+              } else if (strpos($payment->interval, 'month') !== false) {
                 $start_date = date('jS', strtotime($payment->start_date)) . ' of the month';
               } else if (strpos($payment->interval, 'week') !== false) {
                 $start_date = 'Every ' . date('l', strtotime($payment->start_date));
