@@ -15,7 +15,7 @@
             <th>Type</th>
             <th>Amount</th>
             <th>Account</th>
-            <th>Transfer</th>
+            <th>Transfer Account</th>
           </tr>
           </thead>
           <tbody>
@@ -27,7 +27,7 @@
 
             @if ($this_first_letter != $first_letter)
               <tr class="success">
-                <td colspan="5"><h4>{{$this_first_letter}}</h4></td>
+                <td colspan="6"><h4>{{$this_first_letter}}</h4></td>
               </tr>
             @endif
 
@@ -59,15 +59,21 @@
                     : '') . ' from ' . date('jS M y', strtotime($payment->start_date));
               }
             }
+            $transfer_account = '-';
+            if (!empty($payment->transfer_account_id)) {
+              $transfer_account = $account_list[$payment->transfer_account_id];
+              $payment->type = 'transfer';
+            }
+
             ?>
 
             <tr>
               <th><a href="/payments/{{$payment->id}}">{{ $payment->name }}</a></th>
               <td>{{ $start_date }}</td>
               <td>{{ ucwords($payment->type) }}</td>
-              <td>{{ $payment->amount }}</td>
-              <td>{{ $payment->account_id }}</td>
-              <td>{{ $payment->account_id }}</td>
+              <td align="right">{{ $payment->amount }}</td>
+              <td>{{ $account_list[$payment->account_id] }}</td>
+              <td>{{ $transfer_account }}</td>
             </tr>
           @endforeach
           </tbody>
