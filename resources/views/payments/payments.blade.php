@@ -59,14 +59,7 @@
                     : '') . ' from ' . date('jS M y', strtotime($payment->start_date));
               }
             }
-
-
-
-
-
             ?>
-
-
 
             <tr>
               <th><a href="/payments/{{$payment->id}}">{{ $payment->name }}</a></th>
