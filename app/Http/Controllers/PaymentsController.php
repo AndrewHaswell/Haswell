@@ -21,8 +21,15 @@ class PaymentsController extends Controller
     // Remove out of date payments
     Payment::where('end_date', '<', Carbon::parse('today'))->where('end_date', '!=', '')->delete();
 
-    $payments = Payment::orderBy('name','asc')->orderBy('interval','desc')->get();
-    return view('payments.payments', compact('payments'));
+    $accounts = Account::all();
+    $account_list = [];
+    foreach ($accounts as $account) {
+      $account_list[$account->id] = $account->name;
+    }
+
+    $payments = Payment::orderBy('name', 'asc')->orderBy('interval', 'desc')->get();
+    return view('payments.payments', compact(['payments',
+                                              'account_list']));
   }
 
   /**
@@ -65,7 +72,7 @@ class PaymentsController extends Controller
 
     // Show the accounts
     return view('payments.details', compact(['payment',
-                                              'account_list']));
+                                             'account_list']));
   }
 
   /**

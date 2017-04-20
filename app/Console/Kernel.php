@@ -14,7 +14,8 @@ class Kernel extends ConsoleKernel
    *
    * @var array
    */
-  protected $commands = [UpdatePayments::class];
+  protected $commands = [UpdatePayments::class,
+                         DatabaseBackup::class];
 
   /**
    * Define the application's command schedule.
@@ -26,5 +27,6 @@ class Kernel extends ConsoleKernel
   protected function schedule(Schedule $schedule)
   {
     $schedule->command('payments:update')->daily()->sendOutputTo('payment_update.log');
+    $schedule->command('db:backup')->daily()->sendOutputTo('payment_update.log');
   }
 }
