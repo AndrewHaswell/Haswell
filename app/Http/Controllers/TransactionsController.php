@@ -83,6 +83,9 @@ class TransactionsController extends Controller
       $transfer_to = Account::findOrFail($request->transfer);
       $transfer_to_name = 'Transferred to ' . $transfer_to->name;
       $transfer_from_name = 'Transferred from ' . $transfer_from->name;
+      $transfer = 1;
+    }else {
+      $transfer = 0;
     }
 
     $transaction->account_id = $request->account_id;
@@ -91,6 +94,7 @@ class TransactionsController extends Controller
       : $request->name);
     $transaction->payment_date = $request->payment_date;
     $transaction->type = $request->type;
+    $transaction->transfer = $transfer;
     $transaction->amount = $request->amount;
     $transaction->confirmed = $request->confirmed;
 
@@ -101,6 +105,7 @@ class TransactionsController extends Controller
       $transaction = $transaction->replicate();
       $transaction->name = $transfer_from_name;
       $transaction->account_id = $request->transfer;
+      $transaction->transfer = $transfer;
       $transaction->type = ($request->type == 'credit'
         ? 'debit'
         : 'credit');
