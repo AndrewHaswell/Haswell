@@ -118,14 +118,17 @@ class AccountsController extends Controller
   {
     $transactions = $account->transactions()->where('payment_date', '>=', $account->balance_date)->get();
     foreach ($transactions as $transaction) {
-      // If we're only checking for confirmed transactions and it's not, skip it
-      if ($confirmed_only && !$transaction->confirmed) {
-        continue;
-      }
+
       if ($transaction->type == 'debit') {
         $account->balance -= $transaction->amount;
+        if ($transaction->confirmed) {
+          $account->confirmed_balance -= $transaction->amount;
+        }
       } else {
         $account->balance += $transaction->amount;
+        if ($transaction->confirmed) {
+          $account->confirmed_balance += $transaction->amount;
+        }
       }
     }
     return $account;

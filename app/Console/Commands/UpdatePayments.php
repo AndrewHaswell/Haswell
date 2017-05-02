@@ -202,6 +202,9 @@ class UpdatePayments extends Command
           if ($payment->transfer_account_id > 0) {
             $transfer_to_name = 'Transferred to ' . $account_list[$payment->transfer_account_id];
             $transfer_from_name = 'Transferred from ' . $account_list[$payment->account_id];
+            $transfer = 1;
+          }else {
+            $transfer = 0;
           }
 
           $schedule = new Schedule();
@@ -211,6 +214,7 @@ class UpdatePayments extends Command
           $schedule->account_id = $payment->account_id;
           $schedule->amount = $payment->amount;
           $schedule->type = $payment->type;
+          $schedule->transfer = $transfer;
           $schedule->payment_date = (string)$dt->format('Y-m-d');
           $schedule->save();
 
@@ -219,6 +223,7 @@ class UpdatePayments extends Command
             $schedule->name = $transfer_from_name;
             $schedule->account_id = $payment->transfer_account_id;
             $schedule->amount = $payment->amount;
+            $schedule->transfer = $transfer;
             $schedule->type = ($payment->type == 'credit'
               ? 'debit'
               : 'credit');
