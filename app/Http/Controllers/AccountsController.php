@@ -116,6 +116,7 @@ class AccountsController extends Controller
 
   public function get_current_balance($account, $confirmed_only = true)
   {
+    $account->confirmed_balance = $account->balance;
     $transactions = $account->transactions()->where('payment_date', '>=', $account->balance_date)->get();
     foreach ($transactions as $transaction) {
 

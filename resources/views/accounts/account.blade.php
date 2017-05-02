@@ -7,7 +7,7 @@
 
         <?php $balance = $account->balance; ?>
         <h2>{{$account->name}}</h2>
-        <p class="current_balance">Current Balance: <strong>&pound;{{number_format($balance, 2, '.',',')}}</strong></p>
+        <p class="current_balance">Current Balance: <strong>&pound;{{number_format($balance, 2, '.',',')}}</strong> ({{$account->confirmed_balance}})</p>
         <p class="upcoming_link"><a href="#" id="show_upcoming">Show Upcoming</a></p>
 
         <table id="upcoming" class="table table-striped table-hover">
