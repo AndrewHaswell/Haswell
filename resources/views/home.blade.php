@@ -5,7 +5,6 @@
     <div class="row">
       <div class="col-md-10 col-md-offset-1">
 
-
         <h2>Next {{$limit}} transactions:</h2>
 
         <table class="table table-striped table-hover">
@@ -36,6 +35,42 @@
           @endforeach
           </tbody>
         </table>
+
+        <h2>Last {{$limit}} transactions:</h2>
+
+        <table class="table table-striped table-hover">
+          <thead>
+          <tr>
+            <th>Name</th>
+            <th>Date</th>
+            <th>Amount</th>
+            <th>Account</th>
+          </tr>
+          </thead>
+
+          <tbody>
+          @foreach ($transactions as $transaction)
+
+            <?php
+            if ($transaction->type == 'debit')
+              $transaction->amount = $transaction->amount * -1;
+            ?>
+
+            <tr>
+              <td><a
+                    href="/transactions/{{$transaction->id}}">{{ $transaction->name }}</a><?= !$transaction->confirmed
+                  ? '&nbsp;&nbsp;&nbsp;<img src="http://www.rccanada.ca/rccforum/images/rccskin/misc/cross.png"/>'
+                  : ''?></td>
+              <td>{{date('D jS F Y',strtotime($transaction->payment_date))}}</td>
+              <td align="right">{{number_format($transaction->amount, 2, '.',',')}}</td>
+              <td>{{$account_list[$transaction->account_id]}}</td>
+            </tr>
+
+          @endforeach
+          </tbody>
+        </table>
+
+
       </div>
     </div>
   </div>
