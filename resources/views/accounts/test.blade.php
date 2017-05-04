@@ -6,7 +6,7 @@
       <div class="col-md-10 col-md-offset-1">
         <h3>Accounts</h3>
 
-        <?php $total = 0; ?>
+        <?php $total = 0; $subtotal = [];?>
 
         <table class="table table-striped table-hover">
           <thead class="thead-default">
@@ -22,7 +22,27 @@
               <th scope="row"><a href="/accounts/{{$account->id}}">{{ $account->name }}</a></th>
               <td>{{ ucwords($account->type) }}</td>
               <td>{{ number_format($account->balance, 2, '.', '') }}</td>
-              <?php $total += $account->balance; ?>
+              <?php
+
+              $total += $account->balance;
+
+              if (!empty($subtotal[$account->type])) {
+                $subtotal[$account->type] += $account->balance;
+              } else {
+                $subtotal[$account->type] = $account->balance;
+              }
+
+              ?>
+            </tr>
+          @endforeach
+          <tr>
+            <td colspan="3">&nbsp;</td>
+          </tr>
+          @foreach ($subtotal as $type => $balance)
+            <tr>
+              <th>{{ucwords($type)}}</th>
+              <td></td>
+              <td>{{ number_format($balance, 2, '.', '') }}</td>
             </tr>
           @endforeach
           <tr>
