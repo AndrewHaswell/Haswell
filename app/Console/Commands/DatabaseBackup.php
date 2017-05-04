@@ -39,20 +39,17 @@ class DatabaseBackup extends Command
    */
   public function handle()
   {
-    mail('andy@snowmanx.com', 'Cron Ran - DB Backup', 'Cron Ran', 'MIME-Version: 1.0' . "\r\n" . 'Content-type: text/html; charset=iso-8859-1');
-
     $Dump = new MySQLBackup(env('DB_HOST'), env('DB_USERNAME'), env('DB_PASSWORD'), env('DB_DATABASE'));
     $Dump->setCompress('zip');
     $filename = 'bkp_' . time();
     $Dump->setFilename($filename);
     $Dump->dump();
 
-    Mail::raw('Text to e-mail', function ($message) use ($filename) {
+    Mail::raw('Database Backup Attached', function ($message) use ($filename) {
       $message->from('andy@snowmanx.com', 'SnowmanX');
       $message->to('andy@snowmanx.com', 'SnowmanX');
-      $message->subject('Test Email');
-      $message->attach($filename);
+      $message->subject('Database backup');
+      $message->attach($filename . '.zip');
     });
-
   }
 }
