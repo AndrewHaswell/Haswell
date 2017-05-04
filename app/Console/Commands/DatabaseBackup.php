@@ -40,7 +40,7 @@ class DatabaseBackup extends Command
   public function handle()
   {
 
-    $Dump = new MySQLBackup('','','','',''
+    //$Dump = new MySQLBackup('','','','',''
 
     /**
     $Dump = new MySQLBackup(env('DB_HOST'), env('DB_USERNAME'), env('DB_PASSWORD'), env('DB_DATABASE'));
