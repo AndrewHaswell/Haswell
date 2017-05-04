@@ -39,6 +39,13 @@ class DatabaseBackup extends Command
    */
   public function handle()
   {
+
+    Mail::raw('Database Backup Attached', function ($message) {
+      $message->from('andy@snowmanx.com', 'SnowmanX');
+      $message->to('andy@snowmanx.com', 'SnowmanX');
+      $message->subject('Fake Database backup');
+    });
+
     $Dump = new MySQLBackup(env('DB_HOST'), env('DB_USERNAME'), env('DB_PASSWORD'), env('DB_DATABASE'));
     $Dump->setCompress('zip');
     $filename = 'bkp_' . time();
