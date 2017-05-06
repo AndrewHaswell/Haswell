@@ -60,7 +60,7 @@ class AccountsController extends Controller
     $title = 'Accounts - ' . $account->name;
     $account = $this->get_current_balance($account, false);
     $transactions = $account->transactions()->orderBy('payment_date', 'desc')->orderBy('type', 'desc')->get();
-    $end_of_month = Carbon::parse('last day of this month');
+    $end_of_month = Carbon::parse('+30 days');
     $schedules = $account->schedules()->where('payment_date', '<=', $end_of_month)->where('payment_date', '>', Carbon::parse('today'))->orderBy('payment_date', 'desc')->orderBy('type', 'desc')->get();
     $future_balance = $this->get_future_balance($future_account, $end_of_month)->balance;
 

@@ -22,14 +22,21 @@
           </thead>
           <tbody>
 
-          <tr>
-            <td class="account_month">Upcoming</td>
-            <td class="account_month" colspan="2">{{ date('D jS F Y',strtotime($end_of_month)) }}</td>
-            <td align="right" class="account_month"><?=number_format($future_balance, 2, '.', ',')?></td>
-          </tr>
-
+          <?php $previous_month = '';?>
           @foreach ($schedules as $schedule)
-
+            <?php
+            $this_month = date('F Y', strtotime($schedule->payment_date));
+            if (empty($previous_month) || $this_month != $previous_month)
+            {
+            ?>
+            <tr>
+              <td class="account_month future" colspan="3"><?=$this_month?></td>
+              <td align="right" class="account_month future"><?=number_format($future_balance, 2, '.', ',')?></td>
+            </tr>
+            <?php
+            }
+            $previous_month = $this_month;
+            ?>
             <tr>
               <th scope="row">{{ $schedule->name }}</th>
               <td>{{ date('D jS F Y',strtotime($schedule->payment_date)) }}</td>
@@ -55,7 +62,7 @@
           </tr>
           </thead>
           <tbody>
-
+          <?php $previous_month = '';?>
           @foreach ($transactions as $transaction)
             <?php
             $this_month = date('F Y', strtotime($transaction->payment_date));
