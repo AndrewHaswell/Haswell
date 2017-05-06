@@ -44,6 +44,10 @@
       background-color: darkred;
       }
 
+    .account_month.future {
+      background-color: #007700;
+      }
+
     .unconfirmed {
       color: red;
       }
@@ -80,7 +84,7 @@
 
       <!-- Branding Image -->
       <a class="navbar-brand" href="{{ url('/') }}">
-        Laravel
+        SnowmanX
       </a>
     </div>
 
