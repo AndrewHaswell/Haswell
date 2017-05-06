@@ -39,13 +39,8 @@ class DatabaseBackup extends Command
    */
   public function handle()
   {
-
-    dd(env('DB_HOST'));
-    dd(env('DB_USERNAME'));
-    dd(env('DB_DATABASE'));
-
-
-    $Dump = new MySQLBackup(env('DB_HOST'), env('DB_USERNAME'), env('DB_PASSWORD'), env('DB_DATABASE'));
+    $database_config = config('database.connections.mysql');
+    $Dump = new MySQLBackup($database_config['host'], $database_config['username'], $database_config['password'], $database_config['database']);
     $Dump->setCompress('zip');
     $filename = 'bkp_' . time();
     $Dump->setFilename($filename);
