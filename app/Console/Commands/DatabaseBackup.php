@@ -39,6 +39,7 @@ class DatabaseBackup extends Command
    */
   public function handle()
   {
+    // Backup the database
     $database_config = config('database.connections.mysql');
     $Dump = new MySQLBackup($database_config['host'], $database_config['username'], $database_config['password'], $database_config['database']);
     $Dump->setCompress('zip');
@@ -46,11 +47,15 @@ class DatabaseBackup extends Command
     $Dump->setFilename($filename);
     $Dump->dump();
 
-    Mail::raw('Database Backup Attached', function ($message) use ($filename) {
+    // Email the db backup
+    Mail::raw('Cron ran - database backup attached.', function ($message) use ($filename) {
       $message->from('andy@snowmanx.com', 'SnowmanX');
-      $message->to('andy@snowmanx.com', 'SnowmanX');
-      $message->subject('Database backup');
+      $message->to('andy@snowmanx.com', 'Andy Haswell');
+      $message->subject('Database Backup Attached');
       $message->attach($filename . '.zip');
     });
+
+    // Remove the backup from the server
+    unlink($filename . '.zip');
   }
 }
