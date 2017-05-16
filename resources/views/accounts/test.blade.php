@@ -13,7 +13,8 @@
           <tr>
             <th>Account Name</th>
             <th>Account Type</th>
-            <th>Account Balance</th>
+            <th>Upcoming</th>
+            <th style="text-align: right !important;">Account Balance</th>
           </tr>
           </thead>
           <tbody>
@@ -21,11 +22,17 @@
             <tr>
               <th scope="row"><a href="/accounts/{{$account->id}}">{{ $account->name }}</a></th>
               <td>{{ ucwords($account->type) }}</td>
-              <td>{{ number_format($account->balance, 2, '.', '') }}</td>
+              <td>
+                <select class="future_month" id="future_month_{{$account->id}}">
+                  <option value="0">-</option>
+                  @foreach ($months as $month_id => $month_name)
+                    <option value="{{$month_id}}">{{$month_name}}</option>
+                  @endforeach
+                </select>
+              </td>
+              <td align="right">{{ number_format($account->balance, 2, '.', '') }}</td>
               <?php
-
               $total += $account->balance;
-
               if (!empty($subtotal[$account->type])) {
                 $subtotal[$account->type] += $account->balance;
               } else {
@@ -36,22 +43,22 @@
             </tr>
           @endforeach
           <tr>
-            <td colspan="3">&nbsp;</td>
+            <td colspan="4">&nbsp;</td>
           </tr>
           @foreach ($subtotal as $type => $balance)
             <tr>
               <th>{{ucwords($type)}}</th>
-              <td></td>
-              <td>{{ number_format($balance, 2, '.', '') }}</td>
+              <td colspan="2">&nbsp;</td>
+              <td align="right">{{ number_format($balance, 2, '.', '') }}</td>
             </tr>
           @endforeach
           <tr>
-            <td colspan="3">&nbsp;</td>
+            <td colspan="4">&nbsp;</td>
           </tr>
           <tr>
             <th>Total Assets</th>
-            <td></td>
-            <td>{{ number_format($total, 2, '.', '') }}</td>
+            <td colspan="2">&nbsp;</td>
+            <td align="right">{{ number_format($total, 2, '.', '') }}</td>
           </tr>
           </tbody>
 

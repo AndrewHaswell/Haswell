@@ -28,7 +28,7 @@ class HomeController extends Controller
    */
   public function index()
   {
-    $limit = 15;
+    $limit = 8;
     $accounts = Account::all();
     $account_list = [];
     foreach ($accounts as $account) {
