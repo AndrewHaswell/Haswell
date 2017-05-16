@@ -47,15 +47,12 @@ class AccountsController extends Controller
 
     $months = [];
 
-    // Work out our next however may months
+    // Work out our next however many months
     $begin = new DateTime();
     $end = new DateTime();
 
-    // Get the end date or set it a year ahead
     $start_time = strtotime('+1 months');
     $begin->setTimestamp($start_time);
-
-    // Get the end date or set it a year ahead
     $end_time = strtotime('+12 months');
     $end->setTimestamp($end_time);
 
