@@ -20,7 +20,7 @@ class TransactionsController extends Controller
   {
     $transaction = Transaction::findOrfail($id);
 
-    $accounts = Account::all();
+    $accounts = Account::orderBy('type')->orderBy('name')->get();
     $account_list = [];
     foreach ($accounts as $account) {
       $account_list[$account->id] = $account->name;
@@ -38,7 +38,7 @@ class TransactionsController extends Controller
 
   public function index()
   {
-    $accounts = Account::all();
+    $accounts = Account::orderBy('type')->orderBy('name')->get();
     $account_list = [];
     foreach ($accounts as $account) {
       $account_list[$account->id] = $account->name;

@@ -9,6 +9,9 @@ use App\Http\Requests;
 use App\Models\Account;
 use Carbon\Carbon;
 use App\Models\Schedule;
+use DateTime;
+use DatePeriod;
+use DateInterval;
 
 class AccountsController extends Controller
 {
@@ -42,9 +45,28 @@ class AccountsController extends Controller
       $account = $this->get_current_balance($account, false);
     }
 
+    $months = [];
+
+    // Work out our next however many months
+    $begin = new DateTime();
+    $end = new DateTime();
+
+    $start_time = strtotime('+1 months');
+    $begin->setTimestamp($start_time);
+    $end_time = strtotime('+12 months');
+    $end->setTimestamp($end_time);
+
+    $interval = DateInterval::createFromDateString('1 month');
+    $period = new DatePeriod($begin, $interval, $end);
+
+    foreach ($period as $dt) {
+      $months[$dt->format('n')] = $dt->format('F');
+    }
+
     // Show the accounts
     return view('accounts.test', compact(['accounts',
-                                          'title']));
+                                          'title',
+                                          'months']));
   }
 
   /**
@@ -75,8 +97,12 @@ class AccountsController extends Controller
   public function future($id, $month)
   {
     $dt = Carbon::createFromFormat('!m', $month);
-    $month = $dt->format('F');
-    $date = new Carbon('last day of ' . $month);
+    $this_month = $dt->format('F');
+    $date = new Carbon('last day of ' . $this_month . ' ' . date('Y'));
+
+    if ($month <= date('n')) {
+      $date->addYear(1);
+    }
 
     $account = Account::findOrFail($id);
     $account = $this->get_future_balance($account, $date);

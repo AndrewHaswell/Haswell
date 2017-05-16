@@ -132,6 +132,14 @@
       }
       return false;
     });
+
+    $('.future_month').on('change', function () {
+      var account_id = $(this).attr('id').split('_').pop();
+      var month = $(this).val();
+      var url = '/future/' + account_id + '/' + month;
+      window.location.href = url;
+    });
+
   });
 </script>
 
