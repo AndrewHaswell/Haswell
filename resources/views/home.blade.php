@@ -10,10 +10,10 @@
         <table class="table table-striped table-hover">
           <thead>
           <tr>
-            <th>Name</th>
-            <th>Date</th>
-            <th>Amount</th>
-            <th>Account</th>
+            <th width="40%">Name</th>
+            <th width="20%">Date</th>
+            <th width="20%" style="text-align: right !important;">Amount</th>
+            <th width="20%">Account</th>
           </tr>
           </thead>
 
@@ -36,15 +36,15 @@
           </tbody>
         </table>
 
-        <h2>Last {{$limit}} transactions:</h2>
+        <h2>Recent transactions:</h2>
 
         <table class="table table-striped table-hover">
           <thead>
           <tr>
-            <th>Name</th>
-            <th>Date</th>
-            <th>Amount</th>
-            <th>Account</th>
+            <th width="40%">Name</th>
+            <th width="20%">Date</th>
+            <th width="20%" style="text-align: right !important;">Amount</th>
+            <th width="20%">Account</th>
           </tr>
           </thead>
 
@@ -69,7 +69,6 @@
           @endforeach
           </tbody>
         </table>
-
 
       </div>
     </div>

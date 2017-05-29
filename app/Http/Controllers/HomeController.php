@@ -28,7 +28,7 @@ class HomeController extends Controller
    */
   public function index()
   {
-    $limit = 8;
+    $limit = 10;
     $accounts = Account::all();
     $account_list = [];
     foreach ($accounts as $account) {
@@ -36,7 +36,7 @@ class HomeController extends Controller
     }
     $schedules = Schedule::where('payment_date', '>', Carbon::parse('today'))->where('transfer', 0)->orderBy('payment_date', 'asc')->orderBy('type', 'desc')->limit($limit)->get();
 
-    $transactions = Transaction::where('transfer', 0)->orderBy('payment_date', 'desc')->limit($limit)->get();
+    $transactions = Transaction::where('transfer', 0)->orderBy('payment_date', 'desc')->limit(($limit*4))->get();
 
     return view('home', compact(['schedules',
                                  'transactions',

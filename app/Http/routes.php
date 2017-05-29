@@ -33,6 +33,7 @@ Route::get('/future/{id}/{month}', 'AccountsController@future');
 Route::get('/transactions/{id}', 'TransactionsController@detail');
 Route::get('/transactions', 'TransactionsController@index');
 Route::get('/accounts', 'AccountsController@index');
+Route::get('/add', 'AccountsController@add_test');
 Route::get('/balance', 'TestController@balance');
 Route::get('/test', 'TestController@test');
 Route::resource('transactions', 'TransactionsController');
