@@ -44,10 +44,10 @@
             <td>{!! Form::text('amount', '', [
     'class'=>'form-control']) !!}</td>
           </tr>
-          <?php array_unshift($account_list, '')?>
+          <?php $account_list[0] = ''; ?>
           <tr>
             <th>{!! Form::label('transfer', 'Transfer: ') !!}</th>
-            <td>{!! Form::select('transfer', $account_list, '', [
+            <td>{!! Form::select('transfer', $account_list, '0', [
     'class'=>'form-control']) !!}</td>
           </tr>
 

@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Additional;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Http\Requests;
 use App\Models\Account;
+use App\Models\Payment;
 use Carbon\Carbon;
 use App\Models\Schedule;
 use DateTime;
