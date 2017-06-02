@@ -33,9 +33,14 @@ Route::get('/future/{id}/{month}', 'AccountsController@future');
 Route::get('/transactions/{id}', 'TransactionsController@detail');
 Route::get('/transactions', 'TransactionsController@index');
 Route::get('/accounts', 'AccountsController@index');
-Route::get('/add', 'AccountsController@add_test');
-Route::get('/balance', 'TestController@balance');
-Route::get('/test', 'TestController@test');
+Route::get('/test', 'HomeController@meal_test');
+
+Route::get('/add_meal', 'MealsController@add_meal');
+Route::get('/shopping', 'PlannerController@shopping_list');
+
 Route::resource('transactions', 'TransactionsController');
 Route::resource('payments', 'PaymentsController');
 Route::resource('schedules', 'SchedulesController');
+Route::resource('meals', 'MealsController');
+Route::resource('ingredients', 'IngredientsController');
+Route::resource('planner', 'PlannerController');

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests;
 use App\Models\Account;
+use App\Models\Ingredients;
+use App\Models\Meals;
 use App\Models\Schedule;
 use App\Models\Transaction;
 use Carbon\Carbon;
@@ -36,11 +38,21 @@ class HomeController extends Controller
     }
     $schedules = Schedule::where('payment_date', '>', Carbon::parse('today'))->where('transfer', 0)->orderBy('payment_date', 'asc')->orderBy('type', 'desc')->limit($limit)->get();
 
-    $transactions = Transaction::where('transfer', 0)->orderBy('payment_date', 'desc')->limit(($limit*4))->get();
+    $transactions = Transaction::where('transfer', 0)->orderBy('payment_date', 'desc')->limit(($limit * 4))->get();
 
     return view('home', compact(['schedules',
                                  'transactions',
                                  'account_list',
                                  'limit']));
+  }
+
+  public function meal_test()
+  {
+
+    $meal = Meals::find(1);
+
+    $meal->ingredients()->attach([1,
+                                  2,
+                                  3]);
   }
 }
