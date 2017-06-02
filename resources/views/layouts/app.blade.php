@@ -95,6 +95,9 @@
         <li><a href="{{ url('/accounts') }}">Accounts</a></li>
         <li><a href="{{ url('/transactions') }}">Transactions</a></li>
         <li><a href="{{ url('/payments') }}">Payments</a></li>
+        <li><a href="{{ url('/planner') }}">Meal Planner</a></li>
+        <li><a href="{{ url('/meals/create') }}">Add Meal</a></li>
+        <li><a href="{{ url('/ingredients/create') }}">Add Ingredient</a></li>
       </ul>
 
       <!-- Right Side Of Navbar -->
