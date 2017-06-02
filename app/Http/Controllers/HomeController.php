@@ -46,13 +46,4 @@ class HomeController extends Controller
                                  'limit']));
   }
 
-  public function meal_test()
-  {
-
-    $meal = Meals::find(1);
-
-    $meal->ingredients()->attach([1,
-                                  2,
-                                  3]);
-  }
 }

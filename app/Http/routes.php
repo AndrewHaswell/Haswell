@@ -33,7 +33,6 @@ Route::get('/future/{id}/{month}', 'AccountsController@future');
 Route::get('/transactions/{id}', 'TransactionsController@detail');
 Route::get('/transactions', 'TransactionsController@index');
 Route::get('/accounts', 'AccountsController@index');
-Route::get('/test', 'HomeController@meal_test');
 
 Route::get('/add_meal', 'MealsController@add_meal');
 Route::get('/shopping', 'PlannerController@shopping_list');

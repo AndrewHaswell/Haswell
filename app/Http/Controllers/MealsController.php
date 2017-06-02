@@ -18,25 +18,7 @@ class MealsController extends Controller
    */
   public function index()
   {
-    $meals = Meals::all();
-
-    foreach ($meals as $meal)
-    {
-
-     // dump($meal);
-
-      $ingredients = $meal->ingredients()->get();
-
-
-      foreach ($ingredients as $ingredient)
-      {
-
-        dump($ingredient);
-
-      }
-
-    }
-
+    //
   }
 
   /**
