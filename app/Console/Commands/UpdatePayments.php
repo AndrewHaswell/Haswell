@@ -138,7 +138,7 @@ class UpdatePayments extends Command
 
     $now = Carbon::today();
     $absolute_end = new DateTime();
-    $absolute_end->modify('+1 year');
+    $absolute_end->modify('+2 years');
 
     foreach ($payments as $payment) {
 
