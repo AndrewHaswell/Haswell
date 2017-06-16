@@ -55,7 +55,7 @@ class AccountsController extends Controller
 
     $start_time = strtotime('+1 months');
     $begin->setTimestamp($start_time);
-    $end_time = strtotime('+24 months');
+    $end_time = strtotime('+12 months');
     $end->setTimestamp($end_time);
 
     $interval = DateInterval::createFromDateString('1 month');
