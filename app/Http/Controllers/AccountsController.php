@@ -27,18 +27,17 @@ class AccountsController extends Controller
    * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
    * @author Andrew Haswell
    */
-  public function index()
+  public function index($all = false)
   {
-
-    //$id = Auth::id();
-    //$user = Auth::user();
 
     if (!Auth::check()) {
       echo 'Not logged in';
     }
 
     // Get our accounts
-    $accounts = Account::orderBy('type', 'asc')->orderBy('name', 'asc')->get();
+    $accounts = $all
+      ? Account::orderBy('type', 'asc')->orderBy('name', 'asc')->get()
+      : Account::orderBy('type', 'asc')->where('hidden', '=', false)->orderBy('name', 'asc')->get();
 
     $title = 'Accounts';
 
