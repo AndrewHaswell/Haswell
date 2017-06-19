@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Account;
+use App\Models\ScheduleUpdate;
 use App\Models\Transaction;
 use DateTime;
 use DatePeriod;
@@ -67,6 +68,39 @@ class UpdatePayments extends Command
       $transaction->save();
     }
   }
+
+  /**
+   * @return array
+   * @author Andrew Haswell
+   */
+
+  public function get_updates()
+  {
+    $updates = ScheduleUpdate::all();
+
+    $base64_updates = [];
+
+    if (!empty($updates)) {
+
+      foreach ($updates as $update) {
+
+        $update_string = implode('_', [$update->name,
+                                       $update->payment_date,
+                                       $update->type,
+                                       $update->account_id]);
+
+        $base64_updates[$update->id] = base64_encode($update_string);
+      }
+    }
+    return $base64_updates;
+  }
+
+  /**
+   * @param null $year
+   *
+   * @return array
+   * @author Andrew Haswell
+   */
 
   public function bank_holidays($year = null)
   {
@@ -138,7 +172,9 @@ class UpdatePayments extends Command
 
     $now = Carbon::today();
     $absolute_end = new DateTime();
-    $absolute_end->modify('+2 years');
+    $absolute_end->modify('+1 years');
+
+    $updates = $this->get_updates();
 
     foreach ($payments as $payment) {
 
@@ -209,16 +245,38 @@ class UpdatePayments extends Command
             $transfer = 0;
           }
 
-          $schedule = new Schedule();
-          $schedule->name = (!empty($transfer_to_name)
+          $payment->name = !empty($transfer_to_name)
             ? $transfer_to_name
-            : $payment->name);
-          $schedule->account_id = $payment->account_id;
-          $schedule->amount = $payment->amount;
-          $schedule->type = $payment->type;
-          $schedule->transfer = $transfer;
-          $schedule->payment_date = (string)$dt->format('Y-m-d');
-          $schedule->save();
+            : $payment->name;
+
+          $payment->payment_date = (string)$dt->format('Y-m-d H:i:s');
+
+          $base_64_payment = $this->encode_it($payment);
+
+          if (in_array($base_64_payment, $updates)) {
+
+            $key = array_search($base_64_payment, $updates);
+
+            $scheduleUpdate = ScheduleUpdate::findOrFail($key);
+
+            $schedule = new Schedule();
+            $schedule->name = $scheduleUpdate->name;
+            $schedule->account_id = $scheduleUpdate->account_id;
+            $schedule->amount = $scheduleUpdate->amount;
+            $schedule->type = $scheduleUpdate->type;
+            $schedule->transfer = $transfer;
+            $schedule->payment_date = $scheduleUpdate->payment_date;
+            $schedule->save();
+          } else {
+            $schedule = new Schedule();
+            $schedule->name = $payment->name;
+            $schedule->account_id = $payment->account_id;
+            $schedule->amount = $payment->amount;
+            $schedule->type = $payment->type;
+            $schedule->transfer = $transfer;
+            $schedule->payment_date = $payment->payment_date;
+            $schedule->save();
+          }
 
           if ($payment->transfer_account_id > 0) {
             $schedule = new Schedule();
@@ -299,5 +357,20 @@ class UpdatePayments extends Command
         }
       }
     }
+  }
+
+  /**
+   * @param $payment
+   *
+   * @return string
+   * @author Andrew Haswell
+   */
+
+  public function encode_it($payment)
+  {
+    return base64_encode(implode('_', [$payment->name,
+                                       $payment->payment_date,
+                                       $payment->type,
+                                       $payment->account_id]));
   }
 }
