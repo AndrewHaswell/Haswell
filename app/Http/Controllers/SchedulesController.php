@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Account;
 use App\Models\Schedule;
+use App\Models\ScheduleUpdate;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -41,14 +42,25 @@ class SchedulesController extends Controller
   public function store(Request $request)
   {
     $schedule = Schedule::findOrFail($request->schedule_id);
+    $update = new ScheduleUpdate();
 
     $schedule->name = $request->name;
+    $update->name = $request->name;
+
     $schedule->payment_date = $request->payment_date;
+    $update->payment_date = $request->payment_date;
+
     $schedule->type = $request->type;
+    $update->type = $request->type;
+
     $schedule->amount = $request->amount;
+    $update->amount = $request->amount;
+
     $schedule->account_id = $request->account_id;
+    $update->account_id = $request->account_id;
 
     $schedule->save();
+    $update->save();
     return Redirect::to(url('/accounts/' . $schedule->account_id));
   }
 
