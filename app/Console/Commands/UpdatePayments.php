@@ -109,29 +109,33 @@ class UpdatePayments extends Command
 
                 // Round down to nearest 10 pound
                 $saving_balance = floor($saving_balance / 10) * 10;
-                $transfer_to_name = 'Saved to ' . $savings_account->name;
-                $transfer_from_name = 'Saved from ' . $account->name;
 
-                // Create a savings transaction
-                $saving_schedule = new Schedule();
-                $saving_schedule->name = $transfer_to_name;
-                $saving_schedule->account_id = $account->id;
-                $saving_schedule->amount = $saving_balance;
-                $saving_schedule->type = 'debit';
-                $saving_schedule->transfer = $savings_account->id;
-                $saving_schedule->payment_date = $saving_date;
-                $saving_schedule->save();
+                // If we're still more than zero after rounding add it to the schedule
+                if ($saving_balance > 0) {
+                  $transfer_to_name = 'Saved to ' . $savings_account->name;
+                  $transfer_from_name = 'Saved from ' . $account->name;
 
-                $saving_schedule = new Schedule();
-                $saving_schedule->name = $transfer_from_name;
-                $saving_schedule->account_id = $savings_account->id;
-                $saving_schedule->amount = $saving_balance;
-                $saving_schedule->transfer = $account->id;
-                $saving_schedule->type = 'credit';
-                $saving_schedule->payment_date = $saving_date;
-                $saving_schedule->save();
+                  // Create a savings transaction
+                  $saving_schedule = new Schedule();
+                  $saving_schedule->name = $transfer_to_name;
+                  $saving_schedule->account_id = $account->id;
+                  $saving_schedule->amount = $saving_balance;
+                  $saving_schedule->type = 'debit';
+                  $saving_schedule->transfer = $savings_account->id;
+                  $saving_schedule->payment_date = $saving_date;
+                  $saving_schedule->save();
 
-                $account->balance -= $saving_balance;
+                  $saving_schedule = new Schedule();
+                  $saving_schedule->name = $transfer_from_name;
+                  $saving_schedule->account_id = $savings_account->id;
+                  $saving_schedule->amount = $saving_balance;
+                  $saving_schedule->transfer = $account->id;
+                  $saving_schedule->type = 'credit';
+                  $saving_schedule->payment_date = $saving_date;
+                  $saving_schedule->save();
+
+                  $account->balance -= $saving_balance;
+                }
               }
             }
           }
@@ -139,332 +143,337 @@ class UpdatePayments extends Command
         }
       }
     }
+}
+
+/**
+ * @param $account
+ *
+ * @author Andrew Haswell
+ */
+
+private
+function get_current_balance($account)
+{
+  $transactions = $account->transactions()->where('payment_date', '>=', $account->balance_date)->get();
+  foreach ($transactions as $transaction) {
+    if ($transaction->type == 'debit') {
+      $account->balance -= $transaction->amount;
+    } else {
+      $account->balance += $transaction->amount;
+    }
+  }
+  return $account;
+}
+
+/**
+ * @return array
+ * @author Andrew Haswell
+ */
+
+public
+function get_updates()
+{
+  $updates = ScheduleUpdate::all();
+
+  $base64_updates = [];
+
+  if (!empty($updates)) {
+
+    foreach ($updates as $update) {
+
+      $update_string = implode('_', [$update->name,
+                                     $update->payment_date,
+                                     $update->type,
+                                     $update->account_id]);
+
+      $base64_updates[$update->id] = base64_encode($update_string);
+    }
+  }
+  return $base64_updates;
+}
+
+/**
+ * @param null $year
+ *
+ * @return array
+ * @author Andrew Haswell
+ */
+
+public
+function bank_holidays($year = null)
+{
+  if (empty($year)) {
+    $year = new Carbon();
+    $year = $year->format('Y');
+  }
+  $mayday = Carbon::parse('first monday of may ' . $year);
+  $spring_bank_holiday = Carbon::parse('last monday of may ' . $year);
+  $summer_bank_holiday = Carbon::parse('last monday of august ' . $year);
+
+  $easter = new Carbon('21st March ' . $year);
+  $easter_days = easter_days($year);
+  $good_friday = clone $easter;
+  $good_friday->addDays($easter_days - 2);
+  $easter_monday = clone $easter;
+  $easter_monday->addDays($easter_days + 1);
+
+  $christmas = new Carbon('25th December ' . $year);
+  if ($christmas->format('N') == 6) {
+    $christmas->modify('next monday');
+  } else if ($christmas->format('N') > 6) {
+    $christmas->modify('next tuesday');
   }
 
-  /**
-   * @param $account
-   *
-   * @author Andrew Haswell
-   */
-
-  private function get_current_balance($account)
-  {
-    $transactions = $account->transactions()->where('payment_date', '>=', $account->balance_date)->get();
-    foreach ($transactions as $transaction) {
-      if ($transaction->type == 'debit') {
-        $account->balance -= $transaction->amount;
-      } else {
-        $account->balance += $transaction->amount;
-      }
-    }
-    return $account;
+  $boxing_day = new Carbon('26th December ' . $year);
+  if ($boxing_day->format('N') == 6) {
+    $boxing_day->modify('next monday');
+  } else if ($boxing_day->format('N') > 6) {
+    $boxing_day->modify('next tuesday');
+  }
+  $new_year = new Carbon('1st January ' . $year);
+  if ($new_year->format('N') == 6) {
+    $new_year->modify('next monday');
+  } else if ($new_year->format('N') > 6) {
+    $new_year->modify('next tuesday');
   }
 
-  /**
-   * @return array
-   * @author Andrew Haswell
-   */
+  $bank_holidays = [$new_year,
+                    $good_friday,
+                    $easter_monday,
+                    $mayday,
+                    $spring_bank_holiday,
+                    $summer_bank_holiday,
+                    $christmas,
+                    $boxing_day];
 
-  public function get_updates()
-  {
-    $updates = ScheduleUpdate::all();
+  return $bank_holidays;
+}
 
-    $base64_updates = [];
+/**
+ * @author Andrew Haswell
+ */
 
-    if (!empty($updates)) {
+public
+function update_schedules()
+{
+  $payments = Payment::all();
+  $accounts = Account::all();
+  $holidays = $this->bank_holidays();
 
-      foreach ($updates as $update) {
+  $account_list = [];
 
-        $update_string = implode('_', [$update->name,
-                                       $update->payment_date,
-                                       $update->type,
-                                       $update->account_id]);
-
-        $base64_updates[$update->id] = base64_encode($update_string);
-      }
-    }
-    return $base64_updates;
+  foreach ($accounts as $account) {
+    $account_list[$account->id] = $account->name;
   }
 
-  /**
-   * @param null $year
-   *
-   * @return array
-   * @author Andrew Haswell
-   */
+  // Clear the schedule table
+  Schedule::truncate();
 
-  public function bank_holidays($year = null)
-  {
-    if (empty($year)) {
-      $year = new Carbon();
-      $year = $year->format('Y');
-    }
-    $mayday = Carbon::parse('first monday of may ' . $year);
-    $spring_bank_holiday = Carbon::parse('last monday of may ' . $year);
-    $summer_bank_holiday = Carbon::parse('last monday of august ' . $year);
+  $now = Carbon::today();
+  $absolute_end = new DateTime();
+  $absolute_end->modify('+18 months');
+  $end_time_default = $absolute_end->format('U');
 
-    $easter = new Carbon('21st March ' . $year);
-    $easter_days = easter_days($year);
-    $good_friday = clone $easter;
-    $good_friday->addDays($easter_days - 2);
-    $easter_monday = clone $easter;
-    $easter_monday->addDays($easter_days + 1);
+  $updates = $this->get_updates();
 
-    $christmas = new Carbon('25th December ' . $year);
-    if ($christmas->format('N') == 6) {
-      $christmas->modify('next monday');
-    } else if ($christmas->format('N') > 6) {
-      $christmas->modify('next tuesday');
-    }
+  foreach ($payments as $payment) {
 
-    $boxing_day = new Carbon('26th December ' . $year);
-    if ($boxing_day->format('N') == 6) {
-      $boxing_day->modify('next monday');
-    } else if ($boxing_day->format('N') > 6) {
-      $boxing_day->modify('next tuesday');
-    }
-    $new_year = new Carbon('1st January ' . $year);
-    if ($new_year->format('N') == 6) {
-      $new_year->modify('next monday');
-    } else if ($new_year->format('N') > 6) {
-      $new_year->modify('next tuesday');
-    }
+    // Work out our payments dates
+    $begin = new DateTime($payment->start_date);
+    $end = new DateTime();
+    $additionals = $payment->additional()->get();
 
-    $bank_holidays = [$new_year,
-                      $good_friday,
-                      $easter_monday,
-                      $mayday,
-                      $spring_bank_holiday,
-                      $summer_bank_holiday,
-                      $christmas,
-                      $boxing_day];
+    // Get the end date or set it a year ahead
+    $end_time = !empty($payment->end_date)
+      ? strtotime((string)$payment->end_date)
+      : $end_time_default;
 
-    return $bank_holidays;
-  }
+    $end->setTimestamp($end_time);
 
-  /**
-   * @author Andrew Haswell
-   */
+    $interval = DateInterval::createFromDateString($payment->interval);
+    $period = new DatePeriod($begin, $interval, $end);
 
-  public function update_schedules()
-  {
-    $payments = Payment::all();
-    $accounts = Account::all();
-    $holidays = $this->bank_holidays();
+    foreach ($period as $dt) {
+      // If we need to compensate for the weekend, do the checks
+      if ($payment->weekend != 'none') {
 
-    $account_list = [];
+        $weekday = $dt->format('N');
+        // Alter the date for a weekend
+        if ($weekday >= 6) {
+          $modify = $payment->weekend == 'before'
+            ? 'last friday'
+            : 'next monday';
+          $dt->modify($modify);
+        }
 
-    foreach ($accounts as $account) {
-      $account_list[$account->id] = $account->name;
-    }
+        $bank_holidays = $holidays;
+        $reverse_bank_holidays = array_reverse($holidays);
 
-    // Clear the schedule table
-    Schedule::truncate();
+        $holidays = $payment->weekend == 'before'
+          ? $reverse_bank_holidays
+          : $bank_holidays;
 
-    $now = Carbon::today();
-    $absolute_end = new DateTime();
-    $absolute_end->modify('+18 months');
-    $end_time_default = $absolute_end->format('U');
+        foreach ($holidays as $holiday) {
 
-    $updates = $this->get_updates();
+          if ($holiday == $dt) {
 
-    foreach ($payments as $payment) {
-
-      // Work out our payments dates
-      $begin = new DateTime($payment->start_date);
-      $end = new DateTime();
-      $additionals = $payment->additional()->get();
-
-      // Get the end date or set it a year ahead
-      $end_time = !empty($payment->end_date)
-        ? strtotime((string)$payment->end_date)
-        : $end_time_default;
-
-      $end->setTimestamp($end_time);
-
-      $interval = DateInterval::createFromDateString($payment->interval);
-      $period = new DatePeriod($begin, $interval, $end);
-
-      foreach ($period as $dt) {
-        // If we need to compensate for the weekend, do the checks
-        if ($payment->weekend != 'none') {
-
-          $weekday = $dt->format('N');
-          // Alter the date for a weekend
-          if ($weekday >= 6) {
             $modify = $payment->weekend == 'before'
-              ? 'last friday'
-              : 'next monday';
+              ? '-1 day'
+              : '+1 day';
             $dt->modify($modify);
-          }
 
-          $bank_holidays = $holidays;
-          $reverse_bank_holidays = array_reverse($holidays);
+            $weekday = $dt->format('N');
 
-          $holidays = $payment->weekend == 'before'
-            ? $reverse_bank_holidays
-            : $bank_holidays;
-
-          foreach ($holidays as $holiday) {
-
-            if ($holiday == $dt) {
-
+            // Alter the date for a weekend
+            if ($weekday >= 6) {
               $modify = $payment->weekend == 'before'
-                ? '-1 day'
-                : '+1 day';
+                ? 'last friday'
+                : 'next monday';
               $dt->modify($modify);
-
-              $weekday = $dt->format('N');
-
-              // Alter the date for a weekend
-              if ($weekday >= 6) {
-                $modify = $payment->weekend == 'before'
-                  ? 'last friday'
-                  : 'next monday';
-                $dt->modify($modify);
-              }
             }
           }
         }
+      }
 
-        if ($dt >= $now && $dt < $absolute_end) {
+      if ($dt >= $now && $dt < $absolute_end) {
 
-          if ($payment->transfer_account_id > 0) {
-            $transfer_to_name = 'Transferred to ' . $account_list[$payment->transfer_account_id];
-            $transfer_from_name = 'Transferred from ' . $account_list[$payment->account_id];
-            $transfer = 1;
-          } else {
-            $transfer = 0;
-          }
+        if ($payment->transfer_account_id > 0) {
+          $transfer_to_name = 'Transferred to ' . $account_list[$payment->transfer_account_id];
+          $transfer_from_name = 'Transferred from ' . $account_list[$payment->account_id];
+          $transfer = 1;
+        } else {
+          $transfer = 0;
+        }
 
-          $payment->name = !empty($transfer_to_name)
-            ? $transfer_to_name
-            : $payment->name;
+        $payment->name = !empty($transfer_to_name)
+          ? $transfer_to_name
+          : $payment->name;
 
-          $payment->payment_date = (string)$dt->format('Y-m-d H:i:s');
+        $payment->payment_date = (string)$dt->format('Y-m-d H:i:s');
 
-          $base_64_payment = $this->encode_it($payment);
+        $base_64_payment = $this->encode_it($payment);
 
-          if (in_array($base_64_payment, $updates)) {
+        if (in_array($base_64_payment, $updates)) {
 
-            $key = array_search($base_64_payment, $updates);
+          $key = array_search($base_64_payment, $updates);
 
-            $scheduleUpdate = ScheduleUpdate::findOrFail($key);
+          $scheduleUpdate = ScheduleUpdate::findOrFail($key);
 
-            $schedule = new Schedule();
-            $schedule->name = $scheduleUpdate->name;
-            $schedule->account_id = $scheduleUpdate->account_id;
-            $schedule->amount = $scheduleUpdate->amount;
-            $schedule->type = $scheduleUpdate->type;
-            $schedule->transfer = $transfer;
-            $schedule->payment_date = $scheduleUpdate->payment_date;
-            $schedule->save();
-          } else {
-            $schedule = new Schedule();
-            $schedule->name = $payment->name;
-            $schedule->account_id = $payment->account_id;
-            $schedule->amount = $payment->amount;
-            $schedule->type = $payment->type;
-            $schedule->transfer = $transfer;
-            $schedule->payment_date = $payment->payment_date;
-            $schedule->save();
-          }
+          $schedule = new Schedule();
+          $schedule->name = $scheduleUpdate->name;
+          $schedule->account_id = $scheduleUpdate->account_id;
+          $schedule->amount = $scheduleUpdate->amount;
+          $schedule->type = $scheduleUpdate->type;
+          $schedule->transfer = $transfer;
+          $schedule->payment_date = $scheduleUpdate->payment_date;
+          $schedule->save();
+        } else {
+          $schedule = new Schedule();
+          $schedule->name = $payment->name;
+          $schedule->account_id = $payment->account_id;
+          $schedule->amount = $payment->amount;
+          $schedule->type = $payment->type;
+          $schedule->transfer = $transfer;
+          $schedule->payment_date = $payment->payment_date;
+          $schedule->save();
+        }
 
-          if ($payment->transfer_account_id > 0) {
-            $schedule = new Schedule();
-            $schedule->name = $transfer_from_name;
-            $schedule->account_id = $payment->transfer_account_id;
-            $schedule->amount = $payment->amount;
-            $schedule->transfer = $transfer;
-            $schedule->type = ($payment->type == 'credit'
-              ? 'debit'
-              : 'credit');
-            $schedule->payment_date = (string)$dt->format('Y-m-d');
-            $schedule->save();
-          }
+        if ($payment->transfer_account_id > 0) {
+          $schedule = new Schedule();
+          $schedule->name = $transfer_from_name;
+          $schedule->account_id = $payment->transfer_account_id;
+          $schedule->amount = $payment->amount;
+          $schedule->transfer = $transfer;
+          $schedule->type = ($payment->type == 'credit'
+            ? 'debit'
+            : 'credit');
+          $schedule->payment_date = (string)$dt->format('Y-m-d');
+          $schedule->save();
+        }
 
-          unset($transfer_to_name);
+        unset($transfer_to_name);
 
-          // Add any additionals
-          if ($additionals->count() > 0) {
+        // Add any additionals
+        if ($additionals->count() > 0) {
 
-            foreach ($additionals as $additional) {
+          foreach ($additionals as $additional) {
 
-              $add_dt = clone($dt);
+            $add_dt = clone($dt);
 
-              if (!empty($additional->weekday)) {
-                $dow_text = date('l', strtotime("Sunday +" . $additional->weekday . " days"));
-                if ((string)$add_dt->format('Y-m-d') != $additional->weekday) {
-                  $add_dt->modify('next ' . $dow_text);
-                }
+            if (!empty($additional->weekday)) {
+              $dow_text = date('l', strtotime("Sunday +" . $additional->weekday . " days"));
+              if ((string)$add_dt->format('Y-m-d') != $additional->weekday) {
+                $add_dt->modify('next ' . $dow_text);
               }
-
-              if (!empty($additional->start_date)) {
-                $add_start_date = Carbon::parse($additional->start_date);
-                if ($add_dt < $add_start_date) {
-                  continue;
-                }
-              }
-
-              if (!empty($additional->end_date)) {
-                $add_end_date = Carbon::parse($additional->end_date);
-                if ($add_dt >= $add_end_date) {
-                  continue;
-                }
-              }
-
-              if ($additional->transfer_account_id > 0) {
-                $transfer_to_name = 'Transferred to ' . $account_list[$additional->transfer_account_id];
-                $transfer_from_name = 'Transferred from ' . $account_list[$additional->account_id];
-                $transfer = 1;
-              } else {
-                $transfer = 0;
-              }
-
-              $schedule = new Schedule();
-              $schedule->name = (!empty($transfer_to_name)
-                ? $transfer_to_name
-                : $additional->name);
-              $schedule->account_id = $additional->account_id;
-              $schedule->amount = $additional->amount;
-              $schedule->type = $additional->type;
-              $schedule->transfer = $transfer;
-              $schedule->payment_date = (string)$add_dt->format('Y-m-d');
-
-              $schedule->save();
-
-              if ($additional->transfer_account_id > 0) {
-                $schedule = new Schedule();
-                $schedule->name = $transfer_from_name;
-                $schedule->account_id = $additional->transfer_account_id;
-                $schedule->amount = $additional->amount;
-                $schedule->transfer = $transfer;
-                $schedule->type = ($additional->type == 'credit'
-                  ? 'debit'
-                  : 'credit');
-                $schedule->payment_date = (string)$add_dt->format('Y-m-d');
-                $schedule->save();
-              }
-              unset($transfer_to_name);
             }
+
+            if (!empty($additional->start_date)) {
+              $add_start_date = Carbon::parse($additional->start_date);
+              if ($add_dt < $add_start_date) {
+                continue;
+              }
+            }
+
+            if (!empty($additional->end_date)) {
+              $add_end_date = Carbon::parse($additional->end_date);
+              if ($add_dt >= $add_end_date) {
+                continue;
+              }
+            }
+
+            if ($additional->transfer_account_id > 0) {
+              $transfer_to_name = 'Transferred to ' . $account_list[$additional->transfer_account_id];
+              $transfer_from_name = 'Transferred from ' . $account_list[$additional->account_id];
+              $transfer = 1;
+            } else {
+              $transfer = 0;
+            }
+
+            $schedule = new Schedule();
+            $schedule->name = (!empty($transfer_to_name)
+              ? $transfer_to_name
+              : $additional->name);
+            $schedule->account_id = $additional->account_id;
+            $schedule->amount = $additional->amount;
+            $schedule->type = $additional->type;
+            $schedule->transfer = $transfer;
+            $schedule->payment_date = (string)$add_dt->format('Y-m-d');
+
+            $schedule->save();
+
+            if ($additional->transfer_account_id > 0) {
+              $schedule = new Schedule();
+              $schedule->name = $transfer_from_name;
+              $schedule->account_id = $additional->transfer_account_id;
+              $schedule->amount = $additional->amount;
+              $schedule->transfer = $transfer;
+              $schedule->type = ($additional->type == 'credit'
+                ? 'debit'
+                : 'credit');
+              $schedule->payment_date = (string)$add_dt->format('Y-m-d');
+              $schedule->save();
+            }
+            unset($transfer_to_name);
           }
         }
       }
     }
   }
+}
 
-  /**
-   * @param $payment
-   *
-   * @return string
-   * @author Andrew Haswell
-   */
+/**
+ * @param $payment
+ *
+ * @return string
+ * @author Andrew Haswell
+ */
 
-  public function encode_it($payment)
-  {
-    return base64_encode(implode('_', [$payment->name,
-                                       $payment->payment_date,
-                                       $payment->type,
-                                       $payment->account_id]));
-  }
+public
+function encode_it($payment)
+{
+  return base64_encode(implode('_', [$payment->name,
+                                     $payment->payment_date,
+                                     $payment->type,
+                                     $payment->account_id]));
+}
 }
