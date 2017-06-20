@@ -47,14 +47,16 @@ class UpdatePayments extends Command
    */
   public function handle()
   {
+
     $this->update_schedules();
+
+    $this->calculate_savings();
 
     // Add schedules to transactions
     $today = Carbon::today();
     $active = Schedule::where('payment_date', '=', $today)->get();
 
     foreach ($active as $schedule) {
-
       $transaction = new Transaction();
 
       echo 'Transaction Added: ' . $schedule->name . "\n\r";
@@ -67,6 +69,95 @@ class UpdatePayments extends Command
       $transaction->amount = $schedule->amount;
       $transaction->save();
     }
+  }
+
+  /**
+   * @author Andrew Haswell
+   */
+
+  public function calculate_savings()
+  {
+    $accounts = Account::where('type', '=', 'current')->get();
+    $today = Carbon::now();
+    $savings_account = Account::where('name', '=', 'Rhodes 2018')->firstOrFail();
+    $minimum_account_level = 60;
+
+    foreach ($accounts as $account) {
+
+      $account = $this->get_current_balance($account);
+      $schedules = $account->schedules()->orderBy('payment_date', 'asc')->orderBy('type', 'desc')->get();
+
+      foreach ($schedules as $schedule) {
+
+        if ($schedule->type == 'debit') {
+          $account->balance -= $schedule->amount;
+        } else {
+          // Is it pay?
+          if ($schedule->amount > 500) {
+
+            $saving_balance = $account->balance;
+            $saving_date = Carbon::parse($schedule->payment_date);
+            $saving_date->modify('-1 month +1 day');
+
+            if ($saving_date >= $today) {
+
+              // Make sure we never go lower than our minimum account level
+              $saving_balance = ($saving_balance - $minimum_account_level);
+
+              // If that still leaves something to save
+              if ($saving_balance > 0) {
+
+                // Round down to nearest 10 pound
+                $saving_balance = floor($saving_balance / 10) * 10;
+                $transfer_to_name = 'Saved to ' . $savings_account->name;
+                $transfer_from_name = 'Saved from ' . $account->name;
+
+                // Create a savings transaction
+                $saving_schedule = new Schedule();
+                $saving_schedule->name = $transfer_to_name;
+                $saving_schedule->account_id = $account->id;
+                $saving_schedule->amount = $saving_balance;
+                $saving_schedule->type = 'debit';
+                $saving_schedule->transfer = $savings_account->id;
+                $saving_schedule->payment_date = $saving_date;
+                $saving_schedule->save();
+
+                $saving_schedule = new Schedule();
+                $saving_schedule->name = $transfer_from_name;
+                $saving_schedule->account_id = $savings_account->id;
+                $saving_schedule->amount = $saving_balance;
+                $saving_schedule->transfer = $account->id;
+                $saving_schedule->type = 'credit';
+                $saving_schedule->payment_date = $saving_date;
+                $saving_schedule->save();
+
+                $account->balance -= $saving_balance;
+              }
+            }
+          }
+          $account->balance += $schedule->amount;
+        }
+      }
+    }
+  }
+
+  /**
+   * @param $account
+   *
+   * @author Andrew Haswell
+   */
+
+  private function get_current_balance($account)
+  {
+    $transactions = $account->transactions()->where('payment_date', '>=', $account->balance_date)->get();
+    foreach ($transactions as $transaction) {
+      if ($transaction->type == 'debit') {
+        $account->balance -= $transaction->amount;
+      } else {
+        $account->balance += $transaction->amount;
+      }
+    }
+    return $account;
   }
 
   /**
@@ -172,7 +263,8 @@ class UpdatePayments extends Command
 
     $now = Carbon::today();
     $absolute_end = new DateTime();
-    $absolute_end->modify('+1 years');
+    $absolute_end->modify('+18 months');
+    $end_time_default = $absolute_end->format('U');
 
     $updates = $this->get_updates();
 
@@ -186,7 +278,7 @@ class UpdatePayments extends Command
       // Get the end date or set it a year ahead
       $end_time = !empty($payment->end_date)
         ? strtotime((string)$payment->end_date)
-        : strtotime('next year');
+        : $end_time_default;
 
       $end->setTimestamp($end_time);
 
@@ -292,67 +384,69 @@ class UpdatePayments extends Command
           }
 
           unset($transfer_to_name);
-        }
 
-        // Add any additionals
-        if ($additionals->count() > 0) {
-          foreach ($additionals as $additional) {
+          // Add any additionals
+          if ($additionals->count() > 0) {
 
-            $add_dt = clone($dt);
+            foreach ($additionals as $additional) {
 
-            if (!empty($additional->weekday)) {
-              $dow_text = date('l', strtotime("Sunday +" . $additional->weekday . " days"));
-              if ((string)$add_dt->format('Y-m-d') != $additional->weekday) {
-                $add_dt->modify('next ' . $dow_text);
+              $add_dt = clone($dt);
+
+              if (!empty($additional->weekday)) {
+                $dow_text = date('l', strtotime("Sunday +" . $additional->weekday . " days"));
+                if ((string)$add_dt->format('Y-m-d') != $additional->weekday) {
+                  $add_dt->modify('next ' . $dow_text);
+                }
               }
-            }
 
-            if (!empty($additional->start_date)) {
-              $add_start_date = Carbon::parse($additional->start_date);
-              if ($add_dt < $add_start_date) {
-                continue;
+              if (!empty($additional->start_date)) {
+                $add_start_date = Carbon::parse($additional->start_date);
+                if ($add_dt < $add_start_date) {
+                  continue;
+                }
               }
-            }
 
-            if (!empty($additional->end_date)) {
-              $add_end_date = Carbon::parse($additional->end_date);
-              if ($add_dt >= $add_end_date) {
-                continue;
+              if (!empty($additional->end_date)) {
+                $add_end_date = Carbon::parse($additional->end_date);
+                if ($add_dt >= $add_end_date) {
+                  continue;
+                }
               }
-            }
 
-            if ($additional->transfer_account_id > 0) {
-              $transfer_to_name = 'Transferred to ' . $account_list[$additional->transfer_account_id];
-              $transfer_from_name = 'Transferred from ' . $account_list[$additional->account_id];
-              $transfer = 1;
-            } else {
-              $transfer = 0;
-            }
+              if ($additional->transfer_account_id > 0) {
+                $transfer_to_name = 'Transferred to ' . $account_list[$additional->transfer_account_id];
+                $transfer_from_name = 'Transferred from ' . $account_list[$additional->account_id];
+                $transfer = 1;
+              } else {
+                $transfer = 0;
+              }
 
-            $schedule = new Schedule();
-            $schedule->name = (!empty($transfer_to_name)
-              ? $transfer_to_name
-              : $additional->name);
-            $schedule->account_id = $additional->account_id;
-            $schedule->amount = $additional->amount;
-            $schedule->type = $additional->type;
-            $schedule->transfer = $transfer;
-            $schedule->payment_date = (string)$add_dt->format('Y-m-d');
-            $schedule->save();
-
-            if ($additional->transfer_account_id > 0) {
               $schedule = new Schedule();
-              $schedule->name = $transfer_from_name;
-              $schedule->account_id = $additional->transfer_account_id;
+              $schedule->name = (!empty($transfer_to_name)
+                ? $transfer_to_name
+                : $additional->name);
+              $schedule->account_id = $additional->account_id;
               $schedule->amount = $additional->amount;
+              $schedule->type = $additional->type;
               $schedule->transfer = $transfer;
-              $schedule->type = ($additional->type == 'credit'
-                ? 'debit'
-                : 'credit');
               $schedule->payment_date = (string)$add_dt->format('Y-m-d');
+
               $schedule->save();
+
+              if ($additional->transfer_account_id > 0) {
+                $schedule = new Schedule();
+                $schedule->name = $transfer_from_name;
+                $schedule->account_id = $additional->transfer_account_id;
+                $schedule->amount = $additional->amount;
+                $schedule->transfer = $transfer;
+                $schedule->type = ($additional->type == 'credit'
+                  ? 'debit'
+                  : 'credit');
+                $schedule->payment_date = (string)$add_dt->format('Y-m-d');
+                $schedule->save();
+              }
+              unset($transfer_to_name);
             }
-            unset($transfer_to_name);
           }
         }
       }
