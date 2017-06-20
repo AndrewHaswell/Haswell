@@ -90,12 +90,6 @@ class UpdatePayments extends Command
       foreach ($schedules as $schedule) {
 
         if ($schedule->type == 'debit') {
-
-          echo 'Name: ' . $schedule->name . "\n";
-          echo 'Amount: ' . $schedule->amount . "\n";
-          echo 'Balance: ' . $account->balance . "\n";
-          echo 'Date: ' . $schedule->payment_date . "\n\r\n\r";
-
           $account->balance -= $schedule->amount;
         } else {
           // Is it pay?
