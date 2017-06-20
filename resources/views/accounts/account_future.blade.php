@@ -6,8 +6,9 @@
       <div class="col-md-10 col-md-offset-1">
 
         <?php $balance = $account->balance; ?>
-        <h2>{{$account->name}}</h2>
-        <h3>&pound;{{number_format($balance, 2, '.',',')}}</h3>
+        <h3>{{$account->name}} (&pound;{{number_format($balance, 2, '.',',')}})</h3>
+        <h3 style="font-size: 14pt;background-color: #444;padding: 8px; color: #fff">{{date('F Y',strtotime($date))}}</h3>
+
 
         <table class="table table-striped table-hover">
           <thead class="thead-default">
@@ -47,21 +48,6 @@
               <?php $balance -= $schedule->amount; ?>
             </tr>
           @endforeach
-
-          @foreach ($transactions as $transaction)
-            <tr>
-              <th scope="row"><a href="/transactions/{{$transaction->id}}">{{ $transaction->name }}</a></th>
-              <td>{{ date('D jS F Y',strtotime($transaction->payment_date)) }}</td>
-              <?php if ($transaction->type == 'debit') {
-                $transaction->amount *= -1;
-              }?>
-              <td align="right">{{ number_format($transaction->amount, 2, '.',',') }}</td>
-              <td align="right">{{ number_format($balance, 2, '.',',') }}</td>
-              <?php $balance -= $transaction->amount; ?>
-            </tr>
-          @endforeach
-          </tbody>
-
 
         </table>
       </div>
