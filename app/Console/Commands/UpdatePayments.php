@@ -109,29 +109,33 @@ class UpdatePayments extends Command
 
                 // Round down to nearest 10 pound
                 $saving_balance = floor($saving_balance / 10) * 10;
-                $transfer_to_name = 'Saved to ' . $savings_account->name;
-                $transfer_from_name = 'Saved from ' . $account->name;
 
-                // Create a savings transaction
-                $saving_schedule = new Schedule();
-                $saving_schedule->name = $transfer_to_name;
-                $saving_schedule->account_id = $account->id;
-                $saving_schedule->amount = $saving_balance;
-                $saving_schedule->type = 'debit';
-                $saving_schedule->transfer = $savings_account->id;
-                $saving_schedule->payment_date = $saving_date;
-                $saving_schedule->save();
+                if ($saving_balance > 0) {
 
-                $saving_schedule = new Schedule();
-                $saving_schedule->name = $transfer_from_name;
-                $saving_schedule->account_id = $savings_account->id;
-                $saving_schedule->amount = $saving_balance;
-                $saving_schedule->transfer = $account->id;
-                $saving_schedule->type = 'credit';
-                $saving_schedule->payment_date = $saving_date;
-                $saving_schedule->save();
+                  $transfer_to_name = 'Saved to ' . $savings_account->name;
+                  $transfer_from_name = 'Saved from ' . $account->name;
 
-                $account->balance -= $saving_balance;
+                  // Create a savings transaction
+                  $saving_schedule = new Schedule();
+                  $saving_schedule->name = $transfer_to_name;
+                  $saving_schedule->account_id = $account->id;
+                  $saving_schedule->amount = $saving_balance;
+                  $saving_schedule->type = 'debit';
+                  $saving_schedule->transfer = $savings_account->id;
+                  $saving_schedule->payment_date = $saving_date;
+                  $saving_schedule->save();
+
+                  $saving_schedule = new Schedule();
+                  $saving_schedule->name = $transfer_from_name;
+                  $saving_schedule->account_id = $savings_account->id;
+                  $saving_schedule->amount = $saving_balance;
+                  $saving_schedule->transfer = $account->id;
+                  $saving_schedule->type = 'credit';
+                  $saving_schedule->payment_date = $saving_date;
+                  $saving_schedule->save();
+
+                  $account->balance -= $saving_balance;
+                }
               }
             }
           }
