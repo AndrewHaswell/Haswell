@@ -21,6 +21,7 @@ class UpdatePayments extends Command
    *
    * @var string
    */
+
   protected $signature = 'payments:update';
 
   /**
@@ -28,12 +29,11 @@ class UpdatePayments extends Command
    *
    * @var string
    */
+
   protected $description = 'Checks through the payments and makes any due today into transactions';
 
   /**
-   * Create a new command instance.
-   *
-   * @return void
+   * UpdatePayments constructor.
    */
   public function __construct()
   {
@@ -45,9 +45,9 @@ class UpdatePayments extends Command
    *
    * @return mixed
    */
+
   public function handle()
   {
-
     $this->update_schedules();
 
     $this->calculate_savings();
@@ -78,7 +78,7 @@ class UpdatePayments extends Command
   public function calculate_savings()
   {
     $accounts = Account::where('type', '=', 'current')->get();
-    $today = Carbon::now();
+    $today = Carbon::today();
     $savings_account = Account::where('name', '=', 'Rhodes 2018')->firstOrFail();
     $minimum_account_level = 60;
 
@@ -97,7 +97,11 @@ class UpdatePayments extends Command
 
             $saving_balance = $account->balance;
             $saving_date = Carbon::parse($schedule->payment_date);
-            $saving_date->modify('-1 month +1 day');
+
+            $saving_date->modify('-1 month');
+            if ($saving_date->format('N') != 6) {
+              $saving_date->modify('next saturday');
+            }
 
             if ($saving_date >= $today) {
 
