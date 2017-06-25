@@ -19,6 +19,7 @@
           </thead>
           <tbody>
           @foreach ($accounts as $account)
+            @if (!$empty || round($account->balance,2) > 0)
             <tr>
               <th scope="row"><a href="/accounts/{{$account->id}}">{{ $account->name }}</a></th>
               <td>{{ ucwords($account->type) }}</td>
@@ -41,6 +42,7 @@
 
               ?>
             </tr>
+            @endif
           @endforeach
           <tr>
             <td colspan="4">&nbsp;</td>
