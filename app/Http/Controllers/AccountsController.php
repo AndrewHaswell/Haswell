@@ -23,11 +23,20 @@ class AccountsController extends Controller
     $this->middleware('auth');
   }
 
+  public function all_accounts()
+  {
+    return $this->index(false, false);
+  }
+
   /**
+   * @param bool $hidden
+   * @param bool $empty
+   *
    * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
    * @author Andrew Haswell
    */
-  public function index($all = false)
+
+  public function index($hidden = false, $empty = true)
   {
 
     if (!Auth::check()) {
@@ -35,7 +44,7 @@ class AccountsController extends Controller
     }
 
     // Get our accounts
-    $accounts = $all
+    $accounts = $hidden
       ? Account::orderBy('type', 'asc')->orderBy('name', 'asc')->get()
       : Account::orderBy('type', 'asc')->where('hidden', '=', false)->orderBy('name', 'asc')->get();
 
@@ -67,7 +76,8 @@ class AccountsController extends Controller
     // Show the accounts
     return view('accounts.test', compact(['accounts',
                                           'title',
-                                          'months']));
+                                          'months',
+                                          'empty']));
   }
 
   /**
