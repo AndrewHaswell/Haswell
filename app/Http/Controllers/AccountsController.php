@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Additional;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Requests;
 use App\Models\Account;
@@ -30,7 +31,7 @@ class AccountsController extends Controller
 
   public function hidden_accounts()
   {
-    return $this->index(true, true);
+    return $this->index(true, false);
   }
 
   /**
@@ -46,6 +47,10 @@ class AccountsController extends Controller
 
     if (!Auth::check()) {
       echo 'Not logged in';
+    }
+
+    if ($hidden) {
+      $empty = false;
     }
 
     // Get our accounts
