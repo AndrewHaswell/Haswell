@@ -28,6 +28,11 @@ class AccountsController extends Controller
     return $this->index(false, false);
   }
 
+  public function hidden_accounts()
+  {
+    return $this->index(true, true);
+  }
+
   /**
    * @param bool $hidden
    * @param bool $empty
@@ -44,9 +49,7 @@ class AccountsController extends Controller
     }
 
     // Get our accounts
-    $accounts = $hidden
-      ? Account::orderBy('type', 'asc')->orderBy('name', 'asc')->get()
-      : Account::orderBy('type', 'asc')->where('hidden', '=', false)->orderBy('name', 'asc')->get();
+    $accounts = Account::orderBy('type', 'asc')->where('hidden', '=', $hidden)->orderBy('name', 'asc')->get();
 
     $title = 'Accounts';
 
