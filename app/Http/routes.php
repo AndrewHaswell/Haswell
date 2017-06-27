@@ -27,6 +27,10 @@ Route::get('password/reset/{token?}', 'Auth\PasswordController@showResetForm');
 Route::post('password/email', 'Auth\PasswordController@sendResetLinkEmail');
 Route::post('password/reset', 'Auth\PasswordController@reset');
 
+Route::get('/update', function () {
+  Artisan::call('payments:update');
+});
+
 Route::get('/home', 'HomeController@index');
 Route::get('/accounts/{id}', 'AccountsController@detail');
 Route::get('/future/{id}/{month}', 'AccountsController@future');

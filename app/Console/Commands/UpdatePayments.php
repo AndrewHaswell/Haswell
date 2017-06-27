@@ -260,6 +260,14 @@ class UpdatePayments extends Command
     $accounts = Account::all();
     $holidays = $this->bank_holidays();
 
+    $days_of_the_week = ['sunday',
+                         'monday',
+                         'tuesday',
+                         'wednesday',
+                         'thursday',
+                         'friday',
+                         'saturday'];
+
     $account_list = [];
 
     foreach ($accounts as $account) {
@@ -335,6 +343,13 @@ class UpdatePayments extends Command
           }
         }
 
+        // Does the payment come out on a specific day of the week
+        if (!empty($payment->day)) {
+          if (in_array(strtolower($payment->day), $days_of_the_week)) {
+            $dt->modify('next ' . strtolower($payment->day));
+          }
+        }
+
         if ($dt >= $now && $dt < $absolute_end) {
 
           if ($payment->transfer_account_id > 0) {
@@ -392,70 +407,6 @@ class UpdatePayments extends Command
           }
 
           unset($transfer_to_name);
-
-          // Add any additionals
-          if ($additionals->count() > 0) {
-
-            foreach ($additionals as $additional) {
-
-              $add_dt = clone($dt);
-
-              if (!empty($additional->weekday)) {
-                $dow_text = date('l', strtotime("Sunday +" . $additional->weekday . " days"));
-                if ((string)$add_dt->format('Y-m-d') != $additional->weekday) {
-                  $add_dt->modify('next ' . $dow_text);
-                }
-              }
-
-              if (!empty($additional->start_date)) {
-                $add_start_date = Carbon::parse($additional->start_date);
-                if ($add_dt < $add_start_date) {
-                  continue;
-                }
-              }
-
-              if (!empty($additional->end_date)) {
-                $add_end_date = Carbon::parse($additional->end_date);
-                if ($add_dt >= $add_end_date) {
-                  continue;
-                }
-              }
-
-              if ($additional->transfer_account_id > 0) {
-                $transfer_to_name = 'Transferred to ' . $account_list[$additional->transfer_account_id];
-                $transfer_from_name = 'Transferred from ' . $account_list[$additional->account_id];
-                $transfer = 1;
-              } else {
-                $transfer = 0;
-              }
-
-              $schedule = new Schedule();
-              $schedule->name = (!empty($transfer_to_name)
-                ? $transfer_to_name
-                : $additional->name);
-              $schedule->account_id = $additional->account_id;
-              $schedule->amount = $additional->amount;
-              $schedule->type = $additional->type;
-              $schedule->transfer = $transfer;
-              $schedule->payment_date = (string)$add_dt->format('Y-m-d');
-
-              $schedule->save();
-
-              if ($additional->transfer_account_id > 0) {
-                $schedule = new Schedule();
-                $schedule->name = $transfer_from_name;
-                $schedule->account_id = $additional->transfer_account_id;
-                $schedule->amount = $additional->amount;
-                $schedule->transfer = $transfer;
-                $schedule->type = ($additional->type == 'credit'
-                  ? 'debit'
-                  : 'credit');
-                $schedule->payment_date = (string)$add_dt->format('Y-m-d');
-                $schedule->save();
-              }
-              unset($transfer_to_name);
-            }
-          }
         }
       }
     }
