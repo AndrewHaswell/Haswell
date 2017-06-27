@@ -346,7 +346,10 @@ class UpdatePayments extends Command
         // Does the payment come out on a specific day of the week
         if (!empty($payment->day)) {
           if (in_array(strtolower($payment->day), $days_of_the_week)) {
-            $dt->modify('next ' . strtolower($payment->day));
+            // Check we're not already on the right day first
+            if (strtolower($dt->format('l')) != strtolower($payment->day)){
+              $dt->modify('next ' . strtolower($payment->day));
+            }
           }
         }
 
