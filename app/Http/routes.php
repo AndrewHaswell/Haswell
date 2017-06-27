@@ -38,6 +38,7 @@ Route::get('/transactions/{id}', 'TransactionsController@detail');
 Route::get('/transactions', 'TransactionsController@index');
 Route::get('/accounts', 'AccountsController@index');
 Route::get('/all_accounts', 'AccountsController@all_accounts');
+Route::get('/hidden_accounts', 'AccountsController@hidden_accounts');
 
 Route::get('/add_meal', 'MealsController@add_meal');
 Route::get('/shopping', 'PlannerController@shopping_list');
