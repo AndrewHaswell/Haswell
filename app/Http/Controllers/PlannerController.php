@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\MealPlan;
 use App\Models\Meals;
+use App\owned_ingredients;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -115,17 +116,50 @@ class PlannerController extends Controller
     foreach ($meal_plan as $plan) {
 
       $meal = Meals::findOrFail($plan->meal_id);
-
       $ingredients = $meal->ingredients()->get();
 
       if (!empty($ingredients)) {
 
         foreach ($ingredients as $ingredient) {
-          $ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id] = ['name'  => $ingredient->name,
+          $ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id] = ['id'    => $ingredient->id,
+                                                                                         'name'  => $ingredient->name,
                                                                                          'price' => $ingredient->price];
         }
       }
+    }
 
+    return view('shopping.shop', compact(['ingredient_list']));
+  }
+
+  public function shopping_list_2()
+  {
+
+    $meal_plan = MealPlan::all();
+
+    $unwanted_ingredient = owned_ingredients::all();
+    $unwanted_ingredient_list = [];
+
+    foreach ($unwanted_ingredient as $this_ingredient) {
+      $unwanted_ingredient_list[] = $this_ingredient->ingredient_id;
+    }
+
+    $ingredient_list = [];
+
+    foreach ($meal_plan as $plan) {
+
+      $meal = Meals::findOrFail($plan->meal_id);
+      $ingredients = $meal->ingredients()->get();
+
+      if (!empty($ingredients)) {
+
+        foreach ($ingredients as $ingredient) {
+          if (!in_array($ingredient->id, $unwanted_ingredient_list)) {
+            $ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id] = ['id'    => $ingredient->id,
+                                                                                           'name'  => $ingredient->name,
+                                                                                           'price' => $ingredient->price];
+          }
+        }
+      }
     }
 
     return view('shopping.check', compact(['ingredient_list']));

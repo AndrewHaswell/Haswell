@@ -42,6 +42,7 @@ Route::get('/hidden_accounts', 'AccountsController@hidden_accounts');
 
 Route::get('/add_meal', 'MealsController@add_meal');
 Route::get('/shopping', 'PlannerController@shopping_list');
+Route::get('/list', 'PlannerController@shopping_list_2');
 
 Route::resource('transactions', 'TransactionsController');
 Route::resource('payments', 'PaymentsController');
@@ -49,3 +50,4 @@ Route::resource('schedules', 'SchedulesController');
 Route::resource('meals', 'MealsController');
 Route::resource('ingredients', 'IngredientsController');
 Route::resource('planner', 'PlannerController');
+Route::resource('shop', 'ShoppingController');
