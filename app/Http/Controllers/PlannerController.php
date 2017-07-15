@@ -162,6 +162,8 @@ class PlannerController extends Controller
       }
     }
 
+    owned_ingredients::truncate();
+
     return view('shopping.check', compact(['ingredient_list']));
   }
 
