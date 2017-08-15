@@ -15,10 +15,11 @@ class IngredientsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        //
-    }
+  public function index()
+  {
+    $ingredients = Ingredients::orderBy('name')->get();
+    return view('ingredients.list', compact('ingredients'));
+  }
 
     /**
      * Show the form for creating a new resource.
@@ -68,7 +69,7 @@ class IngredientsController extends Controller
      */
     public function edit($id)
     {
-        //
+
     }
 
     /**

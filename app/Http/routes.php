@@ -51,3 +51,5 @@ Route::resource('meals', 'MealsController');
 Route::resource('ingredients', 'IngredientsController');
 Route::resource('planner', 'PlannerController');
 Route::resource('shop', 'ShoppingController');
+
+Route::post('/ajax/update_ingredients', 'AjaxController@update_ingredients');

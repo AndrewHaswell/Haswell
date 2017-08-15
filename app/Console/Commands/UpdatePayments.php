@@ -85,7 +85,7 @@ class UpdatePayments extends Command
     foreach ($accounts as $account) {
 
       $account = $this->get_current_balance($account);
-      $schedules = $account->schedules()->orderBy('payment_date', 'asc')->orderBy('type', 'desc')->get();
+      $schedules = $account->schedules()->orderBy('payment_date', 'asc')->orderBy('type', 'asc')->get();
 
       foreach ($schedules as $schedule) {
 
@@ -94,14 +94,17 @@ class UpdatePayments extends Command
         } else {
           // Is it pay?
           if ($schedule->amount > 500) {
-
-            $saving_balance = $account->balance;
-            $saving_date = Carbon::parse($schedule->payment_date);
-
-            $saving_date->modify('-1 month');
-            if ($saving_date->format('N') != 6) {
-              $saving_date->modify('next saturday');
+            $salary = Schedule::where('name', '=', $schedule->name)->where('payment_date', '<', $schedule->payment_date)->orderBy('payment_date', 'desc')->first();
+            if (!empty($salary)) {
+              $saving_date = Carbon::parse($salary->payment_date);
+              if ($saving_date->format('N') != 6) {
+                $saving_date->modify('next saturday');
+              }
+            } else {
+              $account->balance += $schedule->amount;
+              continue;
             }
+            $saving_balance = $account->balance;
 
             if ($saving_date >= $today) {
 
@@ -347,7 +350,7 @@ class UpdatePayments extends Command
         if (!empty($payment->day)) {
           if (in_array(strtolower($payment->day), $days_of_the_week)) {
             // Check we're not already on the right day first
-            if (strtolower($dt->format('l')) != strtolower($payment->day)){
+            if (strtolower($dt->format('l')) != strtolower($payment->day)) {
               $dt->modify('next ' . strtolower($payment->day));
             }
           }
