@@ -62,6 +62,20 @@
       font-size: 12pt;
       }
 
+    .edit_box {
+      width: 100px;
+      }
+
+    .nutrition {
+      display: inline;
+      }
+
+    .nutrition input {
+      width: 30px;
+      margin-right: 3px;
+      }
+
+    .nutrition
     .upcoming_link {
       float:      right;
       text-align: right;
@@ -95,9 +109,19 @@
         <li><a href="{{ url('/accounts') }}">Accounts</a></li>
         <li><a href="{{ url('/transactions') }}">Transactions</a></li>
         <li><a href="{{ url('/payments') }}">Payments</a></li>
-        <li><a href="{{ url('/planner') }}">Meal Planner</a></li>
-        <li><a href="{{ url('/meals/create') }}">Add Meal</a></li>
-        <li><a href="{{ url('/ingredients/create') }}">Add Ingredient</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+             aria-expanded="false">Meals<span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="{{ url('/planner') }}">Meal Planner</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="{{ url('/meals/create') }}">Add Meal</a></li>
+            <li><a href="{{ url('/ingredients/create') }}">Add Ingredient</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="{{ url('/ingredients') }}">Edit Ingredients</a></li>
+          </ul>
+        </li>
       </ul>
 
       <!-- Right Side Of Navbar -->

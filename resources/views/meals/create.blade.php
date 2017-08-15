@@ -15,18 +15,25 @@
           @foreach ($ingredients as $category => $ingredient)
 
             <?php
-                asort($ingredient);
-                ?>
+            asort($ingredient);
+            ?>
 
+            <tr class="warning">
+              <td colspan="5">{{$category}}:</td>
+            </tr>
             <tr>
-              <th>{{$category}}:</th>
-              <td>
-                @foreach ($ingredient as $id => $ingredient_name)
-                  <div style="display: inline-block; margin: 0 15px 0 0">
-                    {!! Form::label('ingredients', $ingredient_name) !!}&nbsp;&nbsp;{{ Form::checkbox('ingredients[]', $id, null, ['class' => 'field']) }}
-                  </div>
-                @endforeach
-              </td>
+              <?php $counter = 1; ?>
+              @foreach ($ingredient as $id => $ingredient_name)
+                <td>
+                  {{ Form::checkbox('ingredients[]', $id, null, ['class' => 'field']) }}&nbsp;&nbsp;{!! Form::label('ingredients', $ingredient_name) !!}
+                </td>
+                <?php $counter++;?>
+                @if ($counter > 5)
+                  <?php $counter = 1;?>
+            </tr>
+            <tr>
+              @endif
+              @endforeach
             </tr>
           @endforeach
           <tr>
