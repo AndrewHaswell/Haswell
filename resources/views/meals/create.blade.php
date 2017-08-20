@@ -8,36 +8,25 @@
         <table class="table table-striped table-hover">
           <tbody>
           <tr>
-            <th>{!! Form::label('name', 'Name: ') !!}</th>
-            <td>{!! Form::text('name', '', [
-    'class'=>'form-control']) !!}</td>
+            <td>Meal Name:</td>
+            <td colspan="2"><input type="text" name="meal_name"/></td>
           </tr>
-          @foreach ($ingredients as $category => $ingredient)
-
-            <?php
-            asort($ingredient);
-            ?>
-
-            <tr class="warning">
-              <td colspan="5">{{$category}}:</td>
-            </tr>
-            <tr>
-              <?php $counter = 1; ?>
-              @foreach ($ingredient as $id => $ingredient_name)
-                <td>
-                  {{ Form::checkbox('ingredients[]', $id, null, ['class' => 'field']) }}&nbsp;&nbsp;{!! Form::label('ingredients', $ingredient_name) !!}
-                </td>
-                <?php $counter++;?>
-                @if ($counter > 5)
-                  <?php $counter = 1;?>
-            </tr>
-            <tr>
-              @endif
-              @endforeach
-            </tr>
-          @endforeach
           <tr>
-            <td colspan="2">
+            <th id="test">Name</th>
+            <th>Quantity</th>
+            <th>Unit of Measure</th>
+          </tr>
+          <tr class="ingredient_row">
+            <td class="ingredient"><select name="ingredient[]">{!! $select !!}</select></td>
+            <td><input type="text" name="quantity[]" value="1"></td>
+            <td><select name="unit[]">
+                <option value="none">-</option>
+                <option value="weight">g</option>
+                <option value="volume">ml</option>
+              </select></td>
+          </tr>
+          <tr>
+            <td colspan="3">
               {!! Form::submit( 'Add meal', ['class' => 'btn btn-primary form-control']) !!}
             </td>
           </tr>
@@ -47,4 +36,14 @@
     </div>
   </div>
   </div>
+
+  <script>
+    $(function () {
+
+      $(document.body).on('change', '.ingredient_row:last .ingredient', function () {
+        $('.ingredient_row:last').clone().insertAfter('.ingredient_row:last');
+      });
+
+    });
+  </script>
 @endsection

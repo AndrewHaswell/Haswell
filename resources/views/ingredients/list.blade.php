@@ -103,7 +103,7 @@
                   <tr>
                     <td>Salt:</td>
                     <td><div class="nutrition"><span class="editable"
-                                                     id="salt_{{$ingredient->id}}">{{round($ingredient->salt)}}</span></div>g/td>
+                                                     id="salt_{{$ingredient->id}}">{{round($ingredient->salt)}}</span></div>g</td>
                   </tr>
                 </table>
               </td>

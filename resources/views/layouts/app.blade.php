@@ -120,6 +120,8 @@
             <li><a href="{{ url('/ingredients/create') }}">Add Ingredient</a></li>
             <li role="separator" class="divider"></li>
             <li><a href="{{ url('/ingredients') }}">Edit Ingredients</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="{{ url('/shopping') }}">Shopping List</a></li>
           </ul>
         </li>
       </ul>

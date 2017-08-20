@@ -38,7 +38,22 @@ class MealsController extends Controller
     $ingredients = $ingredients_sorted;
     ksort($ingredients);
 
-    return view('meals.create', compact(['ingredients']));
+    $select = "<option value='0'></option>";
+
+    foreach ($ingredients as $category => $ingredient) {
+      asort($ingredient);
+
+      $select .= "<optgroup label='" . $category . "'>" . "\n";
+
+      foreach ($ingredient as $id => $ingredient_name) {
+        $select .= "<option value='" . $id . "'>" . $ingredient_name . "</option>" . "\n";
+      }
+
+      $select .= "</optgroup>" . "\n";
+    }
+
+    return view('meals.create', compact(['ingredients',
+                                         'select']));
   }
 
   /**
@@ -51,11 +66,13 @@ class MealsController extends Controller
   public function store(Request $request)
   {
     $meal = new Meals();
-    $meal->name = $request->name;
+    $meal->name = $request->meal_name;
     $meal->save();
 
-    $ingredients = $request->ingredients;
-    $meal->ingredients()->attach($ingredients);
+    foreach ($request->ingredient as $key => $value) {
+      $meal->ingredients()->attach($value, ['quantity' => $request->quantity[$key],
+                                            'unit'     => $request->unit[$key]]);
+    }
 
     return Redirect::to(url('/meals/create'));
   }

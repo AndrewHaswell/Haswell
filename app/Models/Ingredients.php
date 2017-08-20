@@ -8,6 +8,6 @@ class Ingredients extends Model
 {
   public function meals()
   {
-    return $this->belongsToMany('App\Models\Meals','ingredient_meal','ingredient_id', 'meal_id');
+    return $this->belongsToMany('App\Models\Meals','ingredient_meal','ingredient_id', 'meal_id')->withPivot('quantity','unit');
   }
 }
