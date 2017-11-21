@@ -67,7 +67,7 @@
             <tr>
               <td colspan="4">&nbsp;</td>
             </tr>
-            <tr>
+            <tr style="color: red">
               <th>Overdrawn</th>
               <td colspan="2">&nbsp;</td>
               <td align="right">{{ number_format($overdrawn, 2, '.', '') }}</td>
