@@ -36,10 +36,10 @@
                 $total += $account->balance;
 
                 if ($account->balance < 0 && $subtotal[$account->type] == 'cash') {
-                  if (isset($subtotal['negative cash'])) {
-                    $subtotal['negative cash'] += $account->balance;
+                  if (isset($subtotal['overdrawn'])) {
+                    $subtotal['overdrawn'] += $account->balance;
                   } else {
-                    $subtotal['negative cash'] = $account->balance;
+                    $subtotal['overdrawn'] = $account->balance;
                   }
                 }
 
