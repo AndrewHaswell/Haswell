@@ -35,11 +35,11 @@
                 <?php
                 $total += $account->balance;
 
-                if ($account->balance < 0 && $subtotal[$account->type] == 'cash') {
-                  if (isset($subtotal['overdrawn'])) {
-                    $subtotal['overdrawn'] += $account->balance;
+                if ($account->balance < 0 && $account->type == 'cash') {
+                  if (isset($overdrawn)) {
+                    $overdrawn += $account->balance;
                   } else {
-                    $subtotal['overdrawn'] = $account->balance;
+                    $overdrawn = $account->balance;
                   }
                 }
 
@@ -63,6 +63,16 @@
               <td align="right">{{ number_format($balance, 2, '.', '') }}</td>
             </tr>
           @endforeach
+          @if (!empty($overdrawn))
+            <tr>
+              <td colspan="4">&nbsp;</td>
+            </tr>
+            <tr>
+              <th>Overdrawn</th>
+              <td colspan="2">&nbsp;</td>
+              <td align="right">{{ number_format($overdrawn, 2, '.', '') }}</td>
+            </tr>
+          @endif
           <tr>
             <td colspan="4">&nbsp;</td>
           </tr>
