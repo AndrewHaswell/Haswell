@@ -20,28 +20,37 @@
           <tbody>
           @foreach ($accounts as $account)
             @if (!$empty || round($account->balance,2) != 0)
-            <tr>
-              <th scope="row"><a href="/accounts/{{$account->id}}">{{ $account->name }}</a></th>
-              <td>{{ ucwords($account->type) }}</td>
-              <td>
-                <select class="future_month" id="future_month_{{$account->id}}">
-                  <option value="0">-</option>
-                  @foreach ($months as $month_id => $month_name)
-                    <option value="{{$month_id}}">{{$month_name}}</option>
-                  @endforeach
-                </select>
-              </td>
-              <td align="right">{{ number_format($account->balance, 2, '.', '') }}</td>
-              <?php
-              $total += $account->balance;
-              if (!empty($subtotal[$account->type])) {
-                $subtotal[$account->type] += $account->balance;
-              } else {
-                $subtotal[$account->type] = $account->balance;
-              }
+              <tr>
+                <th scope="row"><a href="/accounts/{{$account->id}}">{{ $account->name }}</a></th>
+                <td>{{ ucwords($account->type) }}</td>
+                <td>
+                  <select class="future_month" id="future_month_{{$account->id}}">
+                    <option value="0">-</option>
+                    @foreach ($months as $month_id => $month_name)
+                      <option value="{{$month_id}}">{{$month_name}}</option>
+                    @endforeach
+                  </select>
+                </td>
+                <td align="right">{{ number_format($account->balance, 2, '.', '') }}</td>
+                <?php
+                $total += $account->balance;
 
-              ?>
-            </tr>
+                if ($account->balance < 0 && $account->type == 'cash') {
+                  if (isset($overdrawn)) {
+                    $overdrawn += $account->balance;
+                  } else {
+                    $overdrawn = $account->balance;
+                  }
+                }
+
+                if (!empty($subtotal[$account->type])) {
+                  $subtotal[$account->type] += $account->balance;
+                } else {
+                  $subtotal[$account->type] = $account->balance;
+                }
+
+                ?>
+              </tr>
             @endif
           @endforeach
           <tr>
@@ -54,6 +63,16 @@
               <td align="right">{{ number_format($balance, 2, '.', '') }}</td>
             </tr>
           @endforeach
+          @if (!empty($overdrawn))
+            <tr>
+              <td colspan="4">&nbsp;</td>
+            </tr>
+            <tr style="color: red">
+              <th>Overdrawn</th>
+              <td colspan="2">&nbsp;</td>
+              <td align="right">{{ number_format($overdrawn, 2, '.', '') }}</td>
+            </tr>
+          @endif
           <tr>
             <td colspan="4">&nbsp;</td>
           </tr>
@@ -63,7 +82,6 @@
             <td align="right">{{ number_format($total, 2, '.', '') }}</td>
           </tr>
           </tbody>
-
 
         </table>
       </div>
