@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Account;
 use App\Models\Transaction;
+use App\Models\Transfer;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -67,8 +68,21 @@ class TransactionsController extends Controller
    */
   public function store(Request $request)
   {
+    $transfer_id = 0;
     if (!empty($request->transaction_id)) {
       $transaction = Transaction::findOrFail($request->transaction_id);
+
+      // Are we linked?
+      $linked = Transfer::where('from_id', $request->transaction_id)->get();
+      if ($linked->count()) {
+        $transfer_id = $linked[0]->to_id;
+      } else {
+        $linked = Transfer::where('to_id', $request->transaction_id)->get();
+        if ($linked->count()) {
+          $transfer_id = $linked[0]->from_id;
+        }
+      }
+
       if (!empty($request->delete) && $request->delete == 'delete') {
         $transaction->delete();
         return Redirect::to(url('/accounts/' . $transaction->account_id));
@@ -84,7 +98,7 @@ class TransactionsController extends Controller
       $transfer_to_name = 'Transferred to ' . $transfer_to->name;
       $transfer_from_name = 'Transferred from ' . $transfer_from->name;
       $transfer = 1;
-    }else {
+    } else {
       $transfer = 0;
     }
 
@@ -100,8 +114,15 @@ class TransactionsController extends Controller
 
     $transaction->save();
 
+    if ($transfer_id) {
+      $transfer_transaction = Transaction::findOrFail($transfer_id);
+      $transfer_transaction->amount = $request->amount;
+      $transfer_transaction->save();
+    }
+
     // If it's a transfer we'll make the opposite transaction as well
     if (!empty($request->transfer)) {
+      $transfer_to_id = $transaction->id;
       $transaction = $transaction->replicate();
       $transaction->name = $transfer_from_name;
       $transaction->account_id = $request->transfer;
@@ -110,6 +131,13 @@ class TransactionsController extends Controller
         ? 'debit'
         : 'credit');
       $transaction->save();
+      $transfer_from_id = $transaction->id;
+
+      // Save to our transfer table both ways
+      $transfer = new Transfer();
+      $transfer->from_id = $transfer_from_id;
+      $transfer->to_id = $transfer_to_id;
+      $transfer->save();
     }
 
     return Redirect::to(url('/accounts/' . $transaction->account_id));
