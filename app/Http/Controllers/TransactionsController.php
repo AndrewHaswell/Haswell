@@ -87,7 +87,7 @@ class TransactionsController extends Controller
         $transaction->delete();
         // Also delete any linked transaction
         if (!empty($transfer_id)) {
-          $transaction = Transaction::findOrFail($request->transaction_id);
+          $transaction = Transaction::findOrFail($transfer_id);
           $transaction->delete();
         }
         return Redirect::to(url('/accounts/' . $transaction->account_id));
