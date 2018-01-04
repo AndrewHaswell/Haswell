@@ -33,11 +33,15 @@ class HomeController extends Controller
     $limit = 7;
     $accounts = Account::all();
     $account_list = [];
+    $hidden_accounts = [];
     foreach ($accounts as $account) {
       $account_list[$account->id] = $account->name;
+      if ($account->hidden) {
+        $hidden_accounts[] = $account->id;
+      }
     }
-    $schedules = Schedule::where('payment_date', '>', Carbon::parse('today'))->where('payment_date', '<=', Carbon::parse($limit . ' days'))->where('transfer', 0)->orderBy('payment_date', 'asc')->orderBy('type', 'desc')->get();
-    $transactions = Transaction::where('transfer', 0)->where('payment_date', '>', Carbon::parse('-' . $limit . ' days'))->orderBy('payment_date', 'desc')->limit(($limit * 6))->get();
+    $schedules = Schedule::whereNotIn('account_id', $hidden_accounts)->where('payment_date', '>', Carbon::parse('today'))->where('payment_date', '<=', Carbon::parse($limit . ' days'))->where('transfer', 0)->orderBy('payment_date', 'asc')->orderBy('type', 'desc')->get();
+    $transactions = Transaction::whereNotIn('account_id', $hidden_accounts)->where('transfer', 0)->where('payment_date', '>', Carbon::parse('-' . $limit . ' days'))->orderBy('payment_date', 'desc')->limit(($limit * 6))->get();
 
     return view('home', compact(['schedules',
                                  'transactions',
