@@ -85,6 +85,11 @@ class TransactionsController extends Controller
 
       if (!empty($request->delete) && $request->delete == 'delete') {
         $transaction->delete();
+        // Also delete any linked transaction
+        if (!empty($transfer_id)) {
+          $transaction = Transaction::findOrFail($transfer_id);
+          $transaction->delete();
+        }
         return Redirect::to(url('/accounts/' . $transaction->account_id));
       }
     } else {
@@ -95,8 +100,8 @@ class TransactionsController extends Controller
     if (!empty($request->transfer)) {
       $transfer_from = Account::findOrFail($request->account_id);
       $transfer_to = Account::findOrFail($request->transfer);
-      $transfer_to_name = 'Transferred to ' . $transfer_to->name;
-      $transfer_from_name = 'Transferred from ' . $transfer_from->name;
+      $transfer_to_name = $request->name . ' -> ' . $transfer_to->name;
+      $transfer_from_name = $request->name . ' <- ' . $transfer_from->name;
       $transfer = 1;
     } else {
       $transfer = 0;
