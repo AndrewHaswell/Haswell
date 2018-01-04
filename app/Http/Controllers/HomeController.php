@@ -30,15 +30,14 @@ class HomeController extends Controller
    */
   public function index()
   {
-    $limit = 10;
+    $limit = 7;
     $accounts = Account::all();
     $account_list = [];
     foreach ($accounts as $account) {
       $account_list[$account->id] = $account->name;
     }
-    $schedules = Schedule::where('payment_date', '>', Carbon::parse('today'))->where('transfer', 0)->orderBy('payment_date', 'asc')->orderBy('type', 'desc')->limit($limit)->get();
-
-    $transactions = Transaction::where('transfer', 0)->orderBy('payment_date', 'desc')->limit(($limit * 4))->get();
+    $schedules = Schedule::where('payment_date', '>', Carbon::parse('today'))->where('payment_date', '<=', Carbon::parse($limit . ' days'))->where('transfer', 0)->orderBy('payment_date', 'asc')->orderBy('type', 'desc')->get();
+    $transactions = Transaction::where('transfer', 0)->where('payment_date', '>', Carbon::parse('-' . $limit . ' days'))->orderBy('payment_date', 'desc')->limit(($limit * 6))->get();
 
     return view('home', compact(['schedules',
                                  'transactions',
