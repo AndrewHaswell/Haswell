@@ -5,7 +5,7 @@
     <div class="row">
       <div class="col-md-10 col-md-offset-1">
 
-        <h2>Next {{$limit}} transactions:</h2>
+        <h2>Next {{$limit}} days:</h2>
 
         <table class="table table-striped table-hover">
           <thead>
@@ -36,7 +36,7 @@
           </tbody>
         </table>
 
-        <h2>Recent transactions:</h2>
+        <h2>Last {{$limit}} days:</h2>
 
         <table class="table table-striped table-hover">
           <thead>
