@@ -117,8 +117,9 @@
             <li><a href="{{ url('/planner') }}">Meal Planner</a></li>
             <li role="separator" class="divider"></li>
             <li><a href="{{ url('/meals/create') }}">Add Meal</a></li>
-            <li><a href="{{ url('/ingredients/create') }}">Add Ingredient</a></li>
+            <li><a href="{{ url('/meals') }}">Edit Meals</a></li>
             <li role="separator" class="divider"></li>
+            <li><a href="{{ url('/ingredients/create') }}">Add Ingredient</a></li>
             <li><a href="{{ url('/ingredients') }}">Edit Ingredients</a></li>
             <li role="separator" class="divider"></li>
             <li><a href="{{ url('/shopping') }}">Shopping List</a></li>

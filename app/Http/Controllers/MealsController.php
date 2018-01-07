@@ -18,7 +18,8 @@ class MealsController extends Controller
    */
   public function index()
   {
-    //
+    $meals = Meals::orderBy('name')->get();
+    return view('meals.list', compact('meals'));
   }
 
   /**
@@ -28,6 +29,56 @@ class MealsController extends Controller
    */
   public function create()
   {
+    $select = $this->ingredients_select();
+    return view('meals.create', compact(['select']));
+  }
+
+  /**
+   * Store a newly created resource in storage.
+   *
+   * @param  \Illuminate\Http\Request $request
+   *
+   * @return \Illuminate\Http\Response
+   */
+  public function store(Request $request)
+  {
+    $meal = $request->update === 'true'
+      ? Meals::findOrFail($request->meal_id)
+      : new Meals();
+
+    $meal->name = $request->meal_name;
+    $meal->portion = $request->meal_portion;
+    $meal->save();
+
+    if ($request->update === 'true') {
+      // Unlink current ingredients!
+      $meal->ingredients()->detach();
+    }
+    foreach ($request->ingredient as $key => $value) {
+      $meal->ingredients()->attach($value, ['quantity' => $request->quantity[$key],
+                                            'unit'     => $request->unit[$key]]);
+    }
+
+    return Redirect::to(url('/meals' . ($request->update === 'true'
+        ? ''
+        : '/create')));
+  }
+
+  /**
+   * Display the specified resource.
+   *
+   * @param  int $id
+   *
+   * @return \Illuminate\Http\Response
+   */
+  public function show($id)
+  {
+    //
+  }
+
+  protected function ingredients_select()
+  {
+
     $ingredients = Ingredients::all();
 
     $ingredients_sorted = [];
@@ -51,42 +102,7 @@ class MealsController extends Controller
 
       $select .= "</optgroup>" . "\n";
     }
-
-    return view('meals.create', compact(['ingredients',
-                                         'select']));
-  }
-
-  /**
-   * Store a newly created resource in storage.
-   *
-   * @param  \Illuminate\Http\Request $request
-   *
-   * @return \Illuminate\Http\Response
-   */
-  public function store(Request $request)
-  {
-    $meal = new Meals();
-    $meal->name = $request->meal_name;
-    $meal->save();
-
-    foreach ($request->ingredient as $key => $value) {
-      $meal->ingredients()->attach($value, ['quantity' => $request->quantity[$key],
-                                            'unit'     => $request->unit[$key]]);
-    }
-
-    return Redirect::to(url('/meals/create'));
-  }
-
-  /**
-   * Display the specified resource.
-   *
-   * @param  int $id
-   *
-   * @return \Illuminate\Http\Response
-   */
-  public function show($id)
-  {
-    //
+    return $select;
   }
 
   /**
@@ -98,7 +114,13 @@ class MealsController extends Controller
    */
   public function edit($id)
   {
-    //
+
+    $meal = Meals::findOrFail($id);
+    $ingredients = $meal->ingredients()->get();
+    $select = $this->ingredients_select();
+    return view('meals.edit', compact(['ingredients',
+                                       'meal',
+                                       'select']));
   }
 
   /**
