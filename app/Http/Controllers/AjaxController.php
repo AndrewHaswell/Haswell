@@ -11,7 +11,6 @@ class AjaxController extends Controller
 {
   public function update_ingredients(Request $request)
   {
-
     $type = (string)$request->type;
     $id = (string)$request->id;
     $value = (string)$request->value;
