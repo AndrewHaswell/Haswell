@@ -108,7 +108,15 @@
         <li><a href="{{ url('/home') }}">Home</a></li>
         <li><a href="{{ url('/accounts') }}">Accounts</a></li>
         <li><a href="{{ url('/transactions') }}">Transactions</a></li>
-        <li><a href="{{ url('/payments') }}">Payments</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+             aria-expanded="false">Payments<span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="{{ url('/payments') }}">Payment List</a></li>
+            <li><a href="{{ url('/budget') }}">Budget</a></li>
+          </ul>
+        </li>
 
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"

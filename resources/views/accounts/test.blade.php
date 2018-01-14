@@ -63,7 +63,7 @@
               <td align="right">{{ number_format($balance, 2, '.', '') }}</td>
             </tr>
           @endforeach
-          @if (!empty($overdrawn))
+          @if (!$hidden && !empty($overdrawn))
             <tr>
               <td colspan="4">&nbsp;</td>
             </tr>
@@ -81,6 +81,26 @@
             <td colspan="2">&nbsp;</td>
             <td align="right">{{ number_format($total, 2, '.', '') }}</td>
           </tr>
+          @if ($hidden)
+            <?php
+            $dmp = \App\Models\Payment::findOrFail(29);
+            $dmp_amount = $dmp->amount;
+            $repayment = abs($total);
+            $months = ceil($repayment / $dmp_amount);
+            $year = date('Y');
+            $month = date('m');
+            $date = new DateTime($year . '-' . $month . '-01');
+            $date->add(new DateInterval('P' . $months . 'M'));
+            ?>
+            <tr>
+              <td colspan="4">&nbsp;</td>
+            </tr>
+            <tr>
+              <th>Final Repayment Date</th>
+              <td colspan="2">&nbsp;</td>
+              <td align="right">{{ $date->format('jS M Y') }}</td>
+            </tr>
+          @endif
           </tbody>
 
         </table>

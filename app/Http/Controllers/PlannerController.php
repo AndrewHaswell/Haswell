@@ -30,6 +30,7 @@ class PlannerController extends Controller
                          'lunch',
                          'snack 2',
                          'dinner',];
+    $this->middleware('auth');
   }
 
   /**
