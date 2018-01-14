@@ -85,6 +85,7 @@ class AccountsController extends Controller
     return view('accounts.test', compact(['accounts',
                                           'title',
                                           'months',
+                                          'hidden',
                                           'empty']));
   }
 

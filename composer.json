@@ -9,7 +9,8 @@
         "laravel/framework": "5.2.*",
         "guzzlehttp/guzzle": "^6.2",
         "laravelcollective/html": "5.*",
-        "phelium/mysql-backup": "dev-master"
+        "phelium/mysql-backup": "dev-master",
+        "doctrine/dbal": "^2.6"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

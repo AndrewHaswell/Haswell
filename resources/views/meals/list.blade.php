@@ -9,41 +9,48 @@
         <table class="table table-striped table-hover">
           <thead class="thead-default">
           <tr>
-            <th>Name</th>
-            <th>---</th>
-            <th>---</th>
-            <th>---</th>
-            <th>---</th>
-            <th>---</th>
-            <th>---</th>
+            <th align="left">Name</th>
+            <th align="center">Energy</th>
+            <th align="center">Fat</th>
+            <th align="center">Saturates</th>
+            <th align="center">Carb</th>
+            <th align="center">Sugars</th>
+            <th align="center">Fibre</th>
+            <th align="center">Protein</th>
+            <th align="center">Salt</th>
           </tr>
           </thead>
           <tbody>
 
           @foreach ($meals as $meal)
 
-
             <tr>
-              <th>
+              <th align="left">
                 <a href="{{ url('/meals/'.$meal->id.'/edit') }}" id="name_">{{$meal->name}}</a>
               </th>
-              <td>
-                ---
+              <td align="center">
+                {{round($meal->energy)}}
               </td>
-              <td>
-                ---
+              <td align="center">
+                {{round($meal->fat,2)}}
               </td>
-              <td>
-                ---
+              <td align="center">
+                {{round($meal->saturates,2)}}
               </td>
-              <td>
-                ---
+              <td align="center">
+                {{round($meal->carb,2)}}
               </td>
-              <td>
-                ---
+              <td align="center">
+                {{round($meal->sugars,2)}}
               </td>
-              <td>
-                ---
+              <td align="center">
+                {{round($meal->fibre,2)}}
+              </td>
+              <td align="center">
+                {{round($meal->protein,2)}}
+              </td>
+              <td align="center">
+                {{round($meal->salt,2)}}
               </td>
 
             </tr>
