@@ -85,6 +85,10 @@
             <?php
             $dmp = \App\Models\Payment::findOrFail(29);
             $dmp_amount = $dmp->amount;
+
+            $mam_loan = \App\Models\Payment::findOrFail(35);
+            $dmp_amount += $mam_loan->amount;
+
             $repayment = abs($total);
             $months = ceil($repayment / $dmp_amount);
             $year = date('Y');
@@ -98,7 +102,7 @@
             <tr>
               <th>Final Repayment Date</th>
               <td colspan="2">&nbsp;</td>
-              <td align="right">{{ $date->format('jS M Y') }}</td>
+              <td align="right">{{ $date->format('M Y') }}</td>
             </tr>
           @endif
           </tbody>
