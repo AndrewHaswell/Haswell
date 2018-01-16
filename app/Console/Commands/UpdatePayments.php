@@ -112,7 +112,7 @@ class UpdatePayments extends Command
 
   public function calculate_savings()
   {
-    $accounts = Account::where('type', '=', 'current')->get();
+    $accounts = Account::where('type', '=', 'current')->where('hidden', '=', 0)->get();
     $today = Carbon::today();
     $savings_account = Account::where('name', '=', 'Rhodes 2018')->firstOrFail();
     $minimum_account_level = 60;
