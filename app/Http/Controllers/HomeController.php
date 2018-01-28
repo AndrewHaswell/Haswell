@@ -41,7 +41,7 @@ class HomeController extends Controller
       }
     }
     $schedules = Schedule::whereNotIn('account_id', $hidden_accounts)->where('payment_date', '>', Carbon::parse('today'))->where('payment_date', '<=', Carbon::parse($limit . ' days'))->where('transfer', 0)->orderBy('payment_date', 'asc')->orderBy('type', 'desc')->get();
-    $transactions = Transaction::whereNotIn('account_id', $hidden_accounts)->where('transfer', 0)->where('payment_date', '>', Carbon::parse('-' . $limit . ' days'))->orderBy('payment_date', 'desc')->limit(($limit * 6))->get();
+    $transactions = Transaction::whereNotIn('account_id', $hidden_accounts)->where('transfer', 0)->where('payment_date', '>', Carbon::parse('-' . $limit . ' days'))->orderBy('payment_date', 'desc')->get();
 
     return view('home', compact(['schedules',
                                  'transactions',
