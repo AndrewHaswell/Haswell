@@ -32,7 +32,7 @@ Route::get('/update', function () {
   Artisan::call('payments:update');
 });
 
-Route::get('/home/{limit}', 'HomeController@index');
+Route::get('/home/{limit?}', 'HomeController@index');
 Route::get('/accounts/{id}', 'AccountsController@detail');
 Route::get('/future/{id}/{month}', 'AccountsController@future');
 Route::get('/transactions/{id}', 'TransactionsController@detail');
