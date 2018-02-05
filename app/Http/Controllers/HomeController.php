@@ -24,13 +24,13 @@ class HomeController extends Controller
   }
 
   /**
-   * Show the application dashboard.
+   * @param int $limit
    *
-   * @return \Illuminate\Http\Response
+   * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+   * @author Andrew Haswell
    */
-  public function index()
+  public function index($limit = 7)
   {
-    $limit = 7;
     $accounts = Account::all();
     $account_list = [];
     $hidden_accounts = [];
