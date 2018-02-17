@@ -77,6 +77,7 @@
 
     .nutrition
     .upcoming_link {
+      margin-left: 15px;
       float:      right;
       text-align: right;
       font-size:  12pt;
