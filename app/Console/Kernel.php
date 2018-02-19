@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Console\Commands\CheckQuotes;
 use App\Console\Commands\UpdatePayments;
 use App\Console\Commands\DatabaseBackup;
 use Illuminate\Console\Scheduling\Schedule;
@@ -15,6 +16,7 @@ class Kernel extends ConsoleKernel
    * @var array
    */
   protected $commands = [UpdatePayments::class,
+                         CheckQuotes::class,
                          DatabaseBackup::class];
 
   /**
