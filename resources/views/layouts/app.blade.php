@@ -77,6 +77,7 @@
 
     .nutrition
     .upcoming_link {
+      margin-left: 15px;
       float:      right;
       text-align: right;
       font-size:  12pt;
@@ -108,7 +109,15 @@
         <li><a href="{{ url('/home') }}">Home</a></li>
         <li><a href="{{ url('/accounts') }}">Accounts</a></li>
         <li><a href="{{ url('/transactions') }}">Transactions</a></li>
-        <li><a href="{{ url('/payments') }}">Payments</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+             aria-expanded="false">Payments<span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="{{ url('/payments') }}">Payment List</a></li>
+            <li><a href="{{ url('/budget') }}">Budget</a></li>
+          </ul>
+        </li>
 
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
@@ -117,8 +126,9 @@
             <li><a href="{{ url('/planner') }}">Meal Planner</a></li>
             <li role="separator" class="divider"></li>
             <li><a href="{{ url('/meals/create') }}">Add Meal</a></li>
-            <li><a href="{{ url('/ingredients/create') }}">Add Ingredient</a></li>
+            <li><a href="{{ url('/meals') }}">Edit Meals</a></li>
             <li role="separator" class="divider"></li>
+            <li><a href="{{ url('/ingredients/create') }}">Add Ingredient</a></li>
             <li><a href="{{ url('/ingredients') }}">Edit Ingredients</a></li>
             <li role="separator" class="divider"></li>
             <li><a href="{{ url('/shopping') }}">Shopping List</a></li>

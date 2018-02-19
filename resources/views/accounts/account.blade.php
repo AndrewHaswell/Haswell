@@ -8,8 +8,8 @@
         <?php $balance = $account->balance; ?>
         <h2>{{$account->name}}</h2>
         <p class="current_balance">Current Balance: <strong>&pound;{{number_format($balance, 2, '.',',')}}</strong>
-          (&pound;{{number_format($account->confirmed_balance, 2, '.',',')}})</p>
-        <p class="upcoming_link"><a href="#" id="show_upcoming">Show Upcoming</a></p>
+          @if ($account->confirmed_balance*100 !=  $balance*100) (&pound;{{number_format($account->confirmed_balance, 2, '.',',')}})@endif</p>
+        <p class="upcoming_link">&nbsp;&nbsp;<a href="#" id="show_upcoming">Show Upcoming</a></p>
 
         <table id="upcoming" class="table table-striped table-hover">
           <thead class="thead-default">

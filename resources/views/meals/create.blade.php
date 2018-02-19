@@ -8,8 +8,9 @@
         <table class="table table-striped table-hover">
           <tbody>
           <tr>
-            <td>Meal Name:</td>
-            <td colspan="2"><input type="text" name="meal_name"/></td>
+            <td colspan="3">Meal Name: <input type="text" name="meal_name"/>&nbsp;&nbsp;&nbsp;Servings: <input
+                  type="text" name="meal_portion"/></td>
+
           </tr>
           <tr>
             <th id="test">Name</th>

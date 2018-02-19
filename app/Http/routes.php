@@ -21,6 +21,7 @@ Route::get('/', function () {
 Route::get('login', 'Auth\AuthController@showLoginForm');
 Route::post('login', 'Auth\AuthController@login');
 Route::get('logout', 'Auth\AuthController@logout');
+Route::get('nutrition', 'MealsController@calculate_meal_nutrition');
 
 // Password Reset Routes...
 Route::get('password/reset/{token?}', 'Auth\PasswordController@showResetForm');
@@ -31,11 +32,12 @@ Route::get('/update', function () {
   Artisan::call('payments:update');
 });
 
-Route::get('/home', 'HomeController@index');
+Route::get('/home/{limit?}', 'HomeController@index');
 Route::get('/accounts/{id}', 'AccountsController@detail');
 Route::get('/future/{id}/{month}', 'AccountsController@future');
 Route::get('/transactions/{id}', 'TransactionsController@detail');
 Route::get('/transactions', 'TransactionsController@index');
+Route::get('/budget', 'BudgetController@index');
 Route::get('/accounts', 'AccountsController@index');
 Route::get('/all_accounts', 'AccountsController@all_accounts');
 Route::get('/tickets', 'TicketController@index');
@@ -53,5 +55,6 @@ Route::resource('meals', 'MealsController');
 Route::resource('ingredients', 'IngredientsController');
 Route::resource('planner', 'PlannerController');
 Route::resource('shop', 'ShoppingController');
+Route::resource('budget', 'BudgetController');
 
 Route::post('/ajax/update_ingredients', 'AjaxController@update_ingredients');

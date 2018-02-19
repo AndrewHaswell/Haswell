@@ -24,21 +24,24 @@ class HomeController extends Controller
   }
 
   /**
-   * Show the application dashboard.
+   * @param int $limit
    *
-   * @return \Illuminate\Http\Response
+   * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+   * @author Andrew Haswell
    */
-  public function index()
+  public function index($limit = 7)
   {
-    $limit = 10;
     $accounts = Account::all();
     $account_list = [];
+    $hidden_accounts = [];
     foreach ($accounts as $account) {
       $account_list[$account->id] = $account->name;
+      if ($account->hidden) {
+        $hidden_accounts[] = $account->id;
+      }
     }
-    $schedules = Schedule::where('payment_date', '>', Carbon::parse('today'))->where('transfer', 0)->orderBy('payment_date', 'asc')->orderBy('type', 'desc')->limit($limit)->get();
-
-    $transactions = Transaction::where('transfer', 0)->orderBy('payment_date', 'desc')->limit(($limit * 4))->get();
+    $schedules = Schedule::whereNotIn('account_id', $hidden_accounts)->where('payment_date', '>', Carbon::parse('today'))->where('payment_date', '<=', Carbon::parse($limit . ' days'))->where('transfer', 0)->orderBy('payment_date', 'asc')->orderBy('type', 'desc')->get();
+    $transactions = Transaction::whereNotIn('account_id', $hidden_accounts)->where('name', 'NOT LIKE', '%->%')->where('name', 'NOT LIKE', '%<-%')->where('payment_date', '>', Carbon::parse('-' . $limit . ' days'))->orderBy('payment_date', 'desc')->get();
 
     return view('home', compact(['schedules',
                                  'transactions',

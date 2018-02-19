@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Account;
 use App\Models\ScheduleUpdate;
 use App\Models\Transaction;
+use App\Models\Transfer;
 use DateTime;
 use DatePeriod;
 use DateInterval;
@@ -49,25 +50,59 @@ class UpdatePayments extends Command
   public function handle()
   {
     $this->update_schedules();
-
     $this->calculate_savings();
+
+    $account_list = [];
+    $accounts = Account::all();
+    foreach ($accounts as $account) {
+      $account_list[$account->id] = $account->name;
+    }
 
     // Add schedules to transactions
     $today = Carbon::today();
-    $active = Schedule::where('payment_date', '=', $today)->get();
+    $active = Schedule::where('payment_date', '=', $today)->where('transfer', '!=', '-1')->get();
 
     foreach ($active as $schedule) {
       $transaction = new Transaction();
 
-      echo 'Transaction Added: ' . $schedule->name . "\n\r";
+      $name = !empty($schedule->transfer)
+        ? $schedule->name . ' -> ' . $account_list[$schedule->transfer]
+        : $schedule->name;
 
-      $transaction->name = $schedule->name;
+      echo 'Transaction Added: ' . $name . "\n\r";
+
+      $transaction->name = $name;
       $transaction->payment_date = $today;
       $transaction->type = $schedule->type;
       $transaction->account_id = $schedule->account_id;
-      $transaction->confirmed = false;
+      $transaction->confirmed = $schedule->confirmed;
       $transaction->amount = $schedule->amount;
       $transaction->save();
+
+      // If we're meant to transfer the money
+      if (!empty($schedule->transfer)) {
+
+        $transfer_from_id = $transaction->id;
+
+        $name = $schedule->name . ' <- ' . $account_list[$schedule->account_id];
+        $transaction = new Transaction();
+        $transaction->name = $name;
+        $transaction->payment_date = $today;
+        $transaction->type = ($schedule->type == 'credit'
+          ? 'debit'
+          : 'credit');
+        $transaction->account_id = $schedule->transfer;
+        $transaction->confirmed = $schedule->confirmed;
+        $transaction->amount = $schedule->amount;
+        $transaction->save();
+
+        $transfer_to_id = $transaction->id;
+
+        $transfer_link = new Transfer();
+        $transfer_link->from_id = $transfer_from_id;
+        $transfer_link->to_id = $transfer_to_id;
+        $transfer_link->save();
+      }
     }
   }
 
@@ -77,7 +112,7 @@ class UpdatePayments extends Command
 
   public function calculate_savings()
   {
-    $accounts = Account::where('type', '=', 'current')->get();
+    $accounts = Account::where('type', '=', 'current')->where('hidden', '=', 0)->get();
     $today = Carbon::today();
     $savings_account = Account::where('name', '=', 'Rhodes 2018')->firstOrFail();
     $minimum_account_level = 60;
@@ -260,7 +295,6 @@ class UpdatePayments extends Command
   public function update_schedules()
   {
     $payments = Payment::all();
-    $accounts = Account::all();
     $holidays = $this->bank_holidays();
 
     $days_of_the_week = ['sunday',
@@ -270,12 +304,6 @@ class UpdatePayments extends Command
                          'thursday',
                          'friday',
                          'saturday'];
-
-    $account_list = [];
-
-    foreach ($accounts as $account) {
-      $account_list[$account->id] = $account->name;
-    }
 
     // Clear the schedule table
     Schedule::truncate();
@@ -358,18 +386,6 @@ class UpdatePayments extends Command
 
         if ($dt >= $now && $dt < $absolute_end) {
 
-          if ($payment->transfer_account_id > 0) {
-            $transfer_to_name = 'Transferred to ' . $account_list[$payment->transfer_account_id];
-            $transfer_from_name = 'Transferred from ' . $account_list[$payment->account_id];
-            $transfer = 1;
-          } else {
-            $transfer = 0;
-          }
-
-          $payment->name = !empty($transfer_to_name)
-            ? $transfer_to_name
-            : $payment->name;
-
           $payment->payment_date = (string)$dt->format('Y-m-d H:i:s');
 
           $base_64_payment = $this->encode_it($payment);
@@ -385,7 +401,8 @@ class UpdatePayments extends Command
             $schedule->account_id = $scheduleUpdate->account_id;
             $schedule->amount = $scheduleUpdate->amount;
             $schedule->type = $scheduleUpdate->type;
-            $schedule->transfer = $transfer;
+            $schedule->confirmed = $payment->confirmed;
+            $schedule->transfer = $payment->transfer_account_id;
             $schedule->payment_date = $scheduleUpdate->payment_date;
             $schedule->save();
           } else {
@@ -394,25 +411,25 @@ class UpdatePayments extends Command
             $schedule->account_id = $payment->account_id;
             $schedule->amount = $payment->amount;
             $schedule->type = $payment->type;
-            $schedule->transfer = $transfer;
+            $schedule->confirmed = $payment->confirmed;
+            $schedule->transfer = $payment->transfer_account_id;
             $schedule->payment_date = $payment->payment_date;
             $schedule->save();
           }
 
           if ($payment->transfer_account_id > 0) {
             $schedule = new Schedule();
-            $schedule->name = $transfer_from_name;
+            $schedule->name = $payment->name;
             $schedule->account_id = $payment->transfer_account_id;
             $schedule->amount = $payment->amount;
-            $schedule->transfer = $transfer;
+            $schedule->transfer = -1;
             $schedule->type = ($payment->type == 'credit'
               ? 'debit'
               : 'credit');
+            $schedule->confirmed = $payment->confirmed;
             $schedule->payment_date = (string)$dt->format('Y-m-d');
             $schedule->save();
           }
-
-          unset($transfer_to_name);
         }
       }
     }
