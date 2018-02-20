@@ -41,7 +41,7 @@ class QuoteController extends Controller
       $sla_days = !empty($sla[$quote->account_ref])
         ? $sla[$quote->account_ref]
         : 365;
-      $sla_date = Carbon::createFromTimestamp($quote->created_at)->addDays($sla_days);
+      $sla_date = Carbon::createFromTimestamp($quote->created_at)->addWeekDays($sla_days);
       $difference = Carbon::now()->diffInHours($sla_date, false);
       $difference = $difference < 0
         ? 0
