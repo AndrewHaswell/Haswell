@@ -134,6 +134,16 @@
             <li><a href="{{ url('/shopping') }}">Shopping List</a></li>
           </ul>
         </li>
+
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+             aria-expanded="false">Work<span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="{{ url('/tickets') }}">Ticket List</a></li>
+            <li><a href="{{ url('/quotes') }}">Quote List</a></li>
+          </ul>
+        </li>
       </ul>
 
       <!-- Right Side Of Navbar -->

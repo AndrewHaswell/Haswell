@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Console\Commands\CheckQuotes;
 use App\Console\Commands\UpdatePayments;
 use App\Console\Commands\DatabaseBackup;
 use Illuminate\Console\Scheduling\Schedule;
@@ -15,6 +16,7 @@ class Kernel extends ConsoleKernel
    * @var array
    */
   protected $commands = [UpdatePayments::class,
+                         CheckQuotes::class,
                          DatabaseBackup::class];
 
   /**
@@ -28,5 +30,6 @@ class Kernel extends ConsoleKernel
   {
     $schedule->command('payments:update')->daily()->sendOutputTo('payment_update.log');
     $schedule->command('db:backup')->daily()->sendOutputTo('payment_update.log');
+    $schedule->command('quotes:check')->hourly()->between('9.00','16:59');
   }
 }
