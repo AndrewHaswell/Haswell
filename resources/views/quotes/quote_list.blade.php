@@ -20,7 +20,7 @@
                 <td align="left"><strong @if ($status_id < 3 && $quote_info['sla_left'] < 8) style="color:red" @endif > {{$quote_info['client']}}</strong></td>
                 <td align="left">{{$quote_info['subject']}}</td>
                 <td align="left">@if ($status_id < 3) {{$quote_info['sla_left']}} @else - @endif</td>
-                <td align="right">{{date('jS F Y', $created_at)}}</td>
+                <td title="{{date('g:ia - jS F Y', $created_at)}}" align="right">{{date('j M y', $created_at)}}</td>
               </tr>
 
             @endforeach
