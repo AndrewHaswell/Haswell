@@ -83,11 +83,11 @@
           </tr>
           @if ($hidden)
             <?php
-            $dmp = \App\Models\Payment::findOrFail(29);
-            $dmp_amount = $dmp->amount;
+            $dmp = \App\Models\Payment::where('name','=','DMP')->get();
+            $dmp_amount = $dmp[0]->amount;
 
-            $mam_loan = \App\Models\Payment::findOrFail(35);
-            $dmp_amount += $mam_loan->amount;
+            $mam_loan = \App\Models\Payment::where('name','=','Mam')->get();
+            $dmp_amount += $mam_loan[0]->amount;
 
             $repayment = abs($total);
             $months = ceil($repayment / $dmp_amount);
