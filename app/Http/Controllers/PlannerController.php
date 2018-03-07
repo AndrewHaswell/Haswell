@@ -25,9 +25,11 @@ class PlannerController extends Controller
                    'thursday',
                    'friday',
                    'saturday'];
-    $this->meal_types = ['breakfast',
+    $this->meal_types = ['andy breakfast',
+                         'tessa breakfast',
                          'snack 1',
-                         'lunch',
+                         'andy lunch',
+                         'tessa lunch',
                          'snack 2',
                          'dinner',];
     $this->middleware('auth');
