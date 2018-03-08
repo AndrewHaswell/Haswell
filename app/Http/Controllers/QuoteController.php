@@ -24,7 +24,7 @@ class QuoteController extends Controller
   public function index()
   {
     $client = new Client();
-    $response = $client->get(env('QUOTE_URL', '') . '?assignee_id=220&status_ids=1,2,3,4', ['auth' => [env('TICKET_USERNAME', ''),
+    $response = $client->get(env('QUOTE_URL', '') . '?assignee_id=220&status_ids=1,2,11', ['auth' => [env('TICKET_USERNAME', ''),
                                                                                                        env('TICKET_PASSWORD', '')]]);
     $result = json_decode((string)$response->getBody());
 
