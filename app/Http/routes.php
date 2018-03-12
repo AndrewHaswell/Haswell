@@ -52,6 +52,7 @@ Route::resource('transactions', 'TransactionsController');
 Route::resource('payments', 'PaymentsController');
 Route::resource('schedules', 'SchedulesController');
 Route::resource('meals', 'MealsController');
+Route::resource('items', 'ItemsController');
 Route::resource('ingredients', 'IngredientsController');
 Route::resource('planner', 'PlannerController');
 Route::resource('shop', 'ShoppingController');
