@@ -8,7 +8,7 @@
         <table id="quotes" class="table table-striped table-hover">
           @foreach ($formatted_quotes as $status_id => $quotes)
             <tr>
-              <td colspan="5" class="bg-primary"><h4>{{$status_codes[$status_id]}} ({{count($quotes)}})</h4></td>
+              <td colspan="5" class="bg-primary"><h4>{{$teamwork_codes[$status_id]}} ({{count($quotes)}})</h4></td>
             </tr>
 
             <?php krsort($quotes); ?>
