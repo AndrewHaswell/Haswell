@@ -24,12 +24,16 @@ class QuoteController extends Controller
   public function index()
   {
     $client = new Client();
-    $response = $client->get(env('QUOTE_URL', '') . '?assignee_id=220&status_ids=1,2,11', ['auth' => [env('TICKET_USERNAME', ''),
+    $response = $client->get(env('QUOTE_URL', '') . '?assignee_id=220&status_ids=1,2,6,11', ['auth' => [env('TICKET_USERNAME', ''),
                                                                                                        env('TICKET_PASSWORD', '')]]);
     $result = json_decode((string)$response->getBody());
 
     $formatted_quotes = [];
     $status_codes = [];
+    $teamwork_codes = [1  => 'Not in Teamwork',
+                       2  => 'Request - Awaiting Quote',
+                       6  => 'Quote - Client Changes Requested',
+                       11 => 'Quote - Awaiting Internal Approval'];
 
     $sla = $this->sla_list();
 
@@ -58,6 +62,7 @@ class QuoteController extends Controller
 
     return view('quotes.quote_list', compact(['formatted_quotes',
                                               'status_codes',
+                                              'teamwork_codes',
                                               'sla']));
   }
 
