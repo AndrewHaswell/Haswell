@@ -54,7 +54,7 @@ class CheckQuotes extends Command
 
       $sla_days = !empty($sla[$quote->account_ref])
         ? $sla[$quote->account_ref]
-        : 35;
+        : 3;
       $sla_date = Carbon::createFromTimestamp($quote->created_at)->addWeekDays($sla_days);
       $difference = Carbon::now()->diffInHours($sla_date, false);
       $difference = $difference < 0

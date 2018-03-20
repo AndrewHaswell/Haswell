@@ -102,6 +102,8 @@ class PlannerController extends Controller
           $meal = MealPlan::firstorNew($this_meal);
           $meal->meal_id = $request->$key;
           $meal->save();
+        } else {
+          MealPlan::where('day', $days)->where('meal', $mt)->delete();
         }
       }
     }
@@ -117,16 +119,30 @@ class PlannerController extends Controller
     $ingredient_list = [];
 
     foreach ($meal_plan as $plan) {
-
       $meal = Meals::findOrFail($plan->meal_id);
       $ingredients = $meal->ingredients()->get();
-
       if (!empty($ingredients)) {
-
         foreach ($ingredients as $ingredient) {
-          $ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id] = ['id'    => $ingredient->id,
-                                                                                         'name'  => $ingredient->name,
-                                                                                         'price' => $ingredient->price];
+          if (empty($ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id])) {
+            $ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id] = ['id'           => $ingredient->id,
+                                                                                           'quantity'     => $ingredient->pivot->quantity,
+                                                                                           'unit'         => $ingredient->pivot->unit,
+                                                                                           'pack_size'    => $ingredient->pack,
+                                                                                           'portion_size' => $ingredient->portion,
+                                                                                           'price'        => $ingredient->price];
+          } else {
+            $ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['quantity'] += $ingredient->pivot->quantity;
+          }
+
+          $name = $ingredient->name;
+          $unit = $ingredient->pivot->unit;
+          $qty = $ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['quantity'];
+
+          $name .= $unit == 'weight'
+            ? ' (' . $qty . 'g)'
+            : ' x ' . $qty;
+
+          $ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['name'] = $name;
         }
       }
     }
