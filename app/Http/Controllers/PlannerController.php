@@ -15,6 +15,7 @@ class PlannerController extends Controller
 
   private $days;
   private $meal_types;
+  private $ingredient_list;
 
   public function __construct()
   {
@@ -33,6 +34,7 @@ class PlannerController extends Controller
                          'snack 2',
                          'dinner',];
     $this->middleware('auth');
+    $this->ingredient_list = [];
   }
 
   /**
@@ -116,13 +118,15 @@ class PlannerController extends Controller
 
     $meal_plan = MealPlan::all();
 
-    $ingredient_list = [];
-
     foreach ($meal_plan as $plan) {
+
+
       $meal = Meals::findOrFail($plan->meal_id);
       $ingredients = $meal->ingredients()->get();
-      $ingredient_list = $this->format_ingredients($ingredients);
+      $this->format_ingredients($ingredients);
     }
+
+    $ingredient_list = $this->ingredient_list;
 
     return view('shopping.shop', compact(['ingredient_list']));
   }
@@ -137,18 +141,18 @@ class PlannerController extends Controller
           continue;
         }
 
-        if (empty($ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id])) {
-          $ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id] = ['id'            => $ingredient->id,
-                                                                                         'quantity'      => $ingredient->pivot->quantity,
-                                                                                         'unit'          => $ingredient->pivot->unit,
-                                                                                         'original_name' => $ingredient->name,
-                                                                                         'pack_size'     => $ingredient->pack,
-                                                                                         'portion_size'  => $ingredient->portion,
-                                                                                         'portion_count' => 1,
-                                                                                         'price'         => $ingredient->price];
+        if (empty($this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id])) {
+          $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id] = ['id'            => $ingredient->id,
+                                                                                               'quantity'      => $ingredient->pivot->quantity,
+                                                                                               'unit'          => $ingredient->pivot->unit,
+                                                                                               'original_name' => $ingredient->name,
+                                                                                               'pack_size'     => $ingredient->pack,
+                                                                                               'portion_size'  => $ingredient->portion,
+                                                                                               'portion_count' => 1,
+                                                                                               'price'         => $ingredient->price];
         } else {
-          $ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['quantity'] += $ingredient->pivot->quantity;
-          $ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['portion_count']++;
+          $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['quantity'] += $ingredient->pivot->quantity;
+          $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['portion_count']++;
         }
 
         // TODO: Update quantity against pack size
@@ -157,16 +161,15 @@ class PlannerController extends Controller
 
         $name = $ingredient->name;
         $unit = $ingredient->pivot->unit;
-        $qty = $ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['quantity'];
+        $qty = $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['quantity'];
 
         $name .= $unit == 'weight'
           ? ' (' . $qty . 'g)'
           : ' x ' . $qty;
 
-        $ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['name'] = $name;
+        $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['name'] = $name;
       }
     }
-    return $ingredient_list;
   }
 
   public function shopping_list_2()
@@ -205,6 +208,11 @@ class PlannerController extends Controller
     return view('shopping.check', compact(['ingredient_list']));
   }
 
+  /**
+   * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+   * @author Andrew Haswell
+   */
+
   public function shopping_list_phone()
   {
 
@@ -221,10 +229,10 @@ class PlannerController extends Controller
 
       $meal = Meals::findOrFail($plan->meal_id);
       $ingredients = $meal->ingredients()->get();
-
-      $ingredient_list = $this->format_ingredients($ingredients, $unwanted_ingredient_list);
+      $this->format_ingredients($ingredients, $unwanted_ingredient_list);
     }
 
+    $ingredient_list = $this->ingredient_list;
     return view('shopping.phone_check', compact(['ingredient_list']));
   }
 
