@@ -49,6 +49,16 @@
         var orig_price = parseFloat($('#price_' + id).val());
         var price = parseFloat($('#price_area input.price').val());
 
+        var name = $('#name_' + id).val();
+
+        var new_row = '<p class="checked_row" id="checked_row_' + id + '">' +
+          '<input class="mark_as_not_done" id="undo_' + id + '" type="checkbox"/>' +
+          '<label for="undo_' + id + '">' + name + '</label>' +
+          '<span class="ingredient_price" id="ingredient_price_' + id + '">' + price.toFixed(2) + '</span>' +
+          '</p>';
+
+        $('#checked_off').append(new_row);
+
         if (Math.round(orig_price * 100) != Math.round(price * 100)) {
 
           $.ajax
@@ -106,7 +116,7 @@
   </script>
   <style>
     body {
-      font-size: 12pt;
+      font-size: 14pt;
       margin:    10px;
       }
 
@@ -126,7 +136,7 @@
 
     label {
       font-weight: normal;
-      font-size:   12pt;
+      font-size:   14pt;
       }
 
     input[type=checkbox] {
@@ -183,6 +193,15 @@
     .spacer {
       margin: 3px;
       }
+
+    #checked_off p label {
+      text-decoration: line-through;
+      }
+
+    #checked_off p {
+
+      color: darkgrey;
+      }
   </style>
 
 </head>
@@ -190,7 +209,7 @@
 
 <div id="price_area">
   <div class="ingredient">-</div>
-  <input class="price" type="number" value="-"/>
+  <input class="price" type="number" value="0"/>
   <input type="hidden" id="current_id" value="0"/>
 
   <button id="go" type="button" class="btn btn-primary">Cross Off</button>
@@ -221,8 +240,13 @@
   <div class="row">
     <strong>TOTAL: </strong><span class="ingredient_price" style="font-weight:bold">&pound;<span
           id="total_display">0.00</span></span>
+    <input type="hidden" id="total" value="0"/>
   </div>
-  <input type="hidden" id="total" value="0"/>
+
+  <div class="spacer">&nbsp;</div>
+  <div id="checked_off" class="row">
+
+  </div>
 </div>
 </div>
 </body>
