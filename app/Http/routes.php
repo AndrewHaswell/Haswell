@@ -49,6 +49,7 @@ Route::get('/shopping', 'PlannerController@shopping_list');
 Route::get('/list', 'PlannerController@shopping_list_2');
 Route::get('/phone_list', 'PlannerController@shopping_list_phone');
 
+
 Route::resource('transactions', 'TransactionsController');
 Route::resource('payments', 'PaymentsController');
 Route::resource('schedules', 'SchedulesController');
@@ -59,3 +60,4 @@ Route::resource('shop', 'ShoppingController');
 Route::resource('budget', 'BudgetController');
 
 Route::post('/ajax/update_ingredients', 'AjaxController@update_ingredients');
+Route::post('/ajax/update_ingredient_prices', 'AjaxController@update_ingredient_prices');

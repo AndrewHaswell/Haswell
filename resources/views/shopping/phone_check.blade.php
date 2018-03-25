@@ -50,7 +50,25 @@
         var price = parseFloat($('#price_area input.price').val());
 
         if (Math.round(orig_price * 100) != Math.round(price * 100)) {
-          alert('ajax update price for ' + id);
+
+          $.ajax
+          (
+            {
+              url: '/ajax/update_ingredient_prices',
+              dataType: 'json',
+              type: 'POST',
+              async: true,
+              data:
+                {
+                  "_token": "{{ csrf_token() }}",
+                  id: id,
+                  price: price
+                },
+              success: function (data) {
+                // Data is whatever gets returned
+              }
+            }
+          );
         }
 
         if (price) {
@@ -172,7 +190,7 @@
 
 <div id="price_area">
   <div class="ingredient">-</div>
-  <input class="price" type="text" value="-"/>
+  <input class="price" type="number" value="-"/>
   <input type="hidden" id="current_id" value="0"/>
 
   <button id="go" type="button" class="btn btn-primary">Cross Off</button>
