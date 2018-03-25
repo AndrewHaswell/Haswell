@@ -127,10 +127,16 @@ class PlannerController extends Controller
     return view('shopping.shop', compact(['ingredient_list']));
   }
 
-  public function format_ingredients($ingredients)
+  public function format_ingredients($ingredients, $unwanted_ingredient_list = [])
   {
     if (!empty($ingredients)) {
       foreach ($ingredients as $ingredient) {
+
+
+        if (in_array($ingredient->id, $unwanted_ingredient_list)) {
+          continue;
+        }
+
         if (empty($ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id])) {
           $ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id] = ['id'            => $ingredient->id,
                                                                                          'quantity'      => $ingredient->pivot->quantity,
@@ -216,7 +222,7 @@ class PlannerController extends Controller
       $meal = Meals::findOrFail($plan->meal_id);
       $ingredients = $meal->ingredients()->get();
 
-      $ingredient_list = $this->format_ingredients($ingredients);
+      $ingredient_list = $this->format_ingredients($ingredients, $unwanted_ingredient_list);
     }
 
     return view('shopping.phone_check', compact(['ingredient_list']));
