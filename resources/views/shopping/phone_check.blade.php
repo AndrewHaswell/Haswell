@@ -120,7 +120,7 @@
   </script>
   <style>
     body {
-      font-size: 14pt;
+      font-size: 11pt;
       margin:    10px;
       }
 
@@ -140,7 +140,7 @@
 
     label {
       font-weight: normal;
-      font-size:   14pt;
+      font-size:   11pt;
       }
 
     input[type=checkbox] {
@@ -160,7 +160,7 @@
     #price_area, #quick_add_area {
       display:          none;
       position:         fixed;
-      top:              130px;
+      top:              20px;
       left:             40px;
       right:            40px;
       border:           2px solid black;
@@ -198,7 +198,7 @@
 
     .add_item button {
       padding:   2%;
-      font-size: 14pt;
+      font-size: 11pt;
       }
 
     .ingredient_price {
