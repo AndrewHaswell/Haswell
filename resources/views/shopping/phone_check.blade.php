@@ -92,6 +92,10 @@
         $('#price_area').hide();
       });
 
+      $('#add_item_button').bind("click", function () {
+        $('#quick_add_area').show();
+      });
+
       $('#cancel').bind("click", function () {
         var id = $('#current_id').val();
         $('input#' + id).prop('checked', false);
@@ -153,7 +157,7 @@
       border-bottom: 1px dotted #afafaf;
       }
 
-    #price_area {
+    #price_area, #quick_add_area {
       display:          none;
       position:         fixed;
       top:              130px;
@@ -163,14 +167,20 @@
       background-color: rgba(255, 255, 255, 0.9);
       }
 
-    #price_area div.ingredient, #price_area input.price {
-      text-align:  center;
-      font-weight: bold;
-      font-size:   16pt;
-      padding:     10px;
+    #price_area div.ingredient, #price_area input.price, #quick_add_area input.ingredient, #quick_add_area input.price {
+      text-align:       center;
+      font-weight:      bold;
+      font-size:        16pt;
+      padding:          10px;
       }
 
-    #price_area input.price {
+    #quick_add_area input.ingredient {
+      width:  90%;
+      margin: 5%;
+      border: 1px dashed grey;
+      }
+
+    #price_area input.price, #quick_add_area input.price {
       font-size: 30pt;
       width:     90%;
       padding:   5%;
@@ -178,12 +188,17 @@
       border:    1px dashed grey;
       }
 
-    #price_area button {
+    #price_area button, .add_item button, #quick_add_area button {
       display:   block;
       width:     90%;
       padding:   8%;
       margin:    5%;
       font-size: 18pt;
+      }
+
+    .add_item button {
+      padding:   2%;
+      font-size: 14pt;
       }
 
     .ingredient_price {
@@ -199,7 +214,6 @@
       }
 
     #checked_off p {
-
       color: darkgrey;
       }
   </style>
@@ -213,6 +227,16 @@
   <input type="hidden" id="current_id" value="0"/>
 
   <button id="go" type="button" class="btn btn-primary">Cross Off</button>
+  <button id="cancel" type="button" class="btn btn-danger">Cancel</button>
+
+</div>
+
+<div id="quick_add_area">
+  <input type="text" class="ingredient" value=""/>
+  <input class="price" type="number" value="0"/>
+  <input type="hidden" id="current_id" value="0"/>
+
+  <button id="add" type="button" class="btn btn-primary">Add Item</button>
   <button id="cancel" type="button" class="btn btn-danger">Cancel</button>
 
 </div>
@@ -241,6 +265,12 @@
     <strong>TOTAL: </strong><span class="ingredient_price" style="font-weight:bold">&pound;<span
           id="total_display">0.00</span></span>
     <input type="hidden" id="total" value="0"/>
+  </div>
+
+  <div class="spacer">&nbsp;</div>
+
+  <div class="row add_item">
+    <button id="add_item_button" type="button" class="btn btn-primary">Add Item</button>
   </div>
 
   <div class="spacer">&nbsp;</div>
