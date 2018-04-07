@@ -28,7 +28,7 @@
 
     $(function () {
 
-      $('.mark_as_done').bind("click", function () {
+      $(document).on("click", '.mark_as_done', function () {
         var id = $(this).attr('id');
         var name = $('#name_' + id).val();
         $('#price_area div.ingredient').text(name);
@@ -38,8 +38,52 @@
         $('#price_area').show();
       });
 
+      $(document).on("click", '.mark_as_not_done', function () {
+
+        if (confirm('Return item to shopping list?')) {
+
+          var id = $(this).attr('id').replace('undo_', '');
+          var price = parseFloat($('#ingredient_price_hidden_' + id).html());
+
+          $('#checked_row_' + id).hide();
+          $('#ingredient_price_' + id).html(price.toFixed(2));
+          $('#shopping_row_' + id).show();
+
+          var total = parseFloat($('#total').val());
+          var new_total = parseFloat(total - price).toFixed(2);
+
+          $('#total').val(new_total);
+          $('#total_display').text(new_total);
+        }
+
+      });
+
       $('input.price').bind("click", function () {
         $(this).val('');
+      });
+
+      $('#qa_add').bind("click", function () {
+        var name = $('#qa_name').val();
+        var price = parseFloat($('#qa_price').val());
+        var id = name + '_' + (price * 100);
+
+        if (name.length > 0 && price > 0) {
+          var new_row = '<p class="added_row" id="added_row_' + id + '">' +
+            '<input class="remove_added_item" id="remove_' + id + '" type="checkbox"/>' +
+            '<label for="remove_' + id + '">' + name + '</label>' +
+            '<span class="ingredient_price" id="ingredient_price_added_' + id + '">' + price.toFixed(2) + '</span>' +
+            '</p>';
+
+          var total = parseFloat($('#total').val());
+          var new_total = parseFloat(price + total).toFixed(2);
+
+          $('#total').val(new_total);
+          $('#total_display').text(new_total);
+
+          $('#checked_off').append(new_row);
+          $('#quick_add_area').hide();
+        }
+
       });
 
       $('#go').bind("click", function () {
@@ -54,7 +98,7 @@
         var new_row = '<p class="checked_row" id="checked_row_' + id + '">' +
           '<input class="mark_as_not_done" id="undo_' + id + '" type="checkbox"/>' +
           '<label for="undo_' + id + '">' + name + '</label>' +
-          '<span class="ingredient_price" id="ingredient_price_' + id + '">' + price.toFixed(2) + '</span>' +
+          '<span class="ingredient_price" id="ingredient_price_hidden_' + id + '">' + price.toFixed(2) + '</span>' +
           '</p>';
 
         $('#checked_off').append(new_row);
@@ -94,6 +138,30 @@
 
       $('#add_item_button').bind("click", function () {
         $('#quick_add_area').show();
+      });
+
+      $('#qa_cancel').bind("click", function () {
+        $('#quick_add_area').hide();
+      })
+
+      $(document).on("click", '.remove_added_item', function () {
+
+        if (confirm('Are you sure you want to remove this added item?')) {
+          var id = $(this).attr('id').replace('remove_', '');
+
+          var price = parseFloat($('#ingredient_price_added_' + id).html());
+          var total = parseFloat($('#total').val());
+
+          console.log(price, total);
+
+          var new_total = parseFloat(total - price).toFixed(2);
+
+          $('#total').val(new_total);
+          $('#total_display').text(new_total);
+
+          $('#added_row_' + id).remove();
+        }
+
       });
 
       $('#cancel').bind("click", function () {
@@ -168,10 +236,10 @@
       }
 
     #price_area div.ingredient, #price_area input.price, #quick_add_area input.ingredient, #quick_add_area input.price {
-      text-align:       center;
-      font-weight:      bold;
-      font-size:        16pt;
-      padding:          10px;
+      text-align:  center;
+      font-weight: bold;
+      font-size:   16pt;
+      padding:     10px;
       }
 
     #quick_add_area input.ingredient {
@@ -232,12 +300,12 @@
 </div>
 
 <div id="quick_add_area">
-  <input type="text" class="ingredient" value=""/>
-  <input class="price" type="number" value="0"/>
-  <input type="hidden" id="current_id" value="0"/>
+  <input type="text" id="qa_name" class="ingredient" value=""/>
+  <input id="qa_price" class="price" type="number" value="0"/>
+  <input type="hidden" id="qa_current_id" value="0"/>
 
-  <button id="add" type="button" class="btn btn-primary">Add Item</button>
-  <button id="cancel" type="button" class="btn btn-danger">Cancel</button>
+  <button id="qa_add" type="button" class="btn btn-primary">Add Item</button>
+  <button id="qa_cancel" type="button" class="btn btn-danger">Cancel</button>
 
 </div>
 
