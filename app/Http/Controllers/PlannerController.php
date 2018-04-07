@@ -15,6 +15,7 @@ class PlannerController extends Controller
 
   private $days;
   private $meal_types;
+  private $ingredient_list;
 
   public function __construct()
   {
@@ -33,6 +34,7 @@ class PlannerController extends Controller
                          'snack 2',
                          'dinner',];
     $this->middleware('auth');
+    $this->ingredient_list = [];
   }
 
   /**
@@ -102,6 +104,8 @@ class PlannerController extends Controller
           $meal = MealPlan::firstorNew($this_meal);
           $meal->meal_id = $request->$key;
           $meal->save();
+        } else {
+          MealPlan::where('day', $days)->where('meal', $mt)->delete();
         }
       }
     }
@@ -114,24 +118,58 @@ class PlannerController extends Controller
 
     $meal_plan = MealPlan::all();
 
-    $ingredient_list = [];
-
     foreach ($meal_plan as $plan) {
+
 
       $meal = Meals::findOrFail($plan->meal_id);
       $ingredients = $meal->ingredients()->get();
-
-      if (!empty($ingredients)) {
-
-        foreach ($ingredients as $ingredient) {
-          $ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id] = ['id'    => $ingredient->id,
-                                                                                         'name'  => $ingredient->name,
-                                                                                         'price' => $ingredient->price];
-        }
-      }
+      $this->format_ingredients($ingredients);
     }
 
+    $ingredient_list = $this->ingredient_list;
+
     return view('shopping.shop', compact(['ingredient_list']));
+  }
+
+  public function format_ingredients($ingredients, $unwanted_ingredient_list = [])
+  {
+    if (!empty($ingredients)) {
+      foreach ($ingredients as $ingredient) {
+
+
+        if (in_array($ingredient->id, $unwanted_ingredient_list)) {
+          continue;
+        }
+
+        if (empty($this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id])) {
+          $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id] = ['id'            => $ingredient->id,
+                                                                                               'quantity'      => $ingredient->pivot->quantity,
+                                                                                               'unit'          => $ingredient->pivot->unit,
+                                                                                               'original_name' => $ingredient->name,
+                                                                                               'pack_size'     => $ingredient->pack,
+                                                                                               'portion_size'  => $ingredient->portion,
+                                                                                               'portion_count' => 1,
+                                                                                               'price'         => $ingredient->price];
+        } else {
+          $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['quantity'] += $ingredient->pivot->quantity;
+          $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['portion_count']++;
+        }
+
+        // TODO: Update quantity against pack size
+        // So if we have 3 apples and the pack size is 6, we need 6
+        // But do we show as 6 or 1 pack??
+
+        $name = $ingredient->name;
+        $unit = $ingredient->pivot->unit;
+        $qty = $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['quantity'];
+
+        $name .= $unit == 'weight'
+          ? ' (' . $qty . 'g)'
+          : ' x ' . $qty;
+
+        $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['name'] = $name;
+      }
+    }
   }
 
   public function shopping_list_2()
@@ -168,6 +206,34 @@ class PlannerController extends Controller
     owned_ingredients::truncate();
 
     return view('shopping.check', compact(['ingredient_list']));
+  }
+
+  /**
+   * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+   * @author Andrew Haswell
+   */
+
+  public function shopping_list_phone()
+  {
+
+    $meal_plan = MealPlan::all();
+
+    $unwanted_ingredient = owned_ingredients::all();
+    $unwanted_ingredient_list = [];
+
+    foreach ($unwanted_ingredient as $this_ingredient) {
+      $unwanted_ingredient_list[] = $this_ingredient->ingredient_id;
+    }
+
+    foreach ($meal_plan as $plan) {
+
+      $meal = Meals::findOrFail($plan->meal_id);
+      $ingredients = $meal->ingredients()->get();
+      $this->format_ingredients($ingredients, $unwanted_ingredient_list);
+    }
+
+    $ingredient_list = $this->ingredient_list;
+    return view('shopping.phone_check', compact(['ingredient_list']));
   }
 
   /**
