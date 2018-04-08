@@ -4,7 +4,7 @@
   <div class="container">
     <div class="row">
       <tr class="col-md-10 col-md-offset-1">
-        <h3>Update Shopping List</h3>
+        <h3>List</h3>
 
         <table class="table table-striped table-hover">
           <thead class="thead-default">

@@ -29,7 +29,8 @@
     $(function () {
 
       $(document).on("click", '.mark_as_done', function () {
-        var id = $(this).attr('id');
+        var id = $(this).attr('id').replace('mark_', '');
+        $(this).prop('checked', false);
         var name = $('#name_' + id).val();
         $('#price_area div.ingredient').text(name);
         var price = $('#price_' + id).val();
@@ -44,7 +45,6 @@
 
           var id = $(this).attr('id').replace('undo_', '');
           var price = parseFloat($('#ingredient_price_hidden_' + id).html());
-
           $('#checked_row_' + id).hide();
           $('#ingredient_price_' + id).html(price.toFixed(2));
           $('#shopping_row_' + id).show();
@@ -65,9 +65,13 @@
       $('#qa_add').bind("click", function () {
         var name = $('#qa_name').val();
         var price = parseFloat($('#qa_price').val());
-        var id = name + '_' + (price * 100);
+        var id = name.replace(' ', '_') + '_' + (price * 100);
 
         if (name.length > 0 && price > 0) {
+          name = name.toLowerCase().replace(/\b[a-z]/g, function (letter) {
+            return letter.toUpperCase();
+          });
+
           var new_row = '<p class="added_row" id="added_row_' + id + '">' +
             '<input class="remove_added_item" id="remove_' + id + '" type="checkbox"/>' +
             '<label for="remove_' + id + '">' + name + '</label>' +
@@ -132,7 +136,6 @@
 
         $('#total').val(new_total);
         $('#total_display').text(new_total);
-
         $('#price_area').hide();
       });
 
@@ -151,9 +154,6 @@
 
           var price = parseFloat($('#ingredient_price_added_' + id).html());
           var total = parseFloat($('#total').val());
-
-          console.log(price, total);
-
           var new_total = parseFloat(total - price).toFixed(2);
 
           $('#total').val(new_total);
@@ -316,7 +316,7 @@
         <div class="spacer">&nbsp;</div>
         @foreach ($item as $ingredient)
           <p class="shopping_row" id="shopping_row_{{$ingredient['id']}}"><input class="mark_as_done"
-                                                                                 id="{{$ingredient['id']}}"
+                                                                                 id="mark_{{$ingredient['id']}}"
                                                                                  type="checkbox"/> <label
                 for="{{$ingredient['id']}}">{{$ingredient['name']}}</label><span class="ingredient_price"
                                                                                  id="ingredient_price_{{$ingredient['id']}}">{{$ingredient['price']}}</span>
