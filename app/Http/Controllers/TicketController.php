@@ -72,7 +72,9 @@ class TicketController extends Controller
 
     ksort($formatted_tickets);
     $sort_level = array_flip($sort_level);
+    $link = env('SUPPORT_TICKET_URL', '');
     return view('tickets.ticket_list', compact(['formatted_tickets',
+                                                'link',
                                                 'sort_level',
                                                 'stats']));
   }

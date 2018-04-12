@@ -3,7 +3,6 @@
 @section('content')
   <div class="container">
 
-
     <div class="row">
       <h1>Open Tickets</h1>
     </div>
@@ -43,11 +42,12 @@
             </tr>
             </thead>
             @foreach ($ticket_level as $priority => $tickets)
-              <?php ksort($tickets); ?>
+              <?php krsort($tickets); ?>
               @foreach($tickets as $created => $ticket_data)
                 @foreach($ticket_data as $ticket_id => $ticket_info)
                   <tr>
-                    <td title="{{$ticket_info['description']}}">#{{$ticket_id}}</td>
+                    <td title="{{$ticket_info['description']}}"><a href="<?= $link . $ticket_id; ?>"
+                                                                   target="_blank">#{{$ticket_id}}</a></td>
                     <td align="left">{{$ticket_info['subject']}}</td>
                     <td<?= $priority < 2
                       ? ' style="color: red; font-weight: bold"'
