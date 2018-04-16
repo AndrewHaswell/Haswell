@@ -10,9 +10,148 @@ use App\Http\Requests;
 
 class QuoteController extends Controller
 {
+
+  private $teamwork_companies;
+  private $teamwork_projects;
+
   public function __construct()
   {
     $this->middleware('auth');
+
+    $this->teamwork_companies = explode(',', env('TEAMWORK_COMPANIES', ''));
+    $this->teamwork_unwanted_ids = explode(',', env('TEAMWORK_UNWANTED_IDS', ''));
+    $this->teamwork_projects = new \stdClass();
+    $this->quote_list = [];
+  }
+
+  /**
+   * @param bool $show_all
+   *
+   * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+   * @author Andrew Haswell
+   */
+
+  public function teamwork($show_all = false)
+  {
+
+    if ($show_all) {
+      $this->teamwork_unwanted_ids = [];
+    }
+    foreach ($this->teamwork_companies as $company_id) {
+      $this->format_projects($this->teamwork_get_projects($company_id));
+    }
+
+    $project_list = $this->teamwork_projects;
+    $quote_list = $this->quote_list;
+    $link = env('TEAMWORK_LINK', '');
+
+    return view('quotes.teamwork', compact(['project_list',
+                                            'link',
+                                            'quote_list']));
+  }
+
+  /**
+   * @param $project_list
+   *
+   * @return bool
+   * @author Andrew Haswell
+   */
+
+  private function format_projects($project_list)
+  {
+    if (!empty($project_list->projects)) {
+      foreach ($project_list->projects as $project) {
+
+        // Set the defaults so we can find it in the list
+        $company = (string)$project->company->name;
+        $id = (int)$project->id;
+        $tag = current($project->tags);
+        $tag_id = (int)$tag->id;
+
+        if (in_array($tag_id, $this->teamwork_unwanted_ids)) {
+          continue;
+        }
+
+        $tag_name = (string)$tag->name;
+
+        // Do we already have this client?
+        if (empty($this->teamwork_projects->$company)) {
+          $this->teamwork_projects->$company = new \stdClass();
+        }
+
+        // Do we already have this tag for the client?
+        if (empty($this->teamwork_projects->$company->$tag_id)) {
+          $this->teamwork_projects->$company->$tag_id = new \stdClass();
+          $this->quote_list[$tag_id] = $tag_name;
+        }
+
+        // Create this project in the global object
+        $this->teamwork_projects->$company->$tag_id->$id = new \stdClass();
+
+        // Let's use an alias now to keep things simpler
+        $this_project = &$this->teamwork_projects->$company->$tag_id->$id;
+        $this_project->name = $project->name;
+        $this_project->date = strtotime($project->{'created-on'});
+        $this_project->updated = strtotime($project->{'last-changed-on'});
+
+        if (0) {
+          $this_project->milestones = new \stdClass();
+          $project_milestones = $this->teamwork_curl('projects/' . $id . '/milestones');
+
+          foreach ($project_milestones->milestones as $milestone) {
+            $deadline = strtotime(implode('-', sscanf((string)$milestone->deadline, "%04d%02d%02d")));
+            $this_project->milestones->$deadline = (string)$milestone->title;
+          }
+        }
+
+        // Leave the messages for the moment - ajax them in?
+        if (0) {
+          $this_project->messages = new \stdClass();
+          $project_messages = $this->teamwork_curl('projects/' . $id . '/posts');
+
+          foreach ($project_messages->posts as $message) {
+            $post_id = $message->{'post-id'};
+            $this_message = ['author' => (string)$message->{'author-first-name'} . ' ' . (string)$message->{'author-last-name'},
+                             'body'   => (string)$message->{'html-body'},
+                             'date'   => (string)$message->{'last-changed-on'},];
+            $this_project->messages->$post_id = $this_message;
+          }
+        }
+      }
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /**
+   * @param $company_id
+   *
+   * @return mixed
+   * @author Andrew Haswell
+   */
+
+  private function teamwork_get_projects($company_id)
+  {
+    return $this->teamwork_curl('companies/' . $company_id . '/projects');
+  }
+
+  /**
+   * Request a response from Teamwork and return the result as an object
+   *
+   * @param        $url
+   * @param string $format
+   *
+   * @return mixed
+   * @author Andrew Haswell
+   */
+
+  public function teamwork_curl($url, $format = 'json')
+  {
+    $client = new Client();
+    $response = $client->get(env('TEAMWORK_URL', '') . '/' . $url . '.' . $format, ['auth' => [env('TEAMWORK_USERNAME', ''),
+                                                                                               env('TEAMWORK_PASSWORD', '')]]);
+    return json_decode((string)$response->getBody());
   }
 
   /**
@@ -25,7 +164,7 @@ class QuoteController extends Controller
   {
     $client = new Client();
     $response = $client->get(env('QUOTE_URL', '') . '?assignee_id=220&status_ids=1,2,6,11', ['auth' => [env('TICKET_USERNAME', ''),
-                                                                                                       env('TICKET_PASSWORD', '')]]);
+                                                                                                        env('TICKET_PASSWORD', '')]]);
     $result = json_decode((string)$response->getBody());
 
     $formatted_quotes = [];
