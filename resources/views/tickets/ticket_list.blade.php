@@ -26,7 +26,7 @@
     @foreach ($formatted_tickets as $client => $ticket_level)
       <div class="row">
         <div class="col-md-12">
-          <h3>{{$client}}</h3>
+          <h3>{{$client}} ({{$ticket_count[$client]}})</h3>
           <table id="tickets" class="table table-striped table-hover">
             <?php
             ksort($ticket_level);
