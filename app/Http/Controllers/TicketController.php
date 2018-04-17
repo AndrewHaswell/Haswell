@@ -31,6 +31,8 @@ class TicketController extends Controller
                     23798527,
                     21216018];
 
+    $ticket_count = [];
+
     $formatted_tickets = [];
 
     $stats = [0       => 0,
@@ -62,6 +64,10 @@ class TicketController extends Controller
           $stats[$sort_level[$ticket->priority]]++;
           $stats['total']++;
 
+          $ticket_count[$ticket->organisation] = !empty($ticket_count[$ticket->organisation])
+            ? $ticket_count[$ticket->organisation] + 1
+            : 1;
+
           $formatted_tickets[$ticket->organisation][$sort_level[$ticket->priority]][$ticket->created_at][$ticket->id] = ['subject'     => $ticket->subject,
                                                                                                                          'assignee'    => $ticket->assignee,
                                                                                                                          'description' => $ticket->description,
@@ -74,6 +80,7 @@ class TicketController extends Controller
     $sort_level = array_flip($sort_level);
     $link = env('SUPPORT_TICKET_URL', '');
     return view('tickets.ticket_list', compact(['formatted_tickets',
+                                                'ticket_count',
                                                 'link',
                                                 'sort_level',
                                                 'stats']));
