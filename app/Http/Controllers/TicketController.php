@@ -26,6 +26,7 @@ class TicketController extends Controller
     $client_list = [32303105,
                     22804471,
                     490384,
+                    32303229,
                     22347236,
                     24652416,
                     23798527,
