@@ -18,6 +18,8 @@ class QuoteController extends Controller
   {
     $this->middleware('auth');
 
+    $this->teamwork_calls = 0;
+
     $this->teamwork_companies = explode(',', env('TEAMWORK_COMPANIES', ''));
     $this->teamwork_unwanted_ids = explode(',', env('TEAMWORK_UNWANTED_IDS', ''));
     $this->teamwork_projects = new \stdClass();
@@ -43,10 +45,12 @@ class QuoteController extends Controller
 
     $project_list = $this->teamwork_projects;
     $quote_list = $this->quote_list;
+    $call_count = $this->teamwork_calls;
     $link = env('TEAMWORK_LINK', '');
 
     return view('quotes.teamwork', compact(['project_list',
                                             'link',
+                                            'call_count',
                                             'quote_list']));
   }
 
@@ -99,14 +103,14 @@ class QuoteController extends Controller
         $this_project->date = strtotime($project->{'created-on'});
         $this_project->updated = strtotime($project->{'last-changed-on'});
 
-        // Don't check milestones just yet
-        if (0) {
+        if ($tag_id == 20654) {
           $this_project->milestones = new \stdClass();
           $project_milestones = $this->teamwork_curl('projects/' . $id . '/milestones');
-
-          foreach ($project_milestones->milestones as $milestone) {
-            $deadline = strtotime(implode('-', sscanf((string)$milestone->deadline, "%04d%02d%02d")));
-            $this_project->milestones->$deadline = (string)$milestone->title;
+          if (!empty($project_milestones->milestones) && is_array($project_milestones->milestones)) {
+            foreach ($project_milestones->milestones as $milestone) {
+              $deadline = strtotime(implode('-', sscanf((string)$milestone->deadline, "%04d%02d%02d")));
+              $this_project->milestones->$deadline = (string)$milestone->title;
+            }
           }
         }
 
@@ -114,7 +118,6 @@ class QuoteController extends Controller
         if (0) {
           $this_project->messages = new \stdClass();
           $project_messages = $this->teamwork_curl('projects/' . $id . '/posts');
-
           foreach ($project_messages->posts as $message) {
             $post_id = $message->{'post-id'};
             $this_message = ['author' => (string)$message->{'author-first-name'} . ' ' . (string)$message->{'author-last-name'},
@@ -157,6 +160,7 @@ class QuoteController extends Controller
     $client = new Client();
     $response = $client->get(env('TEAMWORK_URL', '') . '/' . $url . '.' . $format, ['auth' => [env('TEAMWORK_USERNAME', ''),
                                                                                                env('TEAMWORK_PASSWORD', '')]]);
+    $this->teamwork_calls++;
     return json_decode((string)$response->getBody());
   }
 
