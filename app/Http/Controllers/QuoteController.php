@@ -62,6 +62,11 @@ class QuoteController extends Controller
     if (!empty($project_list->projects)) {
       foreach ($project_list->projects as $project) {
 
+        // Is it a tech project?
+        if (substr((string)$project->name, 0, 8) != '_Project') {
+          continue;
+        }
+
         // Set the defaults so we can find it in the list
         $company = (string)$project->company->name;
         $id = (int)$project->id;
@@ -94,6 +99,7 @@ class QuoteController extends Controller
         $this_project->date = strtotime($project->{'created-on'});
         $this_project->updated = strtotime($project->{'last-changed-on'});
 
+        // Don't check milestones just yet
         if (0) {
           $this_project->milestones = new \stdClass();
           $project_milestones = $this->teamwork_curl('projects/' . $id . '/milestones');
