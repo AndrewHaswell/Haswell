@@ -75,6 +75,16 @@
       margin-right: 3px;
       }
 
+    tr.urgent_row td {
+      background-color: #8b0516;
+      font-weight: bold;
+      color: white;
+      }
+
+    tr.urgent_row td a {
+      color: white;
+      }
+
     .nutrition
     .upcoming_link {
       margin-left: 15px;
