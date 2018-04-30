@@ -45,7 +45,9 @@ class BudgetController extends Controller
                                     3],
                                    3],
                 'water'        => [6,
-                                   34],];
+                                   34],
+                'council_tax'  => [7,
+                                   28],];
 
     // Pocket Money - 42
     foreach ($updates as $name => $ids) {
