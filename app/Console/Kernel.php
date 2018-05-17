@@ -30,6 +30,6 @@ class Kernel extends ConsoleKernel
   {
     $schedule->command('payments:update')->daily()->sendOutputTo('payment_update.log');
     $schedule->command('db:backup')->daily()->sendOutputTo('payment_update.log');
-    $schedule->command('quotes:check')->twiceDaily(9, 16);
+    // $schedule->command('quotes:check')->twiceDaily(9, 16);
   }
 }
