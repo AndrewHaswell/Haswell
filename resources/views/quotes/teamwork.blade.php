@@ -11,21 +11,21 @@
             <tr>
               <td colspan="4" class="bg-primary"><h4>{{$client}}</h4></td>
             </tr>
-            @foreach ($tags as $tag_id => $tag)
+            <tr class="column_headers">
+              <td><strong>Project Name</strong></td>
+              <td align="right"><strong>Updated</strong></td>
+              <td align="right"><strong>Created</strong></td>
+              <td align="right"><strong>Deadline</strong></td>
+            </tr>
+          @foreach ($tags as $tag_id => $tag)
               <tr>
-                <td colspan="4" class="bg-info"><h5><strong>{{$quote_list[$tag_id]}}<!-- {{$tag_id}} --></strong></h5>
+                <td colspan="4" class="bg-info"><strong>{{$quote_list[$tag_id]}}<!-- {{$tag_id}} --></strong>
                 </td>
-              </tr>
-              <tr>
-                <td><strong>Project Name</strong></td>
-                <td align="right"><strong>Updated</strong></td>
-                <td align="right"><strong>Created</strong></td>
-                <td align="right"><strong>Deadline</strong></td>
               </tr>
 
               @foreach ($tag as $project_id => $project)
 
-                <tr @if ($tag_id == 20654) class="urgent_row" @endif>
+                <tr class="@if ($tag_id == 20654) urgent_row @endif teamwork_row">
                   <td>
                     <a href="{{str_replace('{$project_id}', $project_id, $link)}}"
                        target="_blank">{{trim(str_ireplace('_Project:', '', $project->name))}}</a>

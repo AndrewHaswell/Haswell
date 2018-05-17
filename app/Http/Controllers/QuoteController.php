@@ -74,13 +74,22 @@ class QuoteController extends Controller
         // Set the defaults so we can find it in the list
         $company = (string)$project->company->name;
         $id = (int)$project->id;
-        $tag = current($project->tags);
-        $tag_id = (int)$tag->id;
 
-        if (in_array($tag_id, $this->teamwork_unwanted_ids)) {
+        $tags = $project->tags;
+
+        foreach ($tags as $key => $tag) {
+          if (in_array($tag->id, $this->teamwork_unwanted_ids)) {
+            unset($tags[$key]);
+          }
+        }
+
+        if (!empty($tags)) {
+          $tag = current($tags);
+        } else {
           continue;
         }
 
+        $tag_id = (int)$tag->id;
         $tag_name = (string)$tag->name;
 
         // Do we already have this client?
