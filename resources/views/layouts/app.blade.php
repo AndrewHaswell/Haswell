@@ -62,6 +62,12 @@
       font-size: 12pt;
       }
 
+    .column_headers {
+      color:       #444444;
+      font-weight: normal;
+      font-size:   10pt;
+      }
+
     .edit_box {
       width: 100px;
       }
@@ -71,14 +77,14 @@
       }
 
     .nutrition input {
-      width: 30px;
+      width:        30px;
       margin-right: 3px;
       }
 
     tr.urgent_row td {
       background-color: #8b0516;
-      font-weight: bold;
-      color: white;
+      font-weight:      bold;
+      color:            white;
       }
 
     tr.urgent_row td a {
@@ -88,9 +94,9 @@
     .nutrition
     .upcoming_link {
       margin-left: 15px;
-      float:      right;
-      text-align: right;
-      font-size:  12pt;
+      float:       right;
+      text-align:  right;
+      font-size:   12pt;
       }
   </style>
 </head>
@@ -145,7 +151,6 @@
             <li><a href="{{ url('/shopping') }}">Shopping List</a></li>
           </ul>
         </li>
-
 
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
