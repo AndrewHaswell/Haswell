@@ -31,10 +31,10 @@
                        target="_blank">{{trim(str_ireplace('_Project:', '', $project->name))}}</a>
                   </td>
                   <td align="right">
-                    {{date('jS F Y',$project->updated)}}
+                    {{date('D jS F Y',$project->updated)}}
                   </td>
                   <td align="right">
-                    {{date('jS F Y',$project->date)}}
+                    {{date('D jS F Y',$project->date)}}
                   </td>
                   <td align="right">
                     @if (!empty($project->milestones))
@@ -43,7 +43,7 @@
                       $milestone_date = key($project->milestones);
                       ?>
                       @if (!empty($milestone_date))
-                        <span title="{{$milestone_title}}">{{date('jS F Y',$milestone_date)}}</span>
+                        <span title="{{$milestone_title}}">{{date('D jS F Y',$milestone_date)}}</span>
                       @endif
                     @endif
                   </td>
