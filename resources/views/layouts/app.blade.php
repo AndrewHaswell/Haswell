@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <?php
+  date_default_timezone_set('Europe/London');
   if (empty($title))
     $title = 'SN0WMANX';
   ?>
@@ -24,6 +25,15 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css"
         integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
   {{-- <link href="{{ elixir('css/app.css') }}" rel="stylesheet"> --}}
+
+  <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.css"
+        rel="stylesheet"/>
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.min.js"></script>
 
   <style>
     body {
@@ -156,6 +166,9 @@
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
              aria-expanded="false">Work<span class="caret"></span></a>
           <ul class="dropdown-menu">
+            <li><a href="{{ url('/todo') }}">Todo List</a></li>
+            <li><a href="{{ url('/todo/create') }}">Add Item</a></li>
+            <li role="separator" class="divider"></li>
             <li><a href="{{ url('/tickets') }}">Tickets</a></li>
             <li><a href="{{ url('/quotes') }}">Teamwork</a></li>
           </ul>
@@ -206,6 +219,7 @@
     });
 
   });
+  $("#datepicker").datetimepicker({dateFormat: "yy-mm-dd",  timeFormat: "HH:mm:ss", showSecond:"true" });
 </script>
 
 <!-- JavaScripts -->
