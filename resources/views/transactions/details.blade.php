@@ -19,7 +19,7 @@
           <tr>
             <th>{!! Form::label('payment_date', 'Payment Date: ') !!}</th>
             <td>{!! Form::text('payment_date', $transaction->payment_date, [
-    'class'=>'form-control']) !!}</td>
+    'id'=>'datepicker','class'=>'form-control']) !!}</td>
           </tr>
 
           <tr>

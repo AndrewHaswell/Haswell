@@ -56,6 +56,7 @@ Route::resource('schedules', 'SchedulesController');
 Route::resource('meals', 'MealsController');
 Route::resource('items', 'ItemsController');
 Route::resource('ingredients', 'IngredientsController');
+Route::resource('todo', 'TodoController');
 Route::resource('planner', 'PlannerController');
 Route::resource('shop', 'ShoppingController');
 Route::resource('budget', 'BudgetController');
