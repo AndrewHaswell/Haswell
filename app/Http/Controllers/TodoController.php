@@ -22,7 +22,7 @@ class TodoController extends Controller
    */
   public function index()
   {
-    $todo_list = Todo::orderBy('priority')->orderBy('added_time')->get();
+    $todo_list = Todo::where('complete', '=', '0')->orderBy('priority')->orderBy('added_time')->get();
     return view('todo.list', compact('todo_list'));
   }
 

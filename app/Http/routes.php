@@ -63,3 +63,4 @@ Route::resource('budget', 'BudgetController');
 
 Route::post('/ajax/update_ingredients', 'AjaxController@update_ingredients');
 Route::post('/ajax/update_ingredient_prices', 'AjaxController@update_ingredient_prices');
+Route::post('/ajax/update_todo', 'AjaxController@update_todo');

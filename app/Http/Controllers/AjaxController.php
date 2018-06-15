@@ -3,12 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ingredients;
+use App\Models\Todo;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
 
 class AjaxController extends Controller
 {
+
+  public function update_todo(Request $request)
+  {
+    $id = (string)$request->id;
+    $todo = Todo::findOrFail($id);
+    $todo->complete = 1;
+    $todo->save();
+    $response = ['status' => 'OK'];
+    echo json_encode($response);
+    exit;
+  }
 
   /**
    * @param Request $request
