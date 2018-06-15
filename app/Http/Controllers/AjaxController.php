@@ -15,7 +15,7 @@ class AjaxController extends Controller
   {
     $id = (string)$request->id;
     $todo = Todo::findOrFail($id);
-    $todo->complete = 1;
+    $todo->complete = (int)$request->complete;
     $todo->save();
     $response = ['status' => 'OK'];
     echo json_encode($response);
