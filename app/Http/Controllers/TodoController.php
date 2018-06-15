@@ -22,8 +22,12 @@ class TodoController extends Controller
    */
   public function index()
   {
-    $todo_list = Todo::where('complete', '=', '0')->orderBy('priority')->orderBy('added_time')->get();
-    return view('todo.list', compact('todo_list'));
+    $scheduled_list = Todo::where('complete', '=', '0')->where('scheduled_time', '!=', '0000-00-00 00:00:00')->where('scheduled_time', '<=', date("Y-m-d"))->orderBy('scheduled_time')->orderBy('priority')->get();
+    $todo_list = Todo::where('complete', '=', '0')->where('scheduled_time', '=', '0000-00-00 00:00:00')->orderBy('priority')->orderBy('added_time')->get();
+    $done_list = Todo::where('complete', '=', '1')->orderBy('priority')->orderBy('updated_at')->limit(10)->get();
+    return view('todo.list', compact(['scheduled_list',
+                                      'todo_list',
+                                      'done_list']));
   }
 
   /**
