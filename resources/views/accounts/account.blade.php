@@ -15,7 +15,8 @@
           <thead class="thead-default">
           <tr>
             <th width="35%">Name</th>
-            <th width="35%">Date</th>
+            <th width="20%">Date</th>
+            <th width="15%">Category</th>
             <th width="15%">Amount</th>
             <th width="15%">Balance</th>
           </tr>
@@ -30,7 +31,7 @@
             {
             ?>
             <tr>
-              <td class="account_month future" colspan="3"><?=$this_month?></td>
+              <td class="account_month future" colspan="4"><?=$this_month?></td>
               <td align="right" class="account_month future"><?=number_format($future_balance, 2, '.', ',')?></td>
             </tr>
             <?php
@@ -40,6 +41,7 @@
             <tr>
               <th scope="row">{{ $schedule->name }}</th>
               <td>{{ date('D jS F Y',strtotime($schedule->payment_date)) }}</td>
+              <td>&nbsp;</td>
               <?php if ($schedule->type == 'debit') {
                 $schedule->amount *= -1;
               }?>
@@ -56,7 +58,8 @@
           <thead class="thead-default">
           <tr>
             <th width="35%">Name</th>
-            <th width="35%">Date</th>
+            <th width="20%">Date</th>
+            <th width="15%">Category</th>
             <th width="15%">Amount</th>
             <th width="15%">Balance</th>
           </tr>
@@ -70,7 +73,7 @@
             {
             ?>
             <tr>
-              <td class="account_month" colspan="3"><?=$this_month?></td>
+              <td class="account_month" colspan="4"><?=$this_month?></td>
               <td align="right" class="account_month"><?=number_format($balance, 2, '.', ',')?></td>
             </tr>
             <?php
@@ -83,6 +86,7 @@
                     ? '&nbsp;&nbsp;&nbsp;<img src="http://www.rccanada.ca/rccforum/images/rccskin/misc/cross.png"/>'
                     : ''?></a></th>
               <td>{{ date('D jS F Y',strtotime($transaction->payment_date)) }}</td>
+              <td><?= !empty($transaction->category_id) && !empty($category_list[$transaction->category_id]) ? $category_list[$transaction->category_id]:''?></td>
               <?php if ($transaction->type == 'debit') {
                 $transaction->amount *= -1;
               }?>
