@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateCategoriesTable extends Migration
+class AddCategoryIdToTransactions extends Migration
 {
     /**
      * Run the migrations.
@@ -12,11 +12,8 @@ class CreateCategoriesTable extends Migration
      */
     public function up()
     {
-        Schema::create('categories', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('title');
-            $table->integer('account_id')->unsigned();
-            $table->timestamps();
+        Schema::table('transactions', function (Blueprint $table) {
+          $table->integer('category_id')->after('account_id')->default(0);
         });
     }
 
@@ -27,6 +24,8 @@ class CreateCategoriesTable extends Migration
      */
     public function down()
     {
-        Schema::drop('categories');
+        Schema::table('transactions', function (Blueprint $table) {
+          $table->dropColumn('category_id');
+        });
     }
 }

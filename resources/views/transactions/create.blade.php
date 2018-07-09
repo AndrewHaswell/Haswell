@@ -40,6 +40,12 @@
           </tr>
 
           <tr>
+            <th>{!! Form::label('category_id', 'Category: ') !!}</th>
+            <td>{!! Form::select('category_id', [0=>'No Category'], '', [
+    'class'=>'form-control']) !!}</td>
+          </tr>
+
+          <tr>
             <th>{!! Form::label('amount', 'Amount: ') !!}</th>
             <td>{!! Form::text('amount', '', [
     'class'=>'form-control']) !!}</td>
@@ -65,4 +71,42 @@
     </div>
   </div>
   </div>
+
+
+  <script type="application/javascript">
+
+    $(function () {
+
+      var initial_account_id = $('#account_id').val();
+      get_categories(initial_account_id);
+
+      $('body').on('change', '#account_id', get_categories);
+
+      $('body').on('change', '#transfer', function () {
+        var transfer_id = $(this).val();
+        if (transfer_id != 0) {
+          $('#category_id').html('<option value="0">No Category</option>');
+        } else {
+          var account_id = $('#account_id').val();
+          get_categories(account_id);
+        }
+      });
+
+      function get_categories(e) {
+        $.ajax
+        (
+          {
+            url: '/ajax/get_categories/' + this.value,
+            dataType: 'html',
+            type: 'GET',
+            async: true,
+            success: function (html) {
+              $('#category_id').html(html);
+            }
+          }
+        );
+      }
+    });
+  </script>
+
 @endsection

@@ -113,13 +113,16 @@ class TransactionsController extends Controller
     }
 
     $transaction->account_id = $request->account_id;
-    $transaction->name = (!empty($transfer_to_name)
-      ? $transfer_to_name
-      : $request->name);
+    $transaction->name = (!empty($transfer_to_name) ?
+      $transfer_to_name :
+      $request->name);
     $transaction->payment_date = $request->payment_date;
     $transaction->type = $request->type;
     $transaction->transfer = $transfer;
     $transaction->amount = $request->amount;
+    if (!empty($request->category_id) && $transfer == 0) {
+      $transaction->category_id = $request->category_id;
+    }
     $transaction->confirmed = $request->confirmed;
 
     $transaction->save();
