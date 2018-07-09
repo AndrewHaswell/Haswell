@@ -10,10 +10,10 @@
         <table class="table table-striped table-hover">
           <thead>
           <tr>
-            <th width="40%">Name</th>
-            <th width="20%">Date</th>
-            <th width="20%" style="text-align: right !important;">Amount</th>
-            <th width="20%">Account</th>
+            <th width="46%">Name</th>
+            <th width="18%">Date</th>
+            <th width="18%" style="text-align: right !important;">Amount</th>
+            <th width="18%">Account</th>
           </tr>
           </thead>
 
@@ -41,10 +41,11 @@
         <table class="table table-striped table-hover">
           <thead>
           <tr>
-            <th width="40%">Name</th>
-            <th width="20%">Date</th>
-            <th width="20%" style="text-align: right !important;">Amount</th>
-            <th width="20%">Account</th>
+            <th width="28%">Name</th>
+            <th width="18%">Category</th>
+            <th width="18%">Date</th>
+            <th width="18%" style="text-align: right !important;">Amount</th>
+            <th width="18%">Account</th>
           </tr>
           </thead>
 
@@ -61,9 +62,11 @@
                     href="/transactions/{{$transaction->id}}">{{ $transaction->name }}</a><?= !$transaction->confirmed
                   ? '&nbsp;&nbsp;&nbsp;<img src="http://www.rccanada.ca/rccforum/images/rccskin/misc/cross.png"/>'
                   : ''?></td>
+              <td><?= !empty($transaction->category_id) && !empty($category_list[$transaction->category_id]) ? $category_list[$transaction->category_id]:''?></td>
               <td>{{date('D jS F Y',strtotime($transaction->payment_date))}}</td>
               <td align="right">{{number_format($transaction->amount, 2, '.',',')}}</td>
               <td>{{$account_list[$transaction->account_id]}}</td>
+
             </tr>
 
           @endforeach

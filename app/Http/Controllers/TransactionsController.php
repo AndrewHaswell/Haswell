@@ -33,7 +33,7 @@ class TransactionsController extends Controller
     }
 
     // Show the accounts
-    return view('transactions.details', compact(['transaction',
+    return view('transactions.create', compact(['transaction',
                                                  'account_list']));
   }
 
@@ -50,7 +50,8 @@ class TransactionsController extends Controller
       $account_list[$account->id] = $account->name;
     }
     $title = 'Transactions';
-    return view('transactions.create', compact(['account_list',
+    $transaction = new \stdClass();
+    return view('transactions.create', compact(['transaction', 'account_list',
                                                 'title']));
   }
 
