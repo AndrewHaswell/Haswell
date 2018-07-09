@@ -9,7 +9,7 @@
   $title = 'PHONE';
 
   $shopping_list = @json_decode($shopping_list, true);
-  if (!is_array($shopping_list)) {
+  if (!is_array($shopping_list)){
     exit('No shopping list set.');
   }
 
@@ -346,14 +346,7 @@
 
   <div class="spacer">&nbsp;</div>
   <div id="checked_off" class="row">
-    @foreach ($shopping_list as $ingredient)
-      <p class="checked_row" id="checked_row_{{$ingredient['id']}}">
-        <input class="mark_as_not_done" id="undo_{{$ingredient['id']}}" type="checkbox"/>
-        <label for="undo_{{$ingredient['id']}}">{{$ingredient['name']}}</label>
-        <span class="ingredient_price"
-              id="ingredient_price_hidden_{{$ingredient['id']}}">{{$ingredient['price']}}</span>
-      </p>
-    @endforeach
+
   </div>
 </div>
 </div>

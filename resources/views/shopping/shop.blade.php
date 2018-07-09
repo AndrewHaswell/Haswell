@@ -48,7 +48,7 @@
           </ul>
         @endforeach
       @endforeach
-      {!! Form::submit( 'Remove Ingredients', ['class' => 'btn btn-primary form-control']) !!}
+      {!! Form::submit( 'Remove Items', ['class' => 'btn btn-primary form-control']) !!}
       {!! Form::close() !!}
     </tr>
   </div>

@@ -142,6 +142,7 @@
           <ul class="dropdown-menu">
             <li><a href="{{ url('/payments') }}">Payment List</a></li>
             <li><a href="{{ url('/budget') }}">Budget</a></li>
+            <li><a href="{{ url('/categories') }}">Categories</a></li>
           </ul>
         </li>
 

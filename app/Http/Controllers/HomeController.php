@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests;
 use App\Models\Account;
+use App\Models\Category;
 use App\Models\Ingredients;
 use App\Models\Meals;
 use App\Models\Schedule;
@@ -43,9 +44,16 @@ class HomeController extends Controller
     $schedules = Schedule::whereNotIn('account_id', $hidden_accounts)->where('payment_date', '>', Carbon::parse('today'))->where('payment_date', '<=', Carbon::parse($limit . ' days'))->where('transfer', 0)->orderBy('payment_date', 'asc')->orderBy('type', 'desc')->get();
     $transactions = Transaction::whereNotIn('account_id', $hidden_accounts)->where('name', 'NOT LIKE', '%->%')->where('name', 'NOT LIKE', '%<-%')->where('payment_date', '>', Carbon::parse('-' . $limit . ' days'))->orderBy('payment_date', 'desc')->get();
 
+    $categories = Category::all();
+    $category_list = [];
+    foreach ($categories as $category) {
+      $category_list[$category->id] = $category->title;
+    }
+
     return view('home', compact(['schedules',
                                  'transactions',
                                  'account_list',
+                                 'category_list',
                                  'limit']));
   }
 

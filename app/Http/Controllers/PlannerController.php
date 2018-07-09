@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\MealPlan;
 use App\Models\Meals;
+use App\Models\ShoppingList;
 use App\owned_ingredients;
 use Illuminate\Http\Request;
 
@@ -213,9 +214,8 @@ class PlannerController extends Controller
    * @author Andrew Haswell
    */
 
-  public function shopping_list_phone()
+  public function shopping_list_phone_start()
   {
-
     $meal_plan = MealPlan::all();
 
     $unwanted_ingredient = owned_ingredients::all();
@@ -233,7 +233,40 @@ class PlannerController extends Controller
     }
 
     $ingredient_list = $this->ingredient_list;
-    return view('shopping.phone_check', compact(['ingredient_list']));
+
+    $shopping_list = [];
+
+    foreach ($ingredient_list as $store => $store_list) {
+      foreach ($store_list as $category => $items) {
+        foreach ($items as $item) {
+          $shopping_list[] = ['id'            => $item['id'],
+                              'name'          => $item['name'],
+                              'original_name' => $item['original_name'],
+                              'price'         => $item['price'],
+                              'checked'       => false];
+        }
+      }
+    }
+
+    $shopping_list = json_encode($shopping_list);
+
+    $slist = new ShoppingList();
+    $slist->list = $shopping_list;
+    $slist->save();
+    return Redirect::to(url('/list'));
+  }
+
+  /**
+   * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+   * @author Andrew Haswell
+   */
+
+  public function shopping_list_phone()
+  {
+    $shopping_list = ShoppingList::orderBy('created_at', 'desc')->first();
+    $shopping_list = $shopping_list->list;
+
+    return view('shopping.phone_check', compact(['shopping_list']));
   }
 
   /**

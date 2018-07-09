@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Ingredients;
 use App\Models\Todo;
 use Illuminate\Http\Request;
@@ -60,6 +61,24 @@ class AjaxController extends Controller
 
     $response = ['status' => 'OK'];
     echo json_encode($response);
+    exit;
+  }
+
+  /**
+   * @param $account_id
+   *
+   * @author Andrew Haswell
+   */
+
+  public function get_categories($account_id)
+  {
+    $categories = Category::orderBy('title')->whereIn('account_id', [0,
+                                                                     $account_id])->get();
+    $html = ['<option value="0">No Category</option>'];
+    foreach ($categories as $category) {
+      $html[] = '<option value="' . $category->id . '">' . $category->title . '</option>';
+    }
+    echo implode("\n", $html);
     exit;
   }
 }
