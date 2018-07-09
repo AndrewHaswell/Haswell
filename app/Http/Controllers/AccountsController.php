@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Additional;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -106,10 +107,17 @@ class AccountsController extends Controller
     $schedules = $account->schedules()->where('payment_date', '<=', $end_of_month)->where('payment_date', '>', Carbon::parse('today'))->orderBy('payment_date', 'desc')->orderBy('type', 'desc')->get();
     $future_balance = $this->get_future_balance($future_account, $end_of_month)->balance;
 
+    $categories = Category::all();
+    $category_list = [];
+    foreach ($categories as $category) {
+      $category_list[$category->id] = $category->title;
+    }
+
     return view('accounts.account', compact(['account',
                                              'schedules',
                                              'transactions',
                                              'title',
+                                             'category_list',
                                              'end_of_month',
                                              'future_balance']));
   }
