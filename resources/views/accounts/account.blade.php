@@ -41,7 +41,7 @@
             <tr>
               <th scope="row">{{ $schedule->name }}</th>
               <td>{{ date('D jS F Y',strtotime($schedule->payment_date)) }}</td>
-              <td>&nbsp;</td>
+              <td><?= !empty($schedule->category_id) && !empty($category_list[$schedule->category_id]) ? $category_list[$schedule->category_id]:'-'?></td>
               <?php if ($schedule->type == 'debit') {
                 $schedule->amount *= -1;
               }?>
@@ -86,7 +86,7 @@
                     ? '&nbsp;&nbsp;&nbsp;<img src="http://www.rccanada.ca/rccforum/images/rccskin/misc/cross.png"/>'
                     : ''?></a></th>
               <td>{{ date('D jS F Y',strtotime($transaction->payment_date)) }}</td>
-              <td><?= !empty($transaction->category_id) && !empty($category_list[$transaction->category_id]) ? $category_list[$transaction->category_id]:''?></td>
+              <td><?= !empty($transaction->category_id) && !empty($category_list[$transaction->category_id]) ? $category_list[$transaction->category_id]:'-'?></td>
               <?php if ($transaction->type == 'debit') {
                 $transaction->amount *= -1;
               }?>

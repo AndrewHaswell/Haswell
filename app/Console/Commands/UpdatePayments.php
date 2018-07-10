@@ -75,6 +75,7 @@ class UpdatePayments extends Command
       $transaction->payment_date = $today;
       $transaction->type = $schedule->type;
       $transaction->account_id = $schedule->account_id;
+      $transaction->category_id = $schedule->category_id;
       $transaction->confirmed = $schedule->confirmed;
       $transaction->amount = $schedule->amount;
       $transaction->save();
@@ -403,6 +404,9 @@ class UpdatePayments extends Command
             $schedule->type = $scheduleUpdate->type;
             $schedule->confirmed = $payment->confirmed;
             $schedule->transfer = $payment->transfer_account_id;
+            if ($payment->transfer_account_id == 0) {
+              $schedule->category_id = $payment->category_id;
+            }
             $schedule->payment_date = $scheduleUpdate->payment_date;
             $schedule->save();
           } else {
@@ -413,6 +417,9 @@ class UpdatePayments extends Command
             $schedule->type = $payment->type;
             $schedule->confirmed = $payment->confirmed;
             $schedule->transfer = $payment->transfer_account_id;
+            if ($payment->transfer_account_id == 0) {
+              $schedule->category_id = $payment->category_id;
+            }
             $schedule->payment_date = $payment->payment_date;
             $schedule->save();
           }
