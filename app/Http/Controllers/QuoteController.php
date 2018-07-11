@@ -22,6 +22,7 @@ class QuoteController extends Controller
 
     $this->teamwork_companies = explode(',', env('TEAMWORK_COMPANIES', ''));
     $this->teamwork_unwanted_ids = explode(',', env('TEAMWORK_UNWANTED_IDS', ''));
+    $this->teamwork_blocked_ids = explode(',', env('TEAMWORK_BLOCKED_IDS', ''));
     $this->teamwork_projects = new \stdClass();
     $this->quote_list = [];
   }
@@ -80,6 +81,10 @@ class QuoteController extends Controller
         foreach ($tags as $key => $tag) {
           if (in_array($tag->id, $this->teamwork_unwanted_ids)) {
             unset($tags[$key]);
+          }
+          if (in_array($tag->id, $this->teamwork_blocked_ids)) {
+            unset($tags);
+            break;
           }
         }
 
