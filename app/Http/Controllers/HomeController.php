@@ -30,8 +30,14 @@ class HomeController extends Controller
    * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
    * @author Andrew Haswell
    */
-  public function index($limit = 7)
+  public function index($limit = 0)
   {
+    if (empty($limit)) {
+      $limit = (date('d') - 1);
+      if ($limit < 7) {
+        $limit = 7;
+      }
+    }
     $accounts = Account::all();
     $account_list = [];
     $hidden_accounts = [];
