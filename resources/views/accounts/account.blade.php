@@ -96,7 +96,7 @@
               <td>{{ date('D jS F Y',strtotime($transaction->payment_date)) }}</td>
               <td><?= !empty($transaction->category_id) && !empty($category_list[$transaction->category_id]) ? $category_list[$transaction->category_id]:'-'?></td>
               <?php if ($transaction->type == 'debit') {
-                if ($this_month == $actual_month){
+                if ($this_month == $actual_month && ($transaction->transfer == false)) {
                   if (!empty($by_category[$category_list[$transaction->category_id]])) {
                     $by_category[$category_list[$transaction->category_id]] += (float)$transaction->amount;
                   } else {
