@@ -105,8 +105,16 @@
       data.addColumn('number', 'Amount');
       data.addRows([
         <?php
+        $row_count = 0;
         foreach ($by_category as $key => $value) {
           echo "['" . $key . "'," . $value . "],";
+          if (strtolower($key) == 'alcohol') {
+            $alcohol = $row_count;
+          }
+          if (strtolower($key) == 'takeaway') {
+            $takeaway = $row_count;
+          }
+          $row_count++;
         }
         ?>
       ]);
@@ -118,6 +126,18 @@
         pieSliceText: 'label',
         title: 'Last {{$limit}} Days',
         is3D: true,
+        <?php
+        if (isset($alcohol) || isset($takeaway)) {
+          $slices = [];
+          $slices[] = 'slices: {';
+          if (isset($alcohol))
+          $slices[] = $alcohol . ': {offset: 0.1},';
+          if (isset($takeaway))
+          $slices[] = $takeaway . ': {offset: 0.1},';
+          $slices[] = '},';
+          echo implode("\n", $slices);
+        }
+        ?>
       };
       var chart = new google.visualization.PieChart(document.getElementById('piechart'));
       chart.draw(data, options);
