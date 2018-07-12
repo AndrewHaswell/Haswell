@@ -55,7 +55,7 @@ class AccountsController extends Controller
     }
 
     // Get our accounts
-    $accounts = Account::orderBy('type', 'asc')->where('hidden', '=', $hidden)->orderBy('name', 'asc')->get();
+    $accounts = Account::orderBy('type', 'asc')->where('active','=', true)->where('hidden', '=', $hidden)->orderBy('name', 'asc')->get();
 
     $title = 'Accounts';
 
