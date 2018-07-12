@@ -24,7 +24,7 @@ class CategoryController extends Controller
   public function index()
   {
     $categories = Category::orderBy('title')->get();
-    $accounts = Account::orderBy('type')->where('hidden', '=', false)->orderBy('name')->get();
+    $accounts = Account::orderBy('type')->where('active', '=', true)->where('hidden', '=', false)->orderBy('name')->get();
     $account_list = ['No Account'];
     foreach ($accounts as $account) {
       $account_list[$account->id] = $account->name;
