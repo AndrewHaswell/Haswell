@@ -65,12 +65,20 @@
           </tr>
           </thead>
           <tbody>
-          <?php $previous_month = '';?>
+          <?php
+          $actual_month = date('F Y');
+          $previous_month = '';
+          $by_category = [];
+          $category_list[0] = 'Other';
+          ?>
           @foreach ($transactions as $transaction)
             <?php
             $this_month = date('F Y', strtotime($transaction->payment_date));
             if (empty($previous_month) || $this_month != $previous_month)
             {
+            if (!empty($previous_month) && $previous_month == $actual_month){
+              echo '<tr><td colspan="5"><div id="piechart" style="width: 100%; height: 380px;"></div></td></tr>';
+            }
             ?>
             <tr>
               <td class="account_month" colspan="4"><?=$this_month?></td>
@@ -88,6 +96,13 @@
               <td>{{ date('D jS F Y',strtotime($transaction->payment_date)) }}</td>
               <td><?= !empty($transaction->category_id) && !empty($category_list[$transaction->category_id]) ? $category_list[$transaction->category_id]:'-'?></td>
               <?php if ($transaction->type == 'debit') {
+                if ($this_month == $actual_month){
+                  if (!empty($by_category[$category_list[$transaction->category_id]])) {
+                    $by_category[$category_list[$transaction->category_id]] += (float)$transaction->amount;
+                  } else {
+                    $by_category[$category_list[$transaction->category_id]] = (float)$transaction->amount;
+                  }
+                }
                 $transaction->amount *= -1;
               }?>
               <td align="right">{{ number_format($transaction->amount, 2, '.',',') }}</td>
@@ -101,5 +116,55 @@
     </div>
   </div>
 
+  <?php arsort($by_category);?>
+
+  <script type="text/javascript">
+    google.charts.load('current', {'packages': ['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+      var data = new google.visualization.DataTable();
+      data.addColumn('string', 'Category');
+      data.addColumn('number', 'Amount');
+      data.addRows([
+        <?php
+        $row_count = 0;
+        foreach ($by_category as $key => $value) {
+          echo "['" . $key . "'," . $value . "],";
+          if (strtolower($key) == 'alcohol') {
+            $alcohol = $row_count;
+          }
+          if (strtolower($key) == 'takeaway') {
+            $takeaway = $row_count;
+          }
+          $row_count++;
+        }
+        ?>
+      ]);
+      var formatter = new google.visualization.NumberFormat({
+        prefix: '£'
+      });
+      formatter.format(data, 1); // Apply formatter to second column
+      var options = {
+        pieSliceText: 'label',
+        title: '{{$actual_month}}',
+        is3D: true,
+        <?php
+        if (isset($alcohol) || isset($takeaway)) {
+          $slices = [];
+          $slices[] = 'slices: {';
+          if (isset($alcohol))
+            $slices[] = $alcohol . ': {offset: 0.1},';
+          if (isset($takeaway))
+            $slices[] = $takeaway . ': {offset: 0.1},';
+          $slices[] = '},';
+          echo implode("\n", $slices);
+        }
+        ?>
+      };
+      var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+      chart.draw(data, options);
+    }
+  </script>
 
 @endsection
