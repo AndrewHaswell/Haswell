@@ -37,7 +37,12 @@ class HomeController extends Controller
       if ($limit < 7) {
         $limit = 7;
       }
+      $next_limit = 7;
+      $previous_limit = $limit;
+    } else {
+      $next_limit = $previous_limit = $limit;
     }
+
     $accounts = Account::all();
     $account_list = [];
     $hidden_accounts = [];
@@ -47,8 +52,8 @@ class HomeController extends Controller
         $hidden_accounts[] = $account->id;
       }
     }
-    $schedules = Schedule::whereNotIn('account_id', $hidden_accounts)->where('payment_date', '>', Carbon::parse('today'))->where('payment_date', '<=', Carbon::parse($limit . ' days'))->where('transfer', 0)->orderBy('payment_date', 'asc')->orderBy('type', 'desc')->get();
-    $transactions = Transaction::whereNotIn('account_id', $hidden_accounts)->where('name', 'NOT LIKE', '%->%')->where('name', 'NOT LIKE', '%<-%')->where('payment_date', '>', Carbon::parse('-' . $limit . ' days'))->orderBy('payment_date', 'desc')->get();
+    $schedules = Schedule::whereNotIn('account_id', $hidden_accounts)->where('payment_date', '>', Carbon::parse('today'))->where('payment_date', '<=', Carbon::parse($next_limit . ' days'))->where('transfer', 0)->orderBy('payment_date', 'asc')->orderBy('type', 'desc')->get();
+    $transactions = Transaction::whereNotIn('account_id', $hidden_accounts)->where('name', 'NOT LIKE', '%->%')->where('name', 'NOT LIKE', '%<-%')->where('payment_date', '>', Carbon::parse('-' . $previous_limit . ' days'))->orderBy('payment_date', 'desc')->get();
 
     $categories = Category::all();
     $category_list = [];
@@ -60,7 +65,8 @@ class HomeController extends Controller
                                  'transactions',
                                  'account_list',
                                  'category_list',
-                                 'limit']));
+                                 'next_limit',
+                                 'previous_limit']));
   }
 
 }
