@@ -50,7 +50,8 @@ class ShoppingController extends Controller
         $owned_ingredient->save();
       }
     }
-    return Redirect::to(url('/phone_list'));
+
+    return Redirect::to(url('/list'));
   }
 
   /**

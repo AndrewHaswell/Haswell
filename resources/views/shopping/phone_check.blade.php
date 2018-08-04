@@ -34,6 +34,8 @@
 
     $(function () {
 
+      save_shopping_list();
+
       $(document).on("click", '.mark_as_done', function () {
         var id = $(this).attr('id').replace('mark_', '');
         $(this).prop('checked', false);
@@ -189,6 +191,39 @@
         return str.length < max ? pad("0" + str, max) : str;
       }
 
+      function save_shopping_list() {
+        var list = [];
+        $('.shopping_row,.checked_row,.added_row').each(function () {
+          var this_item = [];
+          var id = $(this).attr('id').split('_').pop();
+          var classname = $(this).attr('class');
+          this_item.push(id);
+          this_item.push($('#name_' + id).val());
+          this_item.push($('#price_' + id).val());
+          this_item.push($('#display_' + id).val());
+          var checked = classname != 'shopping_row';
+          this_item.push(checked);
+          list.push(this_item);
+        });
+        $.ajax
+        (
+          {
+            url: '/ajax/save_shopping_list',
+            dataType: 'json',
+            type: 'POST',
+            async: true,
+            data:
+              {
+                "_token": "{{ csrf_token() }}",
+                list: list
+              },
+            success: function (data) {
+              // Data is whatever gets returned
+            }
+          }
+        );
+      }
+
     });
 
   </script>
@@ -319,14 +354,19 @@
   <div class="row">
 
     @foreach ($shopping_list as $ingredient)
-      <p class="shopping_row" id="shopping_row_{{$ingredient['id']}}"><input class="mark_as_done"
-                                                                             id="mark_{{$ingredient['id']}}"
-                                                                             type="checkbox"/> <label
+
+
+
+      <p class="shopping_row" id="shopping_row_{{$ingredient['id']}}"
+         @if ($ingredient['checked']) style="display:none"@endif><input class="mark_as_done"
+                                                                        id="mark_{{$ingredient['id']}}"
+                                                                        type="checkbox"/> <label
             for="{{$ingredient['id']}}">{{$ingredient['name']}}</label><span class="ingredient_price"
                                                                              id="ingredient_price_{{$ingredient['id']}}">{{$ingredient['price']}}</span>
       </p>
       <input type="hidden" id="name_{{$ingredient['id']}}" value="{{$ingredient['original_name']}}"/>
       <input type="hidden" id="price_{{$ingredient['id']}}" value="{{$ingredient['price']}}"/>
+      <input type="hidden" id="display_{{$ingredient['id']}}" value="{{$ingredient['name']}}"/>
 
     @endforeach
   </div>
@@ -347,12 +387,15 @@
   <div class="spacer">&nbsp;</div>
   <div id="checked_off" class="row">
     @foreach ($shopping_list as $ingredient)
-      <p class="checked_row" id="checked_row_{{$ingredient['id']}}">
-        <input class="mark_as_not_done" id="undo_{{$ingredient['id']}}" type="checkbox"/>
-        <label for="undo_{{$ingredient['id']}}">{{$ingredient['name']}}</label>
-        <span class="ingredient_price"
-              id="ingredient_price_hidden_{{$ingredient['id']}}">{{$ingredient['price']}}</span>
-      </p>
+      @if ($ingredient['checked'])
+        <p class="checked_row" id="checked_row_{{$ingredient['id']}}">
+          <input class="mark_as_not_done" id="undo_{{$ingredient['id']}}" type="checkbox"/>
+          <label for="undo_{{$ingredient['id']}}">{{$ingredient['name']}}</label>
+          <span class="ingredient_price"
+                id="ingredient_price_hidden_{{$ingredient['id']}}">{{$ingredient['price']}}</span>
+        </p>
+
+      @endif
     @endforeach
   </div>
 </div>

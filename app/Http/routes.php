@@ -48,7 +48,7 @@ Route::get('/hidden_accounts', 'AccountsController@hidden_accounts');
 Route::get('/add_meal', 'MealsController@add_meal');
 Route::get('/shopping', 'PlannerController@shopping_list');
 Route::get('/old_list', 'PlannerController@shopping_list');
-Route::get('/list', 'PlannerController@shopping_list_phone');
+Route::get('/list', 'PlannerController@shopping_list_2');
 Route::get('/phone_list', 'PlannerController@shopping_list_phone_start');
 
 Route::resource('transactions', 'TransactionsController');
@@ -66,4 +66,5 @@ Route::resource('budget', 'BudgetController');
 Route::post('/ajax/update_ingredients', 'AjaxController@update_ingredients');
 Route::post('/ajax/update_ingredient_prices', 'AjaxController@update_ingredient_prices');
 Route::post('/ajax/update_todo', 'AjaxController@update_todo');
+Route::post('/ajax/save_shopping_list', 'AjaxController@save_shopping_list');
 Route::get('/ajax/get_categories/{account_id}', 'AjaxController@get_categories');
