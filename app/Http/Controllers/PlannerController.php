@@ -164,9 +164,9 @@ class PlannerController extends Controller
         $unit = $ingredient->pivot->unit;
         $qty = $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['quantity'];
 
-        $name .= $unit == 'weight'
-          ? ' (' . $qty . 'g)'
-          : ' x ' . $qty;
+        $name .= $unit == 'weight' ?
+          ' (' . $qty . 'g)' :
+          ' x ' . $qty;
 
         $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['name'] = $name;
       }
@@ -247,7 +247,7 @@ class PlannerController extends Controller
         }
       }
     }
-
+    owned_ingredients::truncate();
     $shopping_list = json_encode($shopping_list);
 
     $slist = new ShoppingList();
@@ -264,9 +264,18 @@ class PlannerController extends Controller
   public function shopping_list_phone()
   {
     $shopping_list = ShoppingList::orderBy('created_at', 'desc')->first();
-    $shopping_list = $shopping_list->list;
 
-    return view('shopping.phone_check', compact(['shopping_list']));
+    if (!empty($shopping_list)) {
+
+      $shopping_list = $shopping_list->list;
+
+
+      dump(json_decode($shopping_list));
+
+      return view('shopping.phone_check', compact(['shopping_list']));
+    }
+
+    return Redirect::to(url('/shopping'));
   }
 
   /**

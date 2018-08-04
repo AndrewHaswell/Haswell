@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Ingredients;
+use App\Models\ShoppingList;
 use App\Models\Todo;
 use Illuminate\Http\Request;
 
@@ -79,6 +80,38 @@ class AjaxController extends Controller
       $html[] = '<option value="' . $category->id . '">' . $category->title . '</option>';
     }
     echo implode("\n", $html);
+    exit;
+  }
+
+  /**
+   * @param Request $request
+   *
+   * @author Andrew Haswell
+   */
+
+  public function save_shopping_list(Request $request)
+  {
+    $shopping_list = $request->list;
+    $saved_list = [];
+
+    foreach ($shopping_list as $row) {
+
+
+      // dd($row);
+
+      $saved_list[] = ['id'            => (int)$row[0],
+                       'name'          => $row[3],
+                       'original_name' => $row[1],
+                       'price'         => (float)$row[2],
+                       'checked'       => (bool)$row[4]];
+    }
+
+    $slist = new ShoppingList();
+    $slist->list = json_encode($shopping_list);
+    $slist->save();
+
+    $response = ['status' => 'OK'];
+    echo json_encode($response);
     exit;
   }
 }
