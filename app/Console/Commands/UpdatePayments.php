@@ -115,8 +115,9 @@ class UpdatePayments extends Command
   {
     $accounts = Account::where('type', '=', 'current')->where('hidden', '=', 0)->get();
     $today = Carbon::today();
-    $savings_account = Account::where('name', '=', 'Rhodes 2018')->firstOrFail();
-    $minimum_account_level = 60;
+    $savings_account_name = env('SAVINGS_ACC_NAME', 'Savings');
+    $savings_account = Account::where('name', '=', $savings_account_name)->firstOrFail();
+    $minimum_account_level = env('SAVINGS_ACC_MINIMUM', 60);
 
     foreach ($accounts as $account) {
 
