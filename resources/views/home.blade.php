@@ -11,9 +11,9 @@
           <thead>
           <tr>
             <th width="28%">Name</th>
-            <th width="18%">Category</th>
-            <th width="18%">Date</th>
-            <th width="18%" style="text-align: right !important;">Amount</th>
+            <th width="15%">Category</th>
+            <th width="27%">Date</th>
+            <th width="12%" style="text-align: right !important;">Amount</th>
             <th width="18%">Account</th>
           </tr>
           </thead>
@@ -46,9 +46,9 @@
           <thead>
           <tr>
             <th width="28%">Name</th>
-            <th width="18%">Category</th>
-            <th width="18%">Date</th>
-            <th width="18%" style="text-align: right !important;">Amount</th>
+            <th width="15%">Category</th>
+            <th width="27%">Date</th>
+            <th width="12%" style="text-align: right !important;">Amount</th>
             <th width="18%">Account</th>
           </tr>
           </thead>
