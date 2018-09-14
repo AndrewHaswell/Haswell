@@ -4,7 +4,9 @@
   <div class="container">
     <div class="row">
       <tr class="col-md-10 col-md-offset-1">
-        <h3><?= !empty($transaction->name) ? $transaction->name : 'Add new transaction'?></h3>
+        <h3><?= !empty($transaction->name) ?
+            $transaction->name :
+            'Add new transaction'?></h3>
         {!! Form::open(['action' => 'TransactionsController@store']) !!}
         <table class="table table-striped table-hover">
 
@@ -76,6 +78,7 @@
             </tr>
 
             {!! Form::hidden('transaction_id', $transaction->id) !!}
+            {!! Form::hidden('transaction_category_id', $transaction->category_id, ['id' => 'default_category_id']) !!}
 
           @endif
 
@@ -93,7 +96,6 @@
   </div>
   </div>
 
-
   <script type="application/javascript">
 
     $(function () {
@@ -102,7 +104,6 @@
       get_categories(initial_account_id);
 
       $('body').on('change', '#account_id', get_categories);
-
       $('body').on('change', '#transfer', function () {
         var transfer_id = $(this).val();
         if (transfer_id != 0) {
@@ -123,6 +124,11 @@
             async: true,
             success: function (html) {
               $('#category_id').html(html);
+              var category_id = $('#default_category_id').val();
+              if (category_id > 0) {
+                $('#category_id').val(category_id);
+                $('#default_category_id').val(0);
+              }
             }
           }
         );
