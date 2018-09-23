@@ -121,7 +121,6 @@ class PlannerController extends Controller
 
     foreach ($meal_plan as $plan) {
 
-
       $meal = Meals::findOrFail($plan->meal_id);
       $ingredients = $meal->ingredients()->get();
       $this->format_ingredients($ingredients);
@@ -134,9 +133,9 @@ class PlannerController extends Controller
 
   public function format_ingredients($ingredients, $unwanted_ingredient_list = [])
   {
+    $errors = [];
     if (!empty($ingredients)) {
       foreach ($ingredients as $ingredient) {
-
 
         if (in_array($ingredient->id, $unwanted_ingredient_list)) {
           continue;
@@ -152,8 +151,44 @@ class PlannerController extends Controller
                                                                                                'portion_count' => 1,
                                                                                                'price'         => $ingredient->price];
         } else {
-          $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['quantity'] += $ingredient->pivot->quantity;
-          $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['portion_count']++;
+
+          // Work out if we have a weight or quantity set
+
+          $existing_unit = $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['unit'];
+          $this_unit = $ingredient->pivot->unit;
+
+          if ($existing_unit != $this_unit) {
+
+            if ($existing_unit == 'none') {
+
+              // We're working on quantities - need to convert to weight
+
+              // What's the portion size
+              $portion_size = $ingredient->portion;
+              $current_quantity = $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['quantity'];
+
+              if (!empty($portion_size) && !empty($current_quantity)) {
+                $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['quantity'] = $portion_size * $current_quantity;
+                $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['unit'] = 'weight';
+              } else {
+                $errors[] = $ingredient->name;
+              }
+              $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['quantity'] += $ingredient->pivot->quantity;
+              $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['portion_count']++;
+            } else {
+              $portion_size = $ingredient->portion;
+              if (!empty($portion_size)) {
+                $quantity = $ingredient->pivot->quantity;
+                $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['quantity'] += ($quantity * $portion_size);
+                $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['portion_count']++;
+              } else {
+                $errors[] = $ingredient->name;
+              }
+            }
+          } else {
+            $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['quantity'] += $ingredient->pivot->quantity;
+            $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['portion_count']++;
+          }
         }
 
         // TODO: Update quantity against pack size
@@ -161,7 +196,7 @@ class PlannerController extends Controller
         // But do we show as 6 or 1 pack??
 
         $name = $ingredient->name;
-        $unit = $ingredient->pivot->unit;
+        $unit = $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['unit'];
         $qty = $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['quantity'];
 
         $name .= $unit == 'weight' ?
@@ -170,6 +205,10 @@ class PlannerController extends Controller
 
         $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['name'] = $name;
       }
+    }
+
+    if (!empty($errors)) {
+      dd('No portion sizes set for: ' . implode(',', $errors));
     }
   }
 
@@ -191,6 +230,8 @@ class PlannerController extends Controller
 
       $meal = Meals::findOrFail($plan->meal_id);
       $ingredients = $meal->ingredients()->get();
+
+      dd($ingredients);
 
       if (!empty($ingredients)) {
 
@@ -268,7 +309,6 @@ class PlannerController extends Controller
     if (!empty($shopping_list)) {
 
       $shopping_list = $shopping_list->list;
-
 
       dump(json_decode($shopping_list));
 
