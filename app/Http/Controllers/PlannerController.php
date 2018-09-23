@@ -231,8 +231,6 @@ class PlannerController extends Controller
       $meal = Meals::findOrFail($plan->meal_id);
       $ingredients = $meal->ingredients()->get();
 
-      dd($ingredients);
-
       if (!empty($ingredients)) {
 
         foreach ($ingredients as $ingredient) {
