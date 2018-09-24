@@ -164,21 +164,20 @@ class PlannerController extends Controller
               // We're working on quantities - need to convert to weight
 
               // What's the portion size
-              $portion_size = $ingredient->portion;
-              $current_quantity = $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['quantity'];
+              $portion_size = (int)$ingredient->portion;
+              $current_quantity = (int)$this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['quantity'];
 
               if (!empty($portion_size) && !empty($current_quantity)) {
-                $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['quantity'] = $portion_size * $current_quantity;
+                $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['quantity'] = ($portion_size * $current_quantity);
                 $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['unit'] = 'weight';
               } else {
                 $errors[] = $ingredient->name;
               }
-              $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['quantity'] += $ingredient->pivot->quantity;
               $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['portion_count']++;
             } else {
-              $portion_size = $ingredient->portion;
+              $portion_size = (int)$ingredient->portion;
               if (!empty($portion_size)) {
-                $quantity = $ingredient->pivot->quantity;
+                $quantity = (int)$ingredient->pivot->quantity;
                 $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['quantity'] += ($quantity * $portion_size);
                 $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['portion_count']++;
               } else {
