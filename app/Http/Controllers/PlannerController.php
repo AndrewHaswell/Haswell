@@ -173,12 +173,13 @@ class PlannerController extends Controller
               } else {
                 $errors[] = $ingredient->name;
               }
+              $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['quantity'] += (int)$ingredient->pivot->quantity;
               $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['portion_count']++;
             } else {
               $portion_size = (int)$ingredient->portion;
               if (!empty($portion_size)) {
                 $quantity = (int)$ingredient->pivot->quantity;
-                $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['quantity'] += ($quantity * $portion_size);
+                $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['quantity'] += (int)($quantity * $portion_size);
                 $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['portion_count']++;
               } else {
                 $errors[] = $ingredient->name;
