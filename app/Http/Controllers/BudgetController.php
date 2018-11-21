@@ -35,24 +35,21 @@ class BudgetController extends Controller
     }
 
     $incoming = floor($incoming);
-
-    // Category updates
-
     $cat_updates = [];
-
     $payment_list = Payment::where('budget_id', '>', 0)->get();
 
     foreach ($payment_list as $this_payment) {
-      if ($this_payment->name == 'NRAM') {
+      if ($this_payment->name == env('MORTGAGE_NAME', '')) {
         $amount = $this_payment->amount * $mortgage_ratio;
         $cat_updates[3] = $amount;
         $cat_updates[2] = $this_payment->amount - $cat_updates[3];
-      } else if ($this_payment->name == 'Tonik') {
+      } else if ($this_payment->name == env('ELECTRIC_NAME', '')) {
         $cat_updates[8] = $this_payment->amount * 0.5;
         $cat_updates[9] = $this_payment->amount * 0.5;
-      }  else if ($this_payment->name == 'Food/Petrol/SW') {
-        $cat_updates[29] = $this_payment->amount * $food_ratio;
-        $cat_updates[27] = $this_payment->amount * $petrol_ration;
+      } else if ($this_payment->name == env('FOOD_PETROL_NAME', '')) {
+        $amount = ($this_payment->amount * 52) / 12;
+        $cat_updates[27] = $amount * $petrol_ration;
+        $cat_updates[29] = $amount * $food_ratio;
       } else {
         if ($this_payment->interval == '1 week') {
           $amount = ($this_payment->amount * 52) / 12;
