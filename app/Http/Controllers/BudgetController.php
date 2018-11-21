@@ -26,7 +26,7 @@ class BudgetController extends Controller
     $mortgage_ratio = 0.133603238866397;
 
     $incoming_payments = Payment::where('type', '=', 'credit')->get();
-    $incoming = 0; // Cos of the extra bit overtime
+    $incoming = 50; // Cos of how Tessa's pay works
 
     foreach ($incoming_payments as $incoming_payment) {
       $incoming += $incoming_payment->amount;
