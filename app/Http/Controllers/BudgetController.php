@@ -26,7 +26,7 @@ class BudgetController extends Controller
     $mortgage_ratio = 0.133603238866397;
 
     $incoming_payments = Payment::where('type', '=', 'credit')->get();
-    $incoming = 50; // Cos of the extra bit overtime
+    $incoming = 0; // Cos of the extra bit overtime
 
     foreach ($incoming_payments as $incoming_payment) {
       $incoming += $incoming_payment->amount;
@@ -38,31 +38,28 @@ class BudgetController extends Controller
 
     $cat_updates = [];
 
-    // First ID is budget ID, second is payment ID
-    $updates = ['pocket_money' => [42,
-                                   71],
-                'mortgage'     => [[2,
-                                    3],
-                                   3],
-                'water'        => [6,
-                                   34],
-                'council_tax'  => [7,
-                                   28],];
+    $payment_list = Payment::where('budget_id', '>', 0)->get();
 
-    // Pocket Money - 42
-    foreach ($updates as $name => $ids) {
-      $this_payment = Payment::findOrFail($ids[1]);
-      if ($name == 'mortgage') {
+
+    foreach ($payment_list as $this_payment) {
+      if ($this_payment->name == 'NRAM') {
         $amount = $this_payment->amount * $mortgage_ratio;
         $cat_updates[3] = $amount;
         $cat_updates[2] = $this_payment->amount - $cat_updates[3];
+      } else if ($this_payment->name == 'Tonik') {
+        $cat_updates[8] = $this_payment->amount * 0.5;
+        $cat_updates[9] = $this_payment->amount * 0.5;
       } else {
         if ($this_payment->interval == '1 week') {
           $amount = ($this_payment->amount * 52) / 12;
+        } else if ($this_payment->interval == '1 year') {
+          $amount = ($this_payment->amount / 12);
         } else {
           $amount = $this_payment->amount;
         }
-        $cat_updates[$ids[0]] = $amount;
+        $cat_updates[$this_payment->budget_id] = !isset($cat_updates[$this_payment->budget_id]) ?
+          $amount :
+          $cat_updates[$this_payment->budget_id] + $amount;
       }
     }
 
