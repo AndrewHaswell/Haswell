@@ -199,7 +199,8 @@ class PlannerController extends Controller
         $unit = $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['unit'];
         $qty = $this->ingredient_list[$ingredient->shop][$ingredient->category][$ingredient->id]['quantity'];
 
-        $name .= $unit == 'weight' ?
+        $name .= in_array($unit, ['volume',
+                                  'weight']) ?
           ' (' . $qty . 'g)' :
           ' x ' . $qty;
 
