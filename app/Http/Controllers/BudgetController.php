@@ -40,7 +40,6 @@ class BudgetController extends Controller
 
     $payment_list = Payment::where('budget_id', '>', 0)->get();
 
-
     foreach ($payment_list as $this_payment) {
       if ($this_payment->name == 'NRAM') {
         $amount = $this_payment->amount * $mortgage_ratio;
