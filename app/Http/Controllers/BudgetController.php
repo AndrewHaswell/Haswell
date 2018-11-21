@@ -24,6 +24,8 @@ class BudgetController extends Controller
   {
     $main_categories = BudgetMain::all();
     $mortgage_ratio = 0.133603238866397;
+    $food_ratio = 0.6333333333;
+    $petrol_ration = 0.166666666;
 
     $incoming_payments = Payment::where('type', '=', 'credit')->get();
     $incoming = 50; // Cos of how Tessa's pay works
@@ -48,6 +50,9 @@ class BudgetController extends Controller
       } else if ($this_payment->name == 'Tonik') {
         $cat_updates[8] = $this_payment->amount * 0.5;
         $cat_updates[9] = $this_payment->amount * 0.5;
+      }  else if ($this_payment->name == 'Food/Petrol/SW') {
+        $cat_updates[29] = $this_payment->amount * $food_ratio;
+        $cat_updates[27] = $this_payment->amount * $petrol_ration;
       } else {
         if ($this_payment->interval == '1 week') {
           $amount = ($this_payment->amount * 52) / 12;
