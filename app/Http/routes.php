@@ -41,8 +41,6 @@ Route::get('/categories', 'CategoryController@index');
 Route::get('/budget', 'BudgetController@index');
 Route::get('/accounts', 'AccountsController@index');
 Route::get('/all_accounts', 'AccountsController@all_accounts');
-Route::get('/tickets', 'TicketController@index');
-Route::get('/quotes/{token?}', 'QuoteController@teamwork');
 Route::get('/hidden_accounts', 'AccountsController@hidden_accounts');
 
 Route::get('/add_meal', 'MealsController@add_meal');
