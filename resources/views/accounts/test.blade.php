@@ -89,6 +89,9 @@
             $mam_loan = \App\Models\Payment::where('name','=','Mam')->get();
             $dmp_amount += $mam_loan[0]->amount;
 
+            $student_loan = \App\Models\Payment::where('name','=','Student Loan')->get();
+            $dmp_amount += $student_loan[0]->amount;
+
             $repayment = abs($total);
             $months = ceil($repayment / $dmp_amount);
             $year = date('Y');
