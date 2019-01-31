@@ -40,12 +40,23 @@ class BudgetController extends Controller
 
     foreach ($payment_list as $this_payment) {
       if ($this_payment->name == env('MORTGAGE_NAME', '')) {
-        $amount = $this_payment->amount * $mortgage_ratio;
-        $cat_updates[3] = $amount;
-        $cat_updates[2] = $this_payment->amount - $cat_updates[3];
+          $amount = $this_payment->amount * $mortgage_ratio;
+          $cat_updates[2] = $this_payment->amount - $amount;
+          if (isset($cat_updates[3])) {
+              $cat_updates[3] += $this_payment->amount;
+          } else {
+              $cat_updates[3] = $this_payment->amount;
+          }
+
       } else if ($this_payment->name == env('ELECTRIC_NAME', '')) {
         $cat_updates[8] = $this_payment->amount * 0.5;
         $cat_updates[9] = $this_payment->amount * 0.5;
+      } else if ($this_payment->name == env('STUDENT_LOAN', '')) {
+          if (isset($cat_updates[3])) {
+              $cat_updates[3] += $this_payment->amount;
+          } else {
+              $cat_updates[3] = $this_payment->amount;
+          }
       } else if ($this_payment->name == env('FOOD_PETROL_NAME', '')) {
         $amount = ($this_payment->amount * 52) / 12;
         $cat_updates[27] = $amount * $petrol_ration;
