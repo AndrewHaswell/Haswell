@@ -100,9 +100,6 @@
             $date->add(new DateInterval('P' . $months . 'M'));
             ?>
             <tr>
-              <td colspan="4">&nbsp;</td>
-            </tr>
-            <tr>
               <th>Total Monthly Repayments</th>
               <td colspan="2">&nbsp;</td>
               <td align="right">{{ number_format($dmp_amount, 2, '.', '') }}</td>
