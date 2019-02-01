@@ -17,7 +17,9 @@
             </thead>
             <tbody>
 
-            </tr>
+           <tr>
+             <td colspan="2"><p><em>Shows default amounts if more than calculated.</em></p></td>
+           </tr>
 
             <?php $sub_categories = $main_category->BudgetSub()->get();?>
 
