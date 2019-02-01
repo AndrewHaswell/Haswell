@@ -38,6 +38,7 @@ class BudgetController extends Controller
     $cat_updates = [];
     $payment_list = Payment::where('budget_id', '>', 0)->get();
 
+    // Calculated amounts only override when they are more than the default
     foreach ($payment_list as $this_payment) {
       if ($this_payment->name == env('MORTGAGE_NAME', '')) {
         $amount = $this_payment->amount * $mortgage_ratio;
