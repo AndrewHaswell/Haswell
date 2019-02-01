@@ -50,7 +50,7 @@ class BudgetController extends Controller
       } else if ($this_payment->name == env('ELECTRIC_NAME', '')) {
         $cat_updates[8] = $this_payment->amount * 0.5;
         $cat_updates[9] = $this_payment->amount * 0.5;
-      } else if ($this_payment->name == env('STUDENT_LOAN', '')) {
+      } else if ($this_payment->name == env('STUDENT_LOAN_NAME', '')) {
           if (isset($cat_updates[3])) {
               $cat_updates[3] += $this_payment->amount;
           } else {
