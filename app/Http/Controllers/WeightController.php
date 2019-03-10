@@ -19,7 +19,7 @@ class WeightController extends Controller
     public function index()
     {
         // Get the latest data from the DB
-        $current_data = Weight::orderby('created_at', 'desc')
+        $current_data = Weight::orderby('created_at', 'desc')->where('user', '=', Auth::user()->id)
                               ->first();
 
         if (empty($current_data)) {
