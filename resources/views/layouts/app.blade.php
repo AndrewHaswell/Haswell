@@ -163,6 +163,9 @@
             <li role="separator" class="divider"></li>
             <li><a href="{{ url('/items') }}">Add Item to List</a></li>
             <li><a href="{{ url('/shopping') }}">Shopping List</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="{{ url('/weight') }}">Show Weight</a></li>
+            <li><a href="{{ url('/weight/create') }}">Log Weight</a></li>
           </ul>
         </li>
 
