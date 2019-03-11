@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\Redirect;
 
 class WeightController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -19,7 +24,8 @@ class WeightController extends Controller
     public function index()
     {
         // Get the latest data from the DB
-        $current_data = Weight::orderby('created_at', 'desc')->where('user', '=', Auth::user()->id)
+        $current_data = Weight::orderby('created_at', 'desc')
+                              ->where('user', '=', Auth::user()->id)
                               ->first();
 
         if (empty($current_data)) {
@@ -125,18 +131,17 @@ class WeightController extends Controller
             }
         }
 
-
         ksort($weekly_average);
-
         $chart_data = [];
+        $bmi_weight = $this->calculate_weight();
 
         foreach ($weekly_average as $week => $weight) {
             list($year, $week_number) = explode('-', $week);
             $actual_date = date("j M y", strtotime($year . "W" . sprintf("%02u", $week_number) . "1"));
-            $chart_data[] = "['" . $actual_date . "'," . $weight . ", 65.8]";
+            $chart_data[] = "['" . $actual_date . "'," . $weight . ", " . $bmi_weight['overweight'] . ", " . $bmi_weight['healthy'] . ", " . $bmi_weight['underweight'] . "]";
         }
 
-        return "[['Date','Weight in Kg', 'Target']," . implode(",", $chart_data) . "]";
+        return "[['Date','Weight in Kg', 'Overweight', 'Healthy', 'Underweight']," . implode(",", $chart_data) . "]";
     }
 
     /**
@@ -274,5 +279,29 @@ class WeightController extends Controller
         $height_in_cm = Auth::user()->height;
         $height_in_m = $height_in_cm / 100;
         return round($weight / pow($height_in_m, 2), 1);
+    }
+
+    /**
+     * @author Andrew Haswell
+     */
+
+    public function calculate_weight()
+    {
+        $underweight = 18.5;
+        $healthy = 24.9;
+        $overweight = 29.9;
+
+        $height_in_cm = Auth::user()->height;
+        $height_in_m = $height_in_cm / 100;
+
+        $underweight = round($underweight * pow($height_in_m, 2), 1);
+        $healthy = round($healthy * pow($height_in_m, 2), 1);
+        $overweight = round($overweight * pow($height_in_m, 2), 1);
+
+        return [
+          'underweight' => $underweight,
+          'healthy'     => $healthy,
+          'overweight'  => $overweight
+        ];
     }
 }
