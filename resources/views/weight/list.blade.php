@@ -58,10 +58,12 @@
       var options = {
         title: 'Weight',
         legend: {position: 'top'},
-        colors: ['red', 'grey'],
+        colors: ['red', 'grey', 'grey', 'grey'],
         series: {
           0: {lineWidth: 3, lineDashStyle: [15, 3], pointSize: 6},
-          1: {lineWidth: 2, lineDashStyle: [3, 1], }
+          1: {lineWidth: 1, lineDashStyle: [6, 3]},
+          2: {lineWidth: 1, lineDashStyle: [6, 3]},
+          3: {lineWidth: 1, lineDashStyle: [6, 3]}
         },
         hAxis: {
           slantedText: true, slantedTextAngle: 70
