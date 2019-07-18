@@ -25,11 +25,15 @@
 
             @foreach ($sub_categories as $sub_category)
 
-              <?php
-              if (isset($cat_updates[$sub_category->id]) && $cat_updates[$sub_category->id] > $sub_category->balance) {
-                $sub_category->balance = $cat_updates[$sub_category->id];
-              }
-              ?>
+                <?php
+                if (isset($cat_updates[$sub_category->id]) && $cat_updates[$sub_category->id] > $sub_category->balance) {
+                    $sub_category->balance = $cat_updates[$sub_category->id];
+                }
+
+                // Hacky hardcoded for the minute - max for this cat
+                if (!empty($sub_category->id) && $sub_category->id == 29 && $sub_category->balance > 360)
+                    $sub_category->balance = 360;
+                ?>
 
               <tr>
                 <td>{{$sub_category->name}}</td>
