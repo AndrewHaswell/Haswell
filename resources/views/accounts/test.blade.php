@@ -83,14 +83,18 @@
           </tr>
           @if ($hidden)
             <?php
-            $dmp = \App\Models\Payment::where('name','=','DMP')->get();
-            $dmp_amount = $dmp[0]->amount;
+            $dmp = \App\Models\Payment::where('name', '=', 'DMP')->get();
+            $dmp_amount = !empty($dmp) ?
+              $dmp[0]->amount :
+              0;
 
-            $mam_loan = \App\Models\Payment::where('name','=','Mam')->get();
-            $dmp_amount += $mam_loan[0]->amount;
+            $mam_loan = \App\Models\Payment::where('name', '=', 'Mam')->get();
+            if (!empty($mam_loan[0]))
+                $dmp_amount += $mam_loan[0]->amount;
 
-            $student_loan = \App\Models\Payment::where('name','=','Student Loan')->get();
-            $dmp_amount += $student_loan[0]->amount;
+            $student_loan = \App\Models\Payment::where('name', '=', 'Student Loan')->get();
+            if (!empty($student_loan[0]))
+                $dmp_amount += $student_loan[0]->amount;
 
             $repayment = abs($total);
             $months = ceil($repayment / $dmp_amount);

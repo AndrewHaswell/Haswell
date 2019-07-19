@@ -33,7 +33,7 @@
                   '-'?></td>
               <td>{{date('D jS F Y',strtotime($schedule->payment_date))}}</td>
               <td align="right">{{number_format($schedule->amount, 2, '.',',')}}</td>
-              <td>{{$account_list[$schedule->account_id]}}</td>
+              <td>{{!empty($account_list[$schedule->account_id]) ? $account_list[$schedule->account_id] : ''}}</td>
             </tr>
 
           @endforeach
@@ -81,7 +81,7 @@
                   '-'?></td>
               <td>{{date('D jS F Y',strtotime($transaction->payment_date))}}</td>
               <td align="right">{{number_format($transaction->amount, 2, '.',',')}}</td>
-              <td>{{$account_list[$transaction->account_id]}}</td>
+              <td>{{!empty($account_list[$transaction->account_id]) ? $account_list[$transaction->account_id] : ''}}</td>
 
             </tr>
 
