@@ -102,9 +102,9 @@ class AccountsController extends Controller
     $future_account = clone $account;
     $title = 'Accounts - ' . $account->name;
     $account = $this->get_current_balance($account, false);
-    $transactions = $account->transactions()->orderBy('payment_date', 'desc')->orderBy('type', 'desc')->get();
+    $transactions = $account->transactions()->orderBy('payment_date', 'desc')->orderBy('name', 'asc')->orderBy('type', 'desc')->get();
     $end_of_month = Carbon::parse('+30 days');
-    $schedules = $account->schedules()->where('payment_date', '<=', $end_of_month)->where('payment_date', '>', Carbon::parse('today'))->orderBy('payment_date', 'desc')->orderBy('type', 'desc')->get();
+    $schedules = $account->schedules()->where('payment_date', '<=', $end_of_month)->where('payment_date', '>', Carbon::parse('today'))->orderBy('payment_date', 'desc')->orderBy('name', 'asc')->orderBy('type', 'desc')->get();
     $future_balance = $this->get_future_balance($future_account, $end_of_month)->balance;
 
     $categories = Category::all();
@@ -134,8 +134,8 @@ class AccountsController extends Controller
 
     $account = Account::findOrFail($id);
     $account = $this->get_future_balance($account, $date);
-    $transactions = $account->transactions()->orderBy('payment_date', 'desc')->orderBy('type', 'desc')->get();
-    $schedules = $account->schedules()->where('payment_date', '<=', $date)->where('payment_date', '>', Carbon::parse('today'))->orderBy('payment_date', 'desc')->orderBy('type', 'desc')->get();
+    $transactions = $account->transactions()->orderBy('payment_date', 'desc')->orderBy('name', 'asc')->orderBy('type', 'desc')->get();
+    $schedules = $account->schedules()->where('payment_date', '<=', $date)->where('payment_date', '>', Carbon::parse('today'))->orderBy('payment_date', 'desc')->orderBy('name', 'asc')->orderBy('type', 'desc')->get();
     return view('accounts.account_future', compact('account', 'transactions', 'schedules', 'date'));
   }
 
