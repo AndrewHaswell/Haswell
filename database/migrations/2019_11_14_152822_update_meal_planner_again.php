@@ -13,7 +13,7 @@ class UpdateMealPlannerAgain extends Migration
     public function up()
     {
         DB::table('meal_plans')->truncate();
-        DB::statement("ALTER TABLE `meal_plans` CHANGE COLUMN `meal` `meal` ENUM('andybreakfast',
+        DB::statement("ALTER TABLE `meal_plans` CHANGE COLUMN `meal` `meal` ENUM(
                          'breakfast',
                          'lunch',
                          'dinner')");
