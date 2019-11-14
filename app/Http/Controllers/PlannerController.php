@@ -289,7 +289,7 @@ class PlannerController extends Controller
     $slist = new ShoppingList();
     $slist->list = $shopping_list;
     $slist->save();
-    return Redirect::to(url('/list'));
+    return Redirect::to(url('/shopping_list_phone'));
   }
 
   /**
