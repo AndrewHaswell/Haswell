@@ -5,20 +5,21 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <?php
-  $title = 'PHONE';
+    <?php
+    $title = 'PHONE';
 
-  $shopping_list = @json_decode($shopping_list, true);
-  if (!is_array($shopping_list)) {
-    exit('No shopping list set.');
-  }
+    $shopping_list = @json_decode($shopping_list, true);
+    if (!is_array($shopping_list)) {
+        exit('No shopping list set.');
+    }
 
-  ?>
+    ?>
 
   <title>{{$title}}</title>
 
   <!-- JQuery -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script type="text/javascript" src="{{ URL::asset('js/phone.js') }}"></script>
 
   <!-- Fonts -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css"
@@ -29,204 +30,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css"
         integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
   {{-- <link href="{{ elixir('css/app.css') }}" rel="stylesheet"> --}}
+  {{-- <link href="{{ elixir('css/app.css') }}" rel="stylesheet"> --}}
 
-  <script type="application/javascript">
-
-    $(function () {
-
-      save_shopping_list();
-
-      $(document).on("click", '.mark_as_done', function () {
-        var id = $(this).attr('id').replace('mark_', '');
-        $(this).prop('checked', false);
-        var name = $('#name_' + id).val();
-        $('#price_area div.ingredient').text(name);
-        var price = $('#price_' + id).val();
-        $('#price_area input.price').val(price);
-        $('#current_id').val(id);
-        $('#price_area').show();
-      });
-
-      $(document).on("click", '.mark_as_not_done', function () {
-
-        if (confirm('Return item to shopping list?')) {
-
-          var id = $(this).attr('id').replace('undo_', '');
-          var price = parseFloat($('#ingredient_price_hidden_' + id).html());
-          $('#checked_row_' + id).hide();
-          $('#ingredient_price_' + id).html(price.toFixed(2));
-          $('#shopping_row_' + id).show();
-
-          var total = parseFloat($('#total').val());
-          var new_total = parseFloat(total - price).toFixed(2);
-
-          $('#total').val(new_total);
-          $('#total_display').text(new_total);
-        }
-
-      });
-
-      $('input.price').bind("click", function () {
-        $(this).val('');
-      });
-
-      $('#qa_add').bind("click", function () {
-        var name = $('#qa_name').val();
-        var price = parseFloat($('#qa_price').val());
-        var id = name.replace(' ', '_') + '_' + (price * 100);
-
-        if (name.length > 0 && price > 0) {
-          name = name.toLowerCase().replace(/\b[a-z]/g, function (letter) {
-            return letter.toUpperCase();
-          });
-
-          var new_row = '<p class="added_row" id="added_row_' + id + '">' +
-            '<input class="remove_added_item" id="remove_' + id + '" type="checkbox"/>' +
-            '<label for="remove_' + id + '">' + name + '</label>' +
-            '<span class="ingredient_price" id="ingredient_price_added_' + id + '">' + price.toFixed(2) + '</span>' +
-            '</p>';
-
-          var total = parseFloat($('#total').val());
-          var new_total = parseFloat(price + total).toFixed(2);
-
-          $('#total').val(new_total);
-          $('#total_display').text(new_total);
-
-          $('#checked_off').append(new_row);
-          $('#quick_add_area').hide();
-        }
-
-      });
-
-      $('#go').bind("click", function () {
-        var id = $('#current_id').val();
-        $('#shopping_row_' + id).hide();
-
-        var orig_price = parseFloat($('#price_' + id).val());
-        var price = parseFloat($('#price_area input.price').val());
-
-        var name = $('#name_' + id).val();
-
-        var new_row = '<p class="checked_row" id="checked_row_' + id + '">' +
-          '<input class="mark_as_not_done" id="undo_' + id + '" type="checkbox"/>' +
-          '<label for="undo_' + id + '">' + name + '</label>' +
-          '<span class="ingredient_price" id="ingredient_price_hidden_' + id + '">' + price.toFixed(2) + '</span>' +
-          '</p>';
-
-        $('#checked_off').append(new_row);
-
-        if (Math.round(orig_price * 100) != Math.round(price * 100)) {
-
-          $.ajax
-          (
-            {
-              url: '/ajax/update_ingredient_prices',
-              dataType: 'json',
-              type: 'POST',
-              async: true,
-              data:
-                {
-                  "_token": "{{ csrf_token() }}",
-                  id: id,
-                  price: price
-                },
-              success: function (data) {
-                // Data is whatever gets returned
-              }
-            }
-          );
-        }
-
-        if (price) {
-          var total = parseFloat($('#total').val());
-        }
-        var new_total = parseFloat(price + total).toFixed(2);
-
-        $('#total').val(new_total);
-        $('#total_display').text(new_total);
-        $('#price_area').hide();
-      });
-
-      $('#add_item_button').bind("click", function () {
-        $('#quick_add_area').show();
-      });
-
-      $('#qa_cancel').bind("click", function () {
-        $('#quick_add_area').hide();
-      })
-
-      $(document).on("click", '.remove_added_item', function () {
-
-        if (confirm('Are you sure you want to remove this added item?')) {
-          var id = $(this).attr('id').replace('remove_', '');
-
-          var price = parseFloat($('#ingredient_price_added_' + id).html());
-          var total = parseFloat($('#total').val());
-          var new_total = parseFloat(total - price).toFixed(2);
-
-          $('#total').val(new_total);
-          $('#total_display').text(new_total);
-
-          $('#added_row_' + id).remove();
-        }
-
-      });
-
-      $('#cancel').bind("click", function () {
-        var id = $('#current_id').val();
-        $('input#' + id).prop('checked', false);
-        $('#price_area').hide();
-      });
-
-      $('input.price').bind("keyup", function () {
-        var value = $(this).val().replace(/\D/g, '');
-        value = pad(value, 3);
-        var pence = value.substr(value.length - 2);
-        var pounds = parseInt(value.substr(0, value.length - 2));
-        $(this).val(pounds + '.' + pence);
-      });
-
-      function pad(str, max) {
-        str = str.toString();
-        return str.length < max ? pad("0" + str, max) : str;
-      }
-
-      function save_shopping_list() {
-        var list = [];
-        $('.shopping_row,.checked_row,.added_row').each(function () {
-          var this_item = [];
-          var id = $(this).attr('id').split('_').pop();
-          var classname = $(this).attr('class');
-          this_item.push(id);
-          this_item.push($('#name_' + id).val());
-          this_item.push($('#price_' + id).val());
-          this_item.push($('#display_' + id).val());
-          var checked = classname != 'shopping_row';
-          this_item.push(checked);
-          list.push(this_item);
-        });
-        $.ajax
-        (
-          {
-            url: '/ajax/save_shopping_list',
-            dataType: 'json',
-            type: 'POST',
-            async: true,
-            data:
-              {
-                "_token": "{{ csrf_token() }}",
-                list: list
-              },
-            success: function (data) {
-              // Data is whatever gets returned
-            }
-          }
-        );
-      }
-
-    });
-
-  </script>
   <style>
     body {
       font-size: 11pt;
@@ -355,8 +160,6 @@
 
     @foreach ($shopping_list as $ingredient)
 
-
-
       <p class="shopping_row" id="shopping_row_{{$ingredient['id']}}"
          @if ($ingredient['checked']) style="display:none"@endif><input class="mark_as_done"
                                                                         id="mark_{{$ingredient['id']}}"
@@ -402,3 +205,244 @@
 </div>
 </body>
 </html>
+
+<script>
+  $(function () {
+
+    save_shopping_list();
+
+    // Show pricing area to add item
+
+    $(document).on("click", '.mark_as_done', function () {
+      var id = $(this).attr('id').replace('mark_', '');
+      $(this).prop('checked', false);
+      var name = $('#name_' + id).val();
+      $('#price_area div.ingredient').text(name);
+      var price = $('#price_' + id).val();
+      $('#price_area input.price').val(price);
+      $('#current_id').val(id);
+      $('#price_area').show();
+    });
+
+
+
+    $(document).on("click", '.mark_as_not_done', function () {
+
+      if (confirm('Return item to shopping list?')) {
+
+        var id = $(this).attr('id').replace('undo_', '');
+        var price = parseFloat($('#ingredient_price_hidden_' + id).html());
+        $('#checked_row_' + id).hide();
+        $('#ingredient_price_' + id).html(price.toFixed(2));
+        $('#shopping_row_' + id).show();
+
+        var total = parseFloat($('#total').val());
+        var new_total = parseFloat(total - price).toFixed(2);
+
+        $('#total').val(new_total);
+        $('#total_display').text(new_total);
+
+      }
+
+      save_shopping_list();
+
+    });
+
+
+
+
+
+
+
+    $('input.price').bind("click", function () {
+      $(this).val('');
+    });
+
+
+
+
+
+
+
+    $('#qa_add').bind("click", function () {
+      var name = $('#qa_name').val();
+      var price = parseFloat($('#qa_price').val());
+      var id = name.replace(' ', '_') + '_' + (price * 100);
+
+      if (name.length > 0 && price > 0) {
+        name = name.toLowerCase().replace(/\b[a-z]/g, function (letter) {
+          return letter.toUpperCase();
+        });
+
+        var new_row = '<p class="added_row" id="added_row_' + id + '">' +
+          '<input class="remove_added_item" id="remove_' + id + '" type="checkbox"/>' +
+          '<label for="remove_' + id + '">' + name + '</label>' +
+          '<span class="ingredient_price" id="ingredient_price_added_' + id + '">' + price.toFixed(2) + '</span>' +
+          '</p>';
+
+        var total = parseFloat($('#total').val());
+        var new_total = parseFloat(price + total).toFixed(2);
+
+        $('#total').val(new_total);
+        $('#total_display').text(new_total);
+
+        $('#checked_off').append(new_row);
+        $('#quick_add_area').hide();
+
+        save_shopping_list();
+
+      }
+
+
+
+    });
+
+    // Check off item from shopping list
+
+    $('#go').bind("click", function () {
+      var id = $('#current_id').val();
+      $('#shopping_row_' + id).hide();
+
+      var orig_price = parseFloat($('#price_' + id).val());
+      var price = parseFloat($('#price_area input.price').val());
+
+      var name = $('#name_' + id).val();
+
+      var new_row = '<p class="checked_row" id="checked_row_' + id + '">' +
+        '<input class="mark_as_not_done" id="undo_' + id + '" type="checkbox"/>' +
+        '<label for="undo_' + id + '">' + name + '</label>' +
+        '<span class="ingredient_price" id="ingredient_price_hidden_' + id + '">' + price.toFixed(2) + '</span>' +
+        '</p>';
+
+      $('#checked_off').append(new_row);
+
+      if (Math.round(orig_price * 100) != Math.round(price * 100)) {
+
+        $.ajax
+        (
+          {
+            url: '/ajax/update_ingredient_prices',
+            dataType: 'json',
+            type: 'POST',
+            async: true,
+            data:
+              {
+                "_token": "{{ csrf_token() }}",
+                id: id,
+                price: price
+              },
+            success: function (data) {
+              // Data is whatever gets returned
+            }
+          }
+        );
+      }
+
+      if (price) {
+        var total = parseFloat($('#total').val());
+      }
+      var new_total = parseFloat(price + total).toFixed(2);
+
+      $('#total').val(new_total);
+      $('#total_display').text(new_total);
+      $('#price_area').hide();
+
+      save_shopping_list();
+
+    });
+
+    $('#add_item_button').bind("click", function () {
+      $('#quick_add_area').show();
+    });
+
+    $('#qa_cancel').bind("click", function () {
+      $('#quick_add_area').hide();
+    })
+
+    $(document).on("click", '.remove_added_item', function () {
+
+      if (confirm('Are you sure you want to remove this added item?')) {
+        var id = $(this).attr('id').replace('remove_', '');
+
+        var price = parseFloat($('#ingredient_price_added_' + id).html());
+        var total = parseFloat($('#total').val());
+        var new_total = parseFloat(total - price).toFixed(2);
+
+        $('#total').val(new_total);
+        $('#total_display').text(new_total);
+
+        $('#added_row_' + id).remove();
+
+        save_shopping_list();
+      }
+
+    });
+
+    $('#cancel').bind("click", function () {
+      var id = $('#current_id').val();
+      $('input#' + id).prop('checked', false);
+      $('#price_area').hide();
+    });
+
+    $('input.price').bind("keyup", function () {
+      var value = $(this).val().replace(/\D/g, '');
+      value = pad(value, 3);
+      var pence = value.substr(value.length - 2);
+      var pounds = parseInt(value.substr(0, value.length - 2));
+      $(this).val(pounds + '.' + pence);
+    });
+
+    function pad(str, max) {
+      str = str.toString();
+      return str.length < max ? pad("0" + str, max) : str;
+    }
+
+    function save_shopping_list() {
+
+      console.clear();
+
+      var list = [];
+      $('.shopping_row:visible,.checked_row:visible,.added_row:visible').each(function () {
+        var this_item = [];
+        var id = $(this).attr('id').split('_').pop();
+        var classname = $(this).attr('class');
+        this_item.push(id);
+        this_item.push($('#name_' + id).val());
+        this_item.push($('#price_' + id).val());
+        this_item.push($('#display_' + id).val());
+
+        console.log(classname);
+
+        var checked = classname != 'shopping_row';
+
+        console.log(checked);
+
+        this_item.push(checked);
+        list.push(this_item);
+      });
+
+      console.log(list);
+
+      $.ajax
+      (
+        {
+          url: '/ajax/save_shopping_list',
+          dataType: 'json',
+          type: 'POST',
+          async: true,
+          data:
+            {
+              "_token": "{{ csrf_token() }}",
+              list: list
+            },
+          success: function (data) {
+            // Data is whatever gets returned
+          }
+        }
+      );
+    }
+
+  });
+
+
+</script>

@@ -89,29 +89,37 @@ class AjaxController extends Controller
    * @author Andrew Haswell
    */
 
-  public function save_shopping_list(Request $request)
-  {
-    $shopping_list = $request->list;
-    $saved_list = [];
+    public function save_shopping_list(Request $request)
+    {
+        $shopping_list = $request->list;
+        $saved_list = [];
 
-    foreach ($shopping_list as $row) {
+        foreach ($shopping_list as $row) {
 
+            $saved_list[] = [
+              'id'            => (int)$row[0],
+              'name'          => $row[3],
+              'original_name' => $row[1],
+              'price'         => (float)$row[2],
+              'checked'       => $row[4] == 'true' ?
+                true :
+                false
+            ];
 
-      // dd($row);
+            dump($row[4]);
+        }
 
-      $saved_list[] = ['id'            => (int)$row[0],
-                       'name'          => $row[3],
-                       'original_name' => $row[1],
-                       'price'         => (float)$row[2],
-                       'checked'       => (bool)$row[4]];
+        /* Debugging for Andy Haswell (06/12/2019) */
+        dump('Line #' . __LINE__);
+        dump($row[4]);
+        dump($saved_list);
+
+        $slist = new ShoppingList();
+        $slist->list = json_encode($saved_list);
+        $slist->save();
+
+        $response = ['status' => 'OK'];
+        echo json_encode($response);
+        exit;
     }
-
-    $slist = new ShoppingList();
-    $slist->list = json_encode($shopping_list);
-    $slist->save();
-
-    $response = ['status' => 'OK'];
-    echo json_encode($response);
-    exit;
-  }
 }
