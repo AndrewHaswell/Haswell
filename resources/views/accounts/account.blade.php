@@ -130,7 +130,7 @@
         <?php
         $row_count = 0;
           foreach ($by_category as $key => $value) {
-              if (strtolower(substr($key, 0, 3)) != 'DD ') {
+              if (strtolower(substr($key, 0, 3)) != 'dd ') {
                   echo "['" . $key . "'," . $value . "],";
                   if (strtolower($key) == 'alcohol') {
                       $alcohol = $row_count;
