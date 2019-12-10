@@ -56,7 +56,11 @@ class BudgetController extends Controller
               $amount = $update->interval == '1 week' ?
                 ($update->amount * 52) / 12 :
                 $update->amount;
-              $cat_updates[$update['budget_id']] = $amount;
+              if (isset($cat_updates[$update['budget_id']])) {
+                  $cat_updates[$update['budget_id']] += $amount;
+              } else {
+                  $cat_updates[$update['budget_id']] = $amount;
+              }
           }
       }
 

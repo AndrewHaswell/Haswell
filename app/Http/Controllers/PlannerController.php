@@ -302,10 +302,9 @@ class PlannerController extends Controller
     $shopping_list = ShoppingList::orderBy('created_at', 'desc')->first();
 
     if (!empty($shopping_list)) {
-
       $shopping_list = $shopping_list->list;
 
-      dump(json_decode($shopping_list));
+      //dump(json_decode($shopping_list));
 
       return view('shopping.phone_check', compact(['shopping_list']));
     }

@@ -90,7 +90,7 @@
 
             $mam_loan = \App\Models\Payment::where('name', '=', 'Mam')->get();
             if (!empty($mam_loan[0]))
-                $dmp_amount += $mam_loan[0]->amount;
+                //$dmp_amount += $mam_loan[0]->amount;
 
             $student_loan = \App\Models\Payment::where('name', '=', 'Student Loan')->get();
             if (!empty($student_loan[0]))
