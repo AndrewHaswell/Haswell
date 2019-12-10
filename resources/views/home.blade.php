@@ -105,17 +105,19 @@
       data.addColumn('number', 'Amount');
       data.addRows([
         <?php
-        $row_count = 0;
-        foreach ($by_category as $key => $value) {
-          echo "['" . $key . "'," . $value . "],";
-          if (strtolower($key) == 'alcohol') {
-            $alcohol = $row_count;
+          $row_count = 0;
+          foreach ($by_category as $key => $value) {
+              if (strtolower(substr($key, 0, 3)) != 'dd ') {
+                  echo "['" . $key . "'," . $value . "],";
+                  if (strtolower($key) == 'alcohol') {
+                      $alcohol = $row_count;
+                  }
+                  if (strtolower($key) == 'takeaway') {
+                      $takeaway = $row_count;
+                  }
+                  $row_count++;
+              }
           }
-          if (strtolower($key) == 'takeaway') {
-            $takeaway = $row_count;
-          }
-          $row_count++;
-        }
         ?>
       ]);
       var formatter = new google.visualization.NumberFormat({
