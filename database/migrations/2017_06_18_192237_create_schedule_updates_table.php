@@ -20,7 +20,7 @@ class CreateScheduleUpdatesTable extends Migration
       $table->datetime('payment_date');
       $table->enum('type', ['credit',
                             'debit']);
-      $table->integer('account_id');
+      $table->integer('account_id')->unsigned();
       $table->tinyInteger('transfer');
       $table->decimal('amount');
       $table->timestamps();
