@@ -134,9 +134,9 @@ class UpdatePayments extends Command
             $salary = Schedule::where('name', '=', $schedule->name)->where('payment_date', '<', $schedule->payment_date)->orderBy('payment_date', 'desc')->first();
             if (!empty($salary)) {
               $saving_date = Carbon::parse($salary->payment_date);
-              if ($saving_date->format('N') != 6) {
+/*              if ($saving_date->format('N') != 6) {
                 $saving_date->modify('next saturday');
-              }
+              }*/
             } else {
               $account->balance += $schedule->amount;
               continue;
