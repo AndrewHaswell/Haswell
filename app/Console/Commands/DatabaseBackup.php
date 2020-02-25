@@ -52,7 +52,7 @@ class DatabaseBackup extends Command
       $message->from('andy@snowmanx.com', 'SnowmanX');
       $message->to('andy@snowmanx.com', 'Andy Haswell');
       $message->subject('Database Backup Attached');
-      //$message->attach($filename . '.zip');
+      $message->attach($filename . '.zip');
     });
 
     // Remove the backup from the server
