@@ -30,8 +30,8 @@ class Kernel extends ConsoleKernel
    */
   protected function schedule(Schedule $schedule)
   {
-    $schedule->command('payments:update')->hourly()->sendOutputTo('payment_update.log');
-    $schedule->command('db:backup')->hourly()->sendOutputTo('payment_update.log');
+    $schedule->command('payments:update')->daily()->sendOutputTo('payment_update.log');
+    $schedule->command('db:backup')->everyMinute()->sendOutputTo('payment_update.log');
     $schedule->command('priorities:update')->daily();
   }
 }
