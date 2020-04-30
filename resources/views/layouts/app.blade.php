@@ -41,6 +41,9 @@
   <style>
     body {
       font-family: 'Lato';
+      @if (!empty(Auth::user()) && Auth::user()->id == 2)
+       background-color: #fae4ff;
+    @endif
       }
 
     #upcoming {
@@ -52,10 +55,12 @@
       }
 
     .account_month {
-      font-weight:      bold;
-      color:            white;
-      background-color: darkred;
-      background-color: #b949a6;
+      font-weight:             bold;
+      color:                   white;
+      background-color:        darkred;
+      @if (!empty(Auth::user()) && Auth::user()->id == 2)
+       background-color: #b949a6;
+    @endif
       }
 
     .account_month.future {
@@ -111,10 +116,6 @@
       float:       right;
       text-align:  right;
       font-size:   12pt;
-      }
-
-    body {
-      background-color: #fae4ff;
       }
 
   </style>
