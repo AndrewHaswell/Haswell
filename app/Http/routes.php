@@ -15,7 +15,7 @@ Route::get('/', function () {
   return view('welcome');
 });
 
-//Route::auth(); //Removed to prevent registration
+Route::auth(); //Removed to prevent registration
 
 // Authentication Routes...
 Route::get('login', 'Auth\AuthController@showLoginForm');
