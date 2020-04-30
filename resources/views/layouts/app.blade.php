@@ -42,7 +42,7 @@
   <style>
     body {
       font-family: 'Lato';
-      @if (!empty(Auth::user()) && Auth::user()->id == 1)
+      @if (!empty(Auth::user()) && Auth::user()->id == 2)
         background-color: #fae4ff;
         font-family:              'Satisfy';
       font-size: 22px;
@@ -60,7 +60,7 @@
       font-weight:             bold;
       color:                   white;
       background-color:        darkred;
-      @if (!empty(Auth::user()) && Auth::user()->id == 1)
+      @if (!empty(Auth::user()) && Auth::user()->id == 2)
        background-color: #b949a6;
       @endif
       }
