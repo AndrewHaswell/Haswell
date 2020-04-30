@@ -111,6 +111,11 @@
       text-align:  right;
       font-size:   12pt;
       }
+
+    body {
+      background-color: #fae4ff;
+      }
+
   </style>
 </head>
 <body id="app-layout">
