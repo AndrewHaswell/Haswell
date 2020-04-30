@@ -45,6 +45,7 @@
       @if (!empty(Auth::user()) && Auth::user()->id == 1)
         background-color: #fae4ff;
         font-family:              'Amatic SC';
+      font-size: 22px;
       @endif
       }
     #upcoming {
