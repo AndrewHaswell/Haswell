@@ -47,7 +47,6 @@
         font-family:              'Amatic SC';
       @endif
       }
-    r-6hmnTgK
     #upcoming {
       display: none;
       }
