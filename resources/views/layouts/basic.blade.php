@@ -53,6 +53,7 @@
       font-weight:      bold;
       color:            white;
       background-color: darkred;
+      background-color: #b949a6;
       }
 
     .account_month.future {
