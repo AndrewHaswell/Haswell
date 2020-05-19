@@ -186,6 +186,10 @@ class AccountsController extends Controller
         }
       }
     }
+
+      $account->confirmed_balance = round($account->confirmed_balance,2);
+      $account->balance = round($account->balance,2);
+
     return $account;
   }
 
