@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Weight;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -24,9 +25,7 @@ class WeightController extends Controller
     public function index()
     {
         // Get the latest data from the DB
-        $current_data = Weight::orderby('created_at', 'desc')
-                              ->where('user', '=', Auth::user()->id)
-                              ->first();
+        $current_data = Weight::orderby('created_at', 'desc')->where('user', '=', Auth::user()->id)->first();
 
         if (empty($current_data)) {
             return Redirect::to(url('/weight/create'));
@@ -84,9 +83,12 @@ class WeightController extends Controller
     public function historical_data()
     {
         $user_id = $name = Auth::user()->id;
-        $weight_data = Weight::where('user', '=', $user_id)
-                             ->orderby('created_at', 'asc')
-                             ->get();
+
+        $dayAgo = 90;
+        $daysToCheck = Carbon::now()->subDays($dayAgo);
+
+        $weight_data = Weight::where('user', '=', $user_id)->whereDate('created_at', '>',
+            $daysToCheck)->orderby('created_at', 'asc')->get();
 
         // Work out average daily weight
         $daily_data = [];
@@ -199,7 +201,7 @@ class WeightController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param \Illuminate\Http\Request $request
      *
      * @return \Illuminate\Http\Response
      */
@@ -228,7 +230,7 @@ class WeightController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int $id
+     * @param int $id
      *
      * @return \Illuminate\Http\Response
      */
@@ -240,7 +242,7 @@ class WeightController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int $id
+     * @param int $id
      *
      * @return \Illuminate\Http\Response
      */
@@ -252,8 +254,8 @@ class WeightController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  int                      $id
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
      *
      * @return \Illuminate\Http\Response
      */
@@ -265,7 +267,7 @@ class WeightController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int $id
+     * @param int $id
      *
      * @return \Illuminate\Http\Response
      */
