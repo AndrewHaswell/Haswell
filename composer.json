@@ -5,7 +5,7 @@
     "license": "MIT",
     "type": "project",
     "require": {
-        "php": ">=5.5.9",
+        "php": "^7.4||^8.0",
         "laravel/framework": "5.2.*",
         "guzzlehttp/guzzle": "^6.2",
         "laravelcollective/html": "5.*",
@@ -13,12 +13,12 @@
         "doctrine/dbal": "^2.6"
     },
     "require-dev": {
-        "fzaninotto/faker": "~1.4",
+        "fakerphp/faker": "^1.9.1",
         "mockery/mockery": "0.9.*",
-        "phpunit/phpunit": "~4.0",
+        "phpunit/phpunit": "^9.3",
         "symfony/css-selector": "2.8.*|3.0.*",
         "symfony/dom-crawler": "2.8.*|3.0.*",
-        "laravel/homestead": "^4.0"
+        "laravel/homestead": "^11.0"
     },
     "autoload": {
         "classmap": [
@@ -35,18 +35,18 @@
     },
     "scripts": {
         "post-root-package-install": [
-            "/usr/bin/php73-cli -r \"copy('.env.example', '.env');\""
+            "php -r \"copy('.env.example', '.env');\""
         ],
         "post-create-project-cmd": [
-            "/usr/bin/php73-cli artisan key:generate"
+            "php artisan key:generate"
         ],
         "post-install-cmd": [
             "Illuminate\\Foundation\\ComposerScripts::postInstall",
-            "/usr/bin/php73-cli artisan optimize"
+            "php artisan optimize"
         ],
         "post-update-cmd": [
             "Illuminate\\Foundation\\ComposerScripts::postUpdate",
-            "/usr/bin/php73-cli artisan optimize"
+            "php artisan optimize"
         ]
     },
     "config": {
