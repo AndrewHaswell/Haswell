@@ -11,9 +11,9 @@ use DatePeriod;
 use DateInterval;
 use App\Models\Payment as Payment;
 use App\Models\Schedule;
-use App\Models\Additional;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 
 class UpdatePayments extends Command
 {
@@ -122,9 +122,17 @@ class UpdatePayments extends Command
         $savings_account = Account::where('name', '=', $savings_account_name)->firstOrFail();
         $minimum_account_level = env('SAVINGS_ACC_MINIMUM', 60);
 
+        dump('Savings Account Name: ' . $savings_account_name);
+        dump($savings_account);
+        dump('Minimum Account Level: ' . $minimum_account_level);
+        dd($accounts);
+
         foreach ($accounts as $account) {
 
             $account = $this->get_current_balance($account);
+
+            dump($account);
+
             $schedules = $account->schedules()->orderBy('payment_date', 'asc')->orderBy('type', 'asc')->get();
 
             foreach ($schedules as $schedule) {
