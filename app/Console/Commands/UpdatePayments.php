@@ -13,7 +13,6 @@ use App\Models\Payment as Payment;
 use App\Models\Schedule;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 
 class UpdatePayments extends Command
 {
@@ -54,8 +53,6 @@ class UpdatePayments extends Command
         $this->update_schedules();
         $this->calculate_bills();
         $this->calculate_savings();
-
-        dd('temporary stop!');
 
         $account_list = [];
         $accounts = Account::all();
@@ -124,19 +121,9 @@ class UpdatePayments extends Command
         $savings_account = Account::where('name', '=', $savings_account_name)->firstOrFail();
         $minimum_account_level = env('SAVINGS_ACC_MINIMUM', 60);
 
-        dump('Savings Account Name: ' . $savings_account_name);
-        dump($savings_account);
-        dump('Minimum Account Level: ' . $minimum_account_level);
-        dump($accounts);
-
         foreach ($accounts as $account) {
 
-            dump($account);
-
             $account = $this->get_current_balance($account);
-
-            dump($account->balance);
-
             $schedules = $account->schedules()->orderBy('payment_date', 'asc')->orderBy('type', 'asc')->get();
 
             foreach ($schedules as $schedule) {
@@ -175,13 +162,6 @@ class UpdatePayments extends Command
                                     $transfer_to_name = 'Saved to ' . $savings_account->name;
                                     $transfer_from_name = 'Saved from ' . $account->name;
 
-
-                                    dump($transfer_to_name);
-                                    dump($transfer_from_name);
-                                    dump($saving_balance);
-                                    dump($saving_date);
-
-
                                     // Create a savings transaction
                                     $saving_schedule = new Schedule();
                                     $saving_schedule->name = $transfer_to_name;
@@ -196,7 +176,7 @@ class UpdatePayments extends Command
                                     $saving_schedule->name = $transfer_from_name;
                                     $saving_schedule->account_id = $savings_account->id;
                                     $saving_schedule->amount = $saving_balance;
-                                    $saving_schedule->transfer = $account->id;
+                                    $saving_schedule->transfer = '-1';
                                     $saving_schedule->type = 'credit';
                                     $saving_schedule->payment_date = $saving_date;
                                     $saving_schedule->save();
