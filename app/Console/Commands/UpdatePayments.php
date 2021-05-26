@@ -125,13 +125,15 @@ class UpdatePayments extends Command
         dump('Savings Account Name: ' . $savings_account_name);
         dump($savings_account);
         dump('Minimum Account Level: ' . $minimum_account_level);
-        dd($accounts);
+        dump($accounts);
 
         foreach ($accounts as $account) {
 
+            dump($account);
+
             $account = $this->get_current_balance($account);
 
-            dump($account);
+            dump($account->balance);
 
             $schedules = $account->schedules()->orderBy('payment_date', 'asc')->orderBy('type', 'asc')->get();
 
@@ -170,6 +172,12 @@ class UpdatePayments extends Command
 
                                     $transfer_to_name = 'Saved to ' . $savings_account->name;
                                     $transfer_from_name = 'Saved from ' . $account->name;
+
+
+                                    dump($transfer_to_name);
+                                    dump($transfer_from_name);
+                                    dump($saving_balance);
+
 
                                     // Create a savings transaction
                                     $saving_schedule = new Schedule();
