@@ -137,6 +137,11 @@ class UpdatePayments extends Command
 
             $schedules = $account->schedules()->orderBy('payment_date', 'asc')->orderBy('type', 'asc')->get();
 
+            /* Debugging for Andy Haswell (26/05/2021) */
+            dump('DEBUG - ' . __NAMESPACE__ . '::' . __FUNCTION__ . '() #' . __LINE__);
+            dd($schedules);
+            /* End of Debugging */
+
             foreach ($schedules as $schedule) {
 
                 if ($schedule->type == 'debit') {
