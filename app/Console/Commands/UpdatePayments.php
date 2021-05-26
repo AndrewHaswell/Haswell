@@ -55,6 +55,8 @@ class UpdatePayments extends Command
         $this->calculate_bills();
         $this->calculate_savings();
 
+        dd('temporary stop!');
+
         $account_list = [];
         $accounts = Account::all();
         foreach ($accounts as $account) {
