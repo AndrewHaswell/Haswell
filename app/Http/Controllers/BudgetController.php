@@ -28,6 +28,11 @@ class BudgetController extends Controller
     $incoming_payments = Payment::where('type', '=', 'credit')->get();
     $incoming = 0;
 
+      /* Debugging for Andy Haswell (14/06/2021) */
+      dump('DEBUG (' . date('H:i:s') . ') - ' . __NAMESPACE__ . '::' . __FUNCTION__ . '() #' . __LINE__);
+      dd($incoming_payments);
+      /* End of Debugging */
+
     foreach ($incoming_payments as $incoming_payment) {
       $incoming += $incoming_payment->amount;
     }
