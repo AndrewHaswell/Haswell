@@ -25,18 +25,15 @@ class BudgetController extends Controller
     $main_categories = BudgetMain::all();
     $mortgage_ratio = 0.133603238866397;
 
-    $incoming_payments = Payment::where('type', '=', 'credit')->get();
-    $incoming = 0;
+      $incoming_payments = Payment::where('type', '=', 'credit')->get();
+      $incoming = 0;
 
-      /* Debugging for Andy Haswell (14/06/2021) */
-      dump('DEBUG (' . date('H:i:s') . ') - ' . __NAMESPACE__ . '::' . __FUNCTION__ . '() #' . __LINE__);
-      dd($incoming_payments);
-      /* End of Debugging */
-
-    foreach ($incoming_payments as $incoming_payment) {
-      $incoming += $incoming_payment->amount;
-    }
-    $incoming = floor($incoming);
+      foreach ($incoming_payments as $incoming_payment) {
+          if ($incoming_payment->account_id == 22) {
+              $incoming += $incoming_payment->amount;
+          }
+      }
+      $incoming = floor($incoming);
 
     // Category updates
 
