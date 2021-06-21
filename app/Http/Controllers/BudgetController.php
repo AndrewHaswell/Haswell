@@ -29,7 +29,15 @@ class BudgetController extends Controller
       $incoming = 0;
 
       foreach ($incoming_payments as $incoming_payment) {
+          if ($incoming_payment->interval == '1 month'){
               $incoming += $incoming_payment->amount;
+          } else if ($incoming_payment->interval == '4 week') {
+              $amount = ($incoming_payment->amount*13)/12;
+              $incoming += $amount;
+          } else if ($incoming_payment->interval == '1 week') {
+              $amount = ($incoming_payment->amount*52)/12;
+              $incoming += $amount;
+          }
       }
       $incoming = floor($incoming);
 
