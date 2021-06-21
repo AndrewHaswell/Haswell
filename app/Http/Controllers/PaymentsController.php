@@ -89,9 +89,10 @@ class PaymentsController extends Controller
                 dump($payment);
                 /* End of Debugging */
             } else {
+                $name = preg_replace('/^(WLT|Card|CLAS)+\s14,\s/Ui', '', $transaction[1]);
                 $add = new Transaction();
                 $add->account_id = 22;
-                $add->name = $transaction[1];
+                $add->name = trim($name);
                 $add->payment_date = Carbon::parse($transaction[0])->toIso8601String();
                 $add->type = $type;
                 $add->amount = $amount;
