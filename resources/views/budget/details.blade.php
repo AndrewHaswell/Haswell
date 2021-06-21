@@ -30,11 +30,6 @@
                     $sub_category->balance = $cat_updates[$sub_category->id];
                 }
 
-                // Hacky hardcoded for the minute - max for this cat
-                if (!empty($sub_category->id) && $sub_category->id == 29 && $sub_category->balance > 360)
-                    $sub_category->balance = 360;
-                ?>
-
               <tr>
                 <td>{{$sub_category->name}}</td>
                 <td align="right">
