@@ -29,9 +29,7 @@ class BudgetController extends Controller
       $incoming = 0;
 
       foreach ($incoming_payments as $incoming_payment) {
-          if ($incoming_payment->account_id == 22) {
               $incoming += $incoming_payment->amount;
-          }
       }
       $incoming = floor($incoming);
 
