@@ -89,7 +89,7 @@ class PaymentsController extends Controller
                 dump($payment);
                 /* End of Debugging */
             } else {
-                $name = preg_replace('/^(WLT|Card|CLAS)+\s14,\s/Ui', '', $transaction[1]);
+                $name = preg_replace('/^(WLT|Card|CLS)+\s[0-9]{2},\s/Ui', '', $transaction[1]);
                 $add = new Transaction();
                 $add->account_id = 22;
                 $add->name = trim($name);
