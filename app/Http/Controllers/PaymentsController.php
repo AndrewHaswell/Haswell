@@ -257,7 +257,7 @@ class PaymentsController extends Controller
     {
         /* Debugging for Andy Haswell (21/06/2021) */
         dump('DEBUG (' . date('H:i:s') . ') - ' . __NAMESPACE__ . '::' . __FUNCTION__ . '() #' . __LINE__);
-        dd($request);
+        dd($request->statement);
         /* End of Debugging */
     }
 
