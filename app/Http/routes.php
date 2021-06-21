@@ -51,7 +51,7 @@ Route::get('/list', 'PlannerController@shopping_list_2');
 Route::get('/phone_list', 'PlannerController@shopping_list_phone_start');
 Route::get('/shopping_list_phone', 'PlannerController@shopping_list_phone');
 
-Route::get('/test', 'PaymentsController@import');
+Route::get('/test', 'PaymentsController@create');
 
 Route::resource('transactions', 'TransactionsController');
 Route::resource('category', 'CategoryController');
