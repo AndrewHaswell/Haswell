@@ -29,6 +29,7 @@
                 if (isset($cat_updates[$sub_category->id]) && $cat_updates[$sub_category->id] > $sub_category->balance) {
                     $sub_category->balance = $cat_updates[$sub_category->id];
                 }
+                ?>
 
               <tr>
                 <td>{{$sub_category->name}}</td>
